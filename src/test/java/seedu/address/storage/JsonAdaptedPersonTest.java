@@ -138,12 +138,12 @@ public class JsonAdaptedPersonTest {
         invalidTags.add(new JsonAdaptedTag(INVALID_TAG));
         JsonAdaptedPerson person =
                 new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS, invalidTags,
-VALID_STATUS, VALID_REJECTION_REASONS, VALID_DATE_ADDED, VALID_PRIORITY);
+                        VALID_STATUS, VALID_REJECTION_REASONS, VALID_DATE_ADDED, VALID_PRIORITY);
 
-AddressBook ab = new AddressBook();
-BENSON.getTags().forEach(ab::addTag);
+        AddressBook ab = new AddressBook();
+        BENSON.getTags().forEach(ab::addTag);
 
-assertThrows(IllegalValueException.class, () -> person.toModelType(ab));
+        assertThrows(IllegalValueException.class, () -> person.toModelType(ab));
     }
 
 }
