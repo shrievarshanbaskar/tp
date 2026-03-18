@@ -35,7 +35,6 @@ public class MarkCommandParser implements Parser<MarkCommand> {
         }
 
         String status = argMultimap.getValue(PREFIX_PRIORITY).get().trim().toLowerCase();
-        
         if (!Priority.isValidPriority(status)) {
             throw new ParseException(Priority.MESSAGE_CONSTRAINTS);
         }

@@ -71,7 +71,6 @@ public class PersonCard extends UiPart<Region> {
             rejectedTag.setVisible(true);
             rejectedTag.setManaged(true);
         }
-        
         if (person.getPriority().isPriority) {
             priorityTag.setText("⭐ PRIORITY");
             priorityTag.setStyle("-fx-background-color: #f0ad4e; -fx-text-fill: black; "

@@ -32,7 +32,7 @@ public class MarkCommand extends Command {
     private final Priority priority;
 
     /**
-     * @param index of the person in the filtered person list to edit
+     * @param index    of the person in the filtered person list to edit
      * @param priority the new priority status
      */
     public MarkCommand(Index index, Priority priority) {
@@ -53,7 +53,6 @@ public class MarkCommand extends Command {
         }
 
         Person personToMark = lastShownList.get(index.getZeroBased());
-        
         if (personToMark.getPriority().equals(priority)) {
             throw new CommandException(String.format(MESSAGE_REDUNDANT_MARK, priority.value));
         }
@@ -62,7 +61,7 @@ public class MarkCommand extends Command {
 
         model.setPerson(personToMark, markedPerson);
         model.updateFilteredPersonList(Model.PREDICATE_SHOW_ALL_PERSONS);
-        
+
         // Sorting MVP: Group priority candidates at the top, then sort by date added descending
         model.sortFilteredPersonList(Comparator.comparing((Person p) -> !p.getPriority().isPriority)
                 .thenComparing((Person p) -> p.getDateAdded().date, Comparator.reverseOrder()));
