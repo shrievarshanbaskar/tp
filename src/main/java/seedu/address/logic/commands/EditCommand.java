@@ -120,7 +120,7 @@ public class EditCommand extends Command {
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress,
                 personToEdit.getTags(), personToEdit.getStatus(), personToEdit.getRejectionReasons(),
-                personToEdit.getDateAdded());
+                personToEdit.getDateAdded(), personToEdit.getPriority());
     }
 
     @Override
