@@ -128,6 +128,20 @@ Examples:
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
 
+### Filtering persons by exact tag: `filter`
+
+Finds persons whose tags exactly match the given tag.
+
+Format: `filter TAG`
+
+* Tag matching is exact (not substring-based).
+* Tag matching is case-insensitive.
+* The tag must follow tag naming rules (alphanumeric, no spaces, 1 to 30 characters).
+
+Examples:
+* `filter friends` returns all candidates tagged `friends`.
+* `filter Java` returns candidates tagged `Java`, but not candidates tagged `JavaScript`.
+
 ### Deleting a person : `delete`
 
 Deletes the specified person from the address book.
@@ -215,6 +229,7 @@ Action | Format, Examples
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Tag** | `tag INDEX[,INDEX]... [a/TAG_TO_ADD]... [d/TAG_TO_DELETE]...`<br> e.g., `tag 1,2 a/Java d/Intern`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
+**Filter** | `filter TAG`<br> e.g., `filter friends`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List** | `list`
 **Help** | `help`
