@@ -123,7 +123,7 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * The search is case-insensitive. e.g `hans` will match `Hans`
 * The order of the keywords does not matter. e.g. `Hans Bo` will match `Bo Hans`
 * Name, phone number, and email are searched.
-* Only full words will be matched e.g. `Han` will not match `Hans`
+* Partial matches are supported. e.g. `Han` will match `Hans`
 * Candidates matching at least one keyword will be returned (i.e. `OR` search).
   e.g. `Hans Bo` will return `Hans Gruber`, `Bo Yang`
 * A maximum of 20 keywords is allowed per search.
@@ -183,14 +183,15 @@ Examples:
 
 ### Sorting candidates by date : `sort`
 
-Sorts all candidates by the date they were added to Talently, from newest to oldest.
+Sorts all candidates by the date they were added to Talently.
 
-Format: `sort date o/desc`
+Format: `sort date o/ORDER`
 
-* Candidates are sorted with the most recently added appearing first.
+* `ORDER` must be either `asc` (oldest first) or `desc` (newest first).
 * When two candidates share the same date, they are sorted alphabetically by name.
 
 Examples:
+* `sort date o/asc` — Sorts candidates from oldest to newest.
 * `sort date o/desc` — Sorts candidates from newest to oldest.
 
 ### Managing the tag pool : `tagpool`
@@ -283,7 +284,7 @@ Action | Format, Examples
 **List** | `list`
 **Remove** | `remove INDEX`<br> e.g., `remove 3`
 **Reject** | `reject INDEX r/REASON`<br> e.g., `reject 1 r/Failed technical interview`
-**Sort** | `sort date o/desc`<br> e.g., `sort date o/desc`
+**Sort** | `sort date o/ORDER`<br> e.g., `sort date o/desc`
 **Tag** | `tag INDEX[,INDEX]... [a/TAG]... [d/TAG]...`<br> e.g., `tag 1 a/Shortlisted d/Applied`
 **Tag Pool** | `tagpool [a/TAG]... [d/TAG]...`<br> e.g., `tagpool a/Shortlisted d/Rejected`
 **Help** | `help`
