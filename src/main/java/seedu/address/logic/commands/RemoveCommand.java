@@ -17,16 +17,12 @@ import seedu.address.model.person.Person;
 public class RemoveCommand extends Command {
 
     public static final String COMMAND_WORD = "remove";
-
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Removes the person identified by the index number used in the displayed person list.\n"
             + "Parameters: INDEX (must be a positive integer)\n"
             + "Example: " + COMMAND_WORD + " 1";
-
     public static final String MESSAGE_REMOVE_PERSON_SUCCESS = "Removed Person: %1$s";
-
     private final Index targetIndex;
-
     public RemoveCommand(Index targetIndex) {
         this.targetIndex = targetIndex;
     }
