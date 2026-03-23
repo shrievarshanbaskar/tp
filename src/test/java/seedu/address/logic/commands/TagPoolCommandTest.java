@@ -191,6 +191,19 @@ public class TagPoolCommandTest {
         }
 
         @Override
+        public void commitAddressBook() {
+        }
+
+        @Override
+        public boolean canUndoAddressBook() {
+            return false;
+        }
+
+        @Override
+        public void undoAddressBook() {
+        }
+
+        @Override
         public void setPerson(Person target, Person editedPerson) {
             // no-op for simple stub
         }
@@ -299,6 +312,19 @@ public class TagPoolCommandTest {
                 ab.addPerson(p);
             }
             return ab;
+        }
+
+        @Override
+        public void commitAddressBook() {
+        }
+
+        @Override
+        public boolean canUndoAddressBook() {
+            return false;
+        }
+
+        @Override
+        public void undoAddressBook() {
         }
 
         @Override

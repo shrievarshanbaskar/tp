@@ -54,6 +54,15 @@ public interface Model {
     /** Returns the AddressBook */
     ReadOnlyAddressBook getAddressBook();
 
+    /** Saves the current address book state into history. */
+    void commitAddressBook();
+
+    /** Returns true if there is a previous address book state to restore. */
+    boolean canUndoAddressBook();
+
+    /** Restores the previous address book state. */
+    void undoAddressBook();
+
     /**
      * Returns true if a person with the same identity as {@code person} exists in the address book.
      */
