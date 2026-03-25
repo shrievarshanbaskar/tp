@@ -160,4 +160,12 @@ public class NoteCommandTest {
         NoteCommand noteCommand = new NoteCommand(INDEX_FIRST_PERSON, VALID_NOTE);
         assertEquals(INDEX_FIRST_PERSON, noteCommand.getTargetIndex());
     }
+
+    @Test
+    public void toString_containsIndexAndNote() {
+        NoteCommand noteCommand = new NoteCommand(INDEX_FIRST_PERSON, VALID_NOTE);
+        String result = noteCommand.toString();
+        assertTrue(result.contains("targetIndex"));
+        assertTrue(result.contains("note"));
+    }
 }

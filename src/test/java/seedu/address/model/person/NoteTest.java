@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
@@ -112,5 +113,72 @@ public class NoteTest {
     public void hashCode_notNull() {
         Note note = new Note(HEADING, CONTENT, FIXED_DATE);
         assertNotNull(note.hashCode());
+    }
+
+    @Test
+    public void isValidHeading_validHeadings_returnsTrue() {
+        assertTrue(Note.isValidHeading("Tech Round 1"));
+        assertTrue(Note.isValidHeading("General Note"));
+        assertTrue(Note.isValidHeading("a"));
+        assertTrue(Note.isValidHeading("   text with spaces   "));
+    }
+
+    @Test
+    public void isValidHeading_blankHeadings_returnsFalse() {
+        assertFalse(Note.isValidHeading(""));
+        assertFalse(Note.isValidHeading("   "));
+        assertFalse(Note.isValidHeading("\t"));
+        assertFalse(Note.isValidHeading("\n"));
+    }
+
+    @Test
+    public void isValidHeading_nullHeading_returnsFalse() {
+        assertFalse(Note.isValidHeading(null));
+    }
+
+    @Test
+    public void isValidContent_validContents_returnsTrue() {
+        assertTrue(Note.isValidContent("Passed the interview"));
+        assertTrue(Note.isValidContent("Some content here"));
+        assertTrue(Note.isValidContent("x"));
+        assertTrue(Note.isValidContent("   text with spaces   "));
+    }
+
+    @Test
+    public void isValidContent_blankContents_returnsFalse() {
+        assertFalse(Note.isValidContent(""));
+        assertFalse(Note.isValidContent("   "));
+        assertFalse(Note.isValidContent("\t"));
+        assertFalse(Note.isValidContent("\n"));
+    }
+
+    @Test
+    public void isValidContent_nullContent_returnsFalse() {
+        assertFalse(Note.isValidContent(null));
+    }
+
+    @Test
+    public void constructor_requiresNonNullHeading() {
+        assertThrows(NullPointerException.class, () -> new Note(null, CONTENT, FIXED_DATE));
+    }
+
+    @Test
+    public void constructor_requiresNonNullContent() {
+        assertThrows(NullPointerException.class, () -> new Note(HEADING, null, FIXED_DATE));
+    }
+
+    @Test
+    public void constructor_requiresNonNullDate() {
+        assertThrows(NullPointerException.class, () -> new Note(HEADING, CONTENT, null));
+    }
+
+    @Test
+    public void constructor_rejectsBlankHeading() {
+        assertThrows(IllegalArgumentException.class, () -> new Note("   ", CONTENT, FIXED_DATE));
+    }
+
+    @Test
+    public void constructor_rejectsBlankContent() {
+        assertThrows(IllegalArgumentException.class, () -> new Note(HEADING, "   ", FIXED_DATE));
     }
 }

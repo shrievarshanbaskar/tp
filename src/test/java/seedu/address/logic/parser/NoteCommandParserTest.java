@@ -77,4 +77,17 @@ public class NoteCommandParserTest {
     public void parse_missingIndex_throwsParseException() {
         assertThrows(ParseException.class, () -> parser.parse(" n/content"));
     }
+
+    @Test
+    public void parse_blankHeading_defaultsToGeneralNote() throws Exception {
+        // Heading provided but blank (h/   ) should default to "General Note"
+        NoteCommand cmd = parser.parse(" 1 n/Some content h/   ");
+        assertEquals("General Note", cmd.getNote().heading);
+        assertEquals("Some content", cmd.getNote().content);
+    }
+
+    @Test
+    public void parse_nullArgument_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
+    }
 }

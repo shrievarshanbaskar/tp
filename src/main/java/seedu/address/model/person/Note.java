@@ -1,21 +1,39 @@
 package seedu.address.model.person;
 
+import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.AppUtil.checkArgument;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * Represents a Note attached to a Person in the address book.
- * Guarantees: immutable.
+ * Guarantees: immutable; heading and content are non-null and non-blank.
  */
 public class Note {
+
+    public static final String MESSAGE_HEADING_CONSTRAINTS =
+            "Note heading must not be blank.";
+    public static final String MESSAGE_CONTENT_CONSTRAINTS =
+            "Note content must not be blank.";
+
     public final String heading;
     public final String content;
     public final LocalDateTime date;
 
     /**
      * Main constructor.
+     *
+     * @param heading Non-null, non-blank heading for the note.
+     * @param content Non-null, non-blank content for the note.
+     * @param date    Non-null timestamp for the note.
      */
     public Note(String heading, String content, LocalDateTime date) {
+        requireNonNull(heading, "Heading must not be null");
+        requireNonNull(content, "Content must not be null");
+        requireNonNull(date, "Date must not be null");
+        checkArgument(isValidHeading(heading), MESSAGE_HEADING_CONSTRAINTS);
+        checkArgument(isValidContent(content), MESSAGE_CONTENT_CONSTRAINTS);
         this.heading = heading;
         this.content = content;
         this.date = date;
@@ -23,9 +41,26 @@ public class Note {
 
     /**
      * Convenience constructor that auto-stamps the current time.
+     *
+     * @param heading Non-null, non-blank heading for the note.
+     * @param content Non-null, non-blank content for the note.
      */
     public Note(String heading, String content) {
         this(heading, content, LocalDateTime.now());
+    }
+
+    /**
+     * Returns true if the given heading string is valid (non-null, non-blank).
+     */
+    public static boolean isValidHeading(String heading) {
+        return heading != null && !heading.isBlank();
+    }
+
+    /**
+     * Returns true if the given content string is valid (non-null, non-blank).
+     */
+    public static boolean isValidContent(String content) {
+        return content != null && !content.isBlank();
     }
 
     @Override

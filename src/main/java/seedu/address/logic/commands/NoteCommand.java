@@ -4,8 +4,11 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
+import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
@@ -22,6 +25,8 @@ public class NoteCommand extends Command {
     public static final String MESSAGE_USAGE = "note INDEX n/CONTENT [h/HEADING]";
 
     public static final String MESSAGE_SUCCESS = "Successfully added note to candidate: %1$s";
+
+    private static final Logger logger = LogsCenter.getLogger(NoteCommand.class);
 
     private final Index targetIndex;
     private final Note note;
@@ -46,10 +51,24 @@ public class NoteCommand extends Command {
         }
 
         Person personToEdit = lastShownList.get(targetIndex.getZeroBased());
+        Person editedPerson = createEditedPerson(personToEdit, note);
+
+        model.setPerson(personToEdit, editedPerson);
+        logger.info("Added note to candidate: " + personToEdit.getName());
+        return new CommandResult(String.format(MESSAGE_SUCCESS, personToEdit.getName()));
+    }
+
+    /**
+     * Creates and returns a {@code Person} with the given {@code note} appended to its notes list.
+     */
+    private static Person createEditedPerson(Person personToEdit, Note note) {
+        assert personToEdit != null;
+        assert note != null;
+
         List<Note> updatedNotes = new ArrayList<>(personToEdit.getNotes());
         updatedNotes.add(note);
 
-        Person editedPerson = new Person(
+        return new Person(
                 personToEdit.getName(),
                 personToEdit.getPhone(),
                 personToEdit.getEmail(),
@@ -61,9 +80,6 @@ public class NoteCommand extends Command {
                 personToEdit.getPriority(),
                 updatedNotes
         );
-
-        model.setPerson(personToEdit, editedPerson);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, personToEdit.getName()));
     }
 
     public Note getNote() {
@@ -84,5 +100,13 @@ public class NoteCommand extends Command {
         }
         NoteCommand otherCmd = (NoteCommand) other;
         return targetIndex.equals(otherCmd.targetIndex) && note.equals(otherCmd.note);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .add("targetIndex", targetIndex)
+                .add("note", note)
+                .toString();
     }
 }
