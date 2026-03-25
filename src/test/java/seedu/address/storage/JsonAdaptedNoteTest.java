@@ -68,4 +68,15 @@ public class JsonAdaptedNoteTest {
         Note restored = adapted.toModelType();
         assertEquals(VALID_DATE, restored.date);
     }
+
+    @Test
+    public void toModelType_invalidDateFormat_throwsIllegalValueException() {
+        JsonAdaptedNote adapted = new JsonAdaptedNote(VALID_HEADING, VALID_CONTENT, "invalid-date-format");
+        assertThrows(IllegalValueException.class, adapted::toModelType);
+    }
+
+    @Test
+    public void constructor_fromNote_requiresNonNullNote() {
+        assertThrows(NullPointerException.class, () -> new JsonAdaptedNote(null));
+    }
 }
