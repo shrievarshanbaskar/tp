@@ -1,10 +1,15 @@
 package seedu.address.storage;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.person.Note;
 
@@ -14,6 +19,8 @@ import seedu.address.model.person.Note;
 class JsonAdaptedNote {
 
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Note's %s field is missing!";
+
+    private static final Logger logger = LogsCenter.getLogger(JsonAdaptedNote.class);
 
     private final String heading;
     private final String content;
@@ -35,6 +42,7 @@ class JsonAdaptedNote {
      * Converts a given {@code Note} into this class for Jackson use.
      */
     public JsonAdaptedNote(Note source) {
+        requireNonNull(source);
         heading = source.heading;
         content = source.content;
         date = source.date.toString();
@@ -55,7 +63,14 @@ class JsonAdaptedNote {
         if (date == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, "date"));
         }
-        LocalDateTime parsedDate = LocalDateTime.parse(date);
+
+        LocalDateTime parsedDate;
+        try {
+            parsedDate = LocalDateTime.parse(date);
+        } catch (DateTimeParseException e) {
+            logger.warning("Invalid date format in note: " + date);
+            throw new IllegalValueException("Note's date is in an invalid format: " + date);
+        }
         return new Note(heading, content, parsedDate);
     }
 }

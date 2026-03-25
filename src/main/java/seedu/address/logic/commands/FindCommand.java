@@ -2,6 +2,9 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.logging.Logger;
+
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.Model;
 import seedu.address.model.person.NamePhoneEmailContainsKeywordsPredicate;
@@ -20,9 +23,15 @@ public class FindCommand extends Command {
             + "Parameters: KEYWORD [MORE_KEYWORDS]...\n"
             + "Example: " + COMMAND_WORD + " alice 9876 john@example.com";
 
+    private static final Logger logger = LogsCenter.getLogger(FindCommand.class);
+
     private final NamePhoneEmailContainsKeywordsPredicate predicate;
 
+    /**
+     * Creates a FindCommand to find persons matching the given {@code predicate}.
+     */
     public FindCommand(NamePhoneEmailContainsKeywordsPredicate predicate) {
+        requireNonNull(predicate);
         this.predicate = predicate;
     }
 
@@ -31,6 +40,7 @@ public class FindCommand extends Command {
         requireNonNull(model);
         model.updateFilteredPersonList(predicate);
         int listSize = model.getFilteredPersonList().size();
+        logger.info("Find command executed: " + listSize + " candidate(s) found");
         if (listSize == 0) {
             return new CommandResult("No matching candidates found.");
         } else {
