@@ -77,7 +77,7 @@ Basic familiarity with using a command terminal (e.g., navigating directories wi
 
 * Commands without parameters (e.g. `help`, `list`, `exit`, `clear`) ignore extraneous input.<br>
   e.g. `help 123` is treated as `help`.
-  
+
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </div>
 
@@ -93,7 +93,7 @@ Format: `help`
 
 Adds a new candidate to Talently.
 
-Format: `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]`
+Format: `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY] [s/STATUS]`
 
 **Parameter Constraints:**
 
@@ -104,6 +104,7 @@ Format: `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]`
 | EMAIL | `e/` | Yes | Valid email in `local@domain` format. Max 254 characters. |
 | ADDRESS | `a/` | Yes | Any non-empty text. |
 | PRIORITY | `pr/` | No | `yes` (high priority) or `no` (normal). Defaults to `no`. |
+| STATUS | `s/` | No | `active`, `rejected`, `hired`, or `blacklisted` (case-insensitive). Defaults to `active`. |
 
 <div markdown="span" class="alert alert-primary">
 :bulb: **Tip:** Use `pr/yes` to flag high-priority candidates so you can sort them to the top later with `sort pr o/asc`.
@@ -112,6 +113,7 @@ Format: `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]`
 Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `add n/Betsy O'Brien e/betsy@example.com a/Newgate Prison p/+6591234567 pr/yes`
+* `add n/Jane Smith p/91234567 e/jane@example.com a/Clementi Ave 3 s/hired`
 
 ### Listing all candidates : `list`
 
@@ -126,13 +128,20 @@ Format: `list`
 
 Modifies an existing candidate's details.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]`
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY] [s/STATUS]`
 
 * Edits the candidate at the specified `INDEX` (the index shown in the currently displayed list).
 * `INDEX` must be a positive integer (1, 2, 3, …).
 * At least one optional field must be provided.
 * Only the specified fields are updated; all other fields remain unchanged.
 * `PRIORITY` accepts `yes` or `no`.
+* `STATUS` accepts `active`, `rejected`, `hired`, or `blacklisted` (case-insensitive).
+
+<div markdown="block" class="alert alert-info">
+
+**:bulb: Tip:** If a candidate was rejected in a previous hiring cycle but applies again, use `edit INDEX s/active` to return them to the active pipeline. Their past rejection reasons remain safely stored in their history.
+
+</div>
 
 <div markdown="span" class="alert alert-warning">
 :warning: **Warning:** Editing a candidate's name or phone to match an existing candidate will result in an error, as Talently does not allow duplicate candidates.
@@ -141,6 +150,8 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]`
 Examples:
 * `edit 1 p/91234567 e/johndoe@example.com`<br> Updates the phone and email of the 1st candidate.
 * `edit 2 n/Betsy Crower pr/yes`<br> Updates the name and sets high priority for the 2nd candidate.
+* `edit 1 s/hired` — Updates the 1st candidate's status to Hired.
+* `edit 3 s/active` — Re-activates a previously rejected candidate.
 
 ### Showing candidate details : `show`
 
@@ -150,7 +161,7 @@ Format: `show INDEX`
 
 * Shows the candidate at the specified `INDEX`.
 * `INDEX` must be a positive integer (1, 2, 3, …).
-* The detail panel displays: name, phone, email, address, priority, date added, all tags, notes (with headings and content), and rejection history.
+* The detail panel displays: name, phone, email, address, status, priority, date added, all tags, notes (with headings and content), and rejection history.
 
 <div markdown="span" class="alert alert-primary">
 :bulb: **Tip:** Use `show` after adding notes or rejections to verify your changes in the detail panel.
@@ -178,6 +189,8 @@ Examples:
 * `find John` returns `john` and `John Doe`.
 * `find alex david` returns `Alex Yeoh` and `David Li`.<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `find overqualified` returns candidates with "overqualified" in their rejection reasons.
+* `find interview` returns candidates with "interview" in their note headings or content.
 * `find technical interview` returns candidates with notes or rejection reasons mentioning `technical` or `interview`.
 
 ### Filtering candidates by exact tag: `filter`
@@ -222,9 +235,10 @@ Format: `reject INDEX r/REASON`
 * `INDEX` must be a positive integer (1, 2, 3, …).
 * `REASON` must be non-empty, at most 200 characters, and may contain: letters, digits, spaces, and the punctuation `.` `,` `-` `'` `/`.
 * Each `reject` call appends a new entry to the candidate's rejection history — previous entries are preserved.
+* **Automatically sets the candidate's status to `rejected`.**
 * The candidate's card displays a red badge showing the total rejection count.
 * If the same reason is given consecutively, a warning is shown.
-* Cannot reject an archived candidate.
+* Cannot reject a blacklisted candidate.
 
 <div markdown="span" class="alert alert-primary">
 :bulb: **Tip:** Use `show INDEX` after rejecting a candidate to view their full rejection history in the detail panel.
@@ -233,6 +247,24 @@ Format: `reject INDEX r/REASON`
 Examples:
 * `reject 1 r/Failed technical interview`
 * `reject 3 r/Insufficient experience`
+
+### Tracking candidate status : `s/`
+
+Talently tracks each candidate's position in the hiring lifecycle using a status field.
+
+**Allowed values** (case-insensitive):
+
+| Status | Colour in detail panel | Meaning |
+|---|---|---|
+| `active` | Blue | Candidate is in the active pipeline |
+| `rejected` | Red | Candidate has been rejected |
+| `hired` | Green | Candidate has been successfully hired |
+| `blacklisted` | Grey | Candidate is blacklisted from future consideration |
+
+* Status defaults to `active` when a new candidate is added without `s/`.
+* The `reject` command automatically sets status to `rejected`.
+* Status can be freely changed using the `edit` command with `s/STATUS`.
+* The detail panel (opened with `show`) automatically refreshes when the displayed candidate's data is edited — no need to re-open it.
 
 ### Sorting candidates by date : `sort date`
 
@@ -402,6 +434,9 @@ Advanced users may edit this file directly.
 **Q: How do I view a candidate's notes and rejection history?**<br>
 **A:** Use `show INDEX` to display the candidate's full details — including all notes and rejection records — in the detail panel.
 
+**Q: What happens if I open a save file from an older version of Talently?**<br>
+**A:** Talently will automatically migrate legacy status values — `NONE` becomes `active` and `ARCHIVED` becomes `blacklisted` — so your data loads without any issues.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## Known issues
@@ -418,9 +453,9 @@ Advanced users may edit this file directly.
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123 Clementi Rd`
+**Add** | `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY] [s/STATUS]` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123 Clementi Rd s/active`
 **Clear** | `clear`
-**Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
+**Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY] [s/STATUS]`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com s/hired`
 **Filter** | `filter TAG`<br> e.g., `filter Shortlisted`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List** | `list`
