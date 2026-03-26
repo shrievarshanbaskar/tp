@@ -8,17 +8,23 @@ import static seedu.address.logic.commands.CommandTestUtil.INVALID_ADDRESS_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_EMAIL_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_PHONE_DESC;
+import static seedu.address.logic.commands.CommandTestUtil.INVALID_STATUS_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.STATUS_DESC_ACTIVE;
+import static seedu.address.logic.commands.CommandTestUtil.STATUS_DESC_HIRED;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_STATUS_ACTIVE;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_STATUS_HIRED;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
@@ -35,6 +41,7 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Status;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 
 public class EditCommandParserTest {
@@ -137,6 +144,33 @@ public class EditCommandParserTest {
         descriptor = new EditPersonDescriptorBuilder().withAddress(VALID_ADDRESS_AMY).build();
         expectedCommand = new EditCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
+    }
+
+    @Test
+    public void parse_statusFieldSpecified_success() {
+        // s/active
+        Index targetIndex = INDEX_FIRST_PERSON;
+        String userInput = targetIndex.getOneBased() + STATUS_DESC_ACTIVE;
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withStatus(Status.valueOf(VALID_STATUS_ACTIVE.toUpperCase())).build();
+        assertParseSuccess(parser, userInput, new EditCommand(targetIndex, descriptor));
+
+        // s/hired
+        userInput = targetIndex.getOneBased() + STATUS_DESC_HIRED;
+        descriptor = new EditPersonDescriptorBuilder()
+                .withStatus(Status.valueOf(VALID_STATUS_HIRED.toUpperCase())).build();
+        assertParseSuccess(parser, userInput, new EditCommand(targetIndex, descriptor));
+    }
+
+    @Test
+    public void parse_invalidStatus_failure() {
+        assertParseFailure(parser, "1" + INVALID_STATUS_DESC, Status.MESSAGE_CONSTRAINTS);
+    }
+
+    @Test
+    public void parse_duplicateStatus_failure() {
+        assertParseFailure(parser, "1" + STATUS_DESC_ACTIVE + STATUS_DESC_HIRED,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_STATUS));
     }
 
     @Test

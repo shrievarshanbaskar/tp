@@ -20,6 +20,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Note;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Status;
 import seedu.address.testutil.PersonBuilder;
 
 public class JsonAdaptedPersonTest {
@@ -167,6 +168,42 @@ public class JsonAdaptedPersonTest {
         assertEquals(2, restored.getNotes().size());
         assertEquals(note1, restored.getNotes().get(0));
         assertEquals(note2, restored.getNotes().get(1));
+    }
+
+    @Test
+    public void toModelType_nullStatus_defaultsToActive() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                VALID_TAGS, null, VALID_REJECTION_REASONS, VALID_DATE_ADDED, VALID_PRIORITY, null);
+        AddressBook ab = new AddressBook();
+        BENSON.getTags().forEach(ab::addTag);
+        assertEquals(Status.ACTIVE, person.toModelType(ab).getStatus());
+    }
+
+    @Test
+    public void toModelType_legacyStatusNone_migratedToActive() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                VALID_TAGS, "NONE", VALID_REJECTION_REASONS, VALID_DATE_ADDED, VALID_PRIORITY, null);
+        AddressBook ab = new AddressBook();
+        BENSON.getTags().forEach(ab::addTag);
+        assertEquals(Status.ACTIVE, person.toModelType(ab).getStatus());
+    }
+
+    @Test
+    public void toModelType_legacyStatusArchived_migratedToBlacklisted() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                VALID_TAGS, "ARCHIVED", VALID_REJECTION_REASONS, VALID_DATE_ADDED, VALID_PRIORITY, null);
+        AddressBook ab = new AddressBook();
+        BENSON.getTags().forEach(ab::addTag);
+        assertEquals(Status.BLACKLISTED, person.toModelType(ab).getStatus());
+    }
+
+    @Test
+    public void toModelType_invalidStatus_throwsIllegalValueException() {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, VALID_ADDRESS,
+                VALID_TAGS, "pending", VALID_REJECTION_REASONS, VALID_DATE_ADDED, VALID_PRIORITY, null);
+        AddressBook ab = new AddressBook();
+        BENSON.getTags().forEach(ab::addTag);
+        assertThrows(IllegalValueException.class, () -> person.toModelType(ab));
     }
 
     @Test
