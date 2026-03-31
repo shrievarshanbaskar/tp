@@ -123,8 +123,10 @@ public class SortPriorityCommandTest {
         // Use regex or contains to avoid brittle exact string match if toString implementation varies,
         // but typically in Address Book Level 3, toString uses ToStringBuilder.
         // Even if Custom toString is not implemented, the default does not break, but we can verify it doesn't crash
-        // Actually since we don't have toString overridden in SortPriorityCommand, it will use Command's or Object's toString.
-        // It's safer to just call toString to ensure no exception, or if there's no toString, we can skip or do a basic check.
+        // Actually since we don't have toString overridden in SortPriorityCommand,
+        // it will use Command's or Object's toString.
+        // It's safer to just call toString to ensure no exception, or if there's no toString,
+        // we can skip or do a basic check.
         // Actually, seedu.address commands rarely override toString unless explicitly done.
         // Let's just create a basic test.
         assertTrue(sortAscFirst.toString().contains("SortPriorityCommand") || sortAscFirst.toString() != null);
