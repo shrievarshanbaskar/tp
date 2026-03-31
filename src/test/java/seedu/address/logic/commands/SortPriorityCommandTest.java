@@ -33,8 +33,8 @@ public class SortPriorityCommandTest {
 
         expectedModel.sortFilteredPersonList(
                 java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority ? 0 : 1)
-                                    .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
-                                    .thenComparing(p -> p.getName().fullName)
+                        .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
+                        .thenComparing(p -> p.getName().fullName)
         );
         expectedModel.updateFilteredPersonList(seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS);
 
@@ -49,8 +49,8 @@ public class SortPriorityCommandTest {
 
         expectedModel.sortFilteredPersonList(
                 java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority ? 1 : 0)
-                                    .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
-                                    .thenComparing(p -> p.getName().fullName)
+                        .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
+                        .thenComparing(p -> p.getName().fullName)
         );
         expectedModel.updateFilteredPersonList(seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS);
 
@@ -119,7 +119,7 @@ public class SortPriorityCommandTest {
     @Test
     public void toStringMethod() {
         SortPriorityCommand sortAscFirst = new SortPriorityCommand(true);
-        
+
         // Use regex or contains to avoid brittle exact string match if toString implementation varies,
         // but typically in Address Book Level 3, toString uses ToStringBuilder.
         // Even if Custom toString is not implemented, the default does not break, but we can verify it doesn't crash

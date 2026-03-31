@@ -34,7 +34,7 @@ public class SortPriorityCommandParserTest {
         assertParseFailure(parser, "pr o/xyz", SortPriorityCommandParser.MESSAGE_INVALID_ORDER);
 
         // duplicate prefixes
-        assertParseFailure(parser, "pr o/asc o/desc", 
+        assertParseFailure(parser, "pr o/asc o/desc",
                 seedu.address.logic.Messages.getErrorMessageForDuplicatePrefixes(seedu.address.logic.parser.CliSyntax.PREFIX_ORDER));
     }
 }
