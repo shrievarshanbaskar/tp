@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ORDER;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import java.util.Comparator;
 
@@ -18,7 +19,7 @@ public class SortDateCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Sorts candidates chronologically based on their creation datetime.\n"
             + "Parameters: " + COMMAND_WORD + " date " + PREFIX_ORDER + "ORDER\n"
-            + "ORDER must be 'asc' or 'desc'.\n"
+            + "ORDER must be 'asc' or 'desc' (case-insensitive).\n"
             + "Example: " + COMMAND_WORD + " date " + PREFIX_ORDER + "desc";
 
     public static final String MESSAGE_SUCCESS_ASC = "Sorted all candidates by date added in ascending order.";
@@ -47,6 +48,7 @@ public class SortDateCommand extends Command {
         }
 
         model.sortFilteredPersonList(comparator);
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
 
         return new CommandResult(isAscending ? MESSAGE_SUCCESS_ASC : MESSAGE_SUCCESS_DESC);
     }

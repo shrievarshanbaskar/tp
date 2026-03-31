@@ -85,12 +85,11 @@ public class DateAdded implements Comparable<DateAdded> {
         }
 
         DateAdded otherDateAdded = (DateAdded) other;
-        // ZonedDateTime's isEqual or comparing standard strings
-        return value.equals(otherDateAdded.value);
+        return this.date.toInstant().equals(otherDateAdded.date.toInstant());
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return date.toInstant().hashCode();
     }
 }

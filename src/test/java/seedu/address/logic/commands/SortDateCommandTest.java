@@ -37,6 +37,7 @@ public class SortDateCommandTest {
                 java.util.Comparator.comparing(Person::getDateAdded)
                                     .thenComparing(p -> p.getName().fullName)
         );
+        expectedModel.updateFilteredPersonList(seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS);
 
         assertCommandSuccess(sortDateCommand, model, expectedMessage, expectedModel);
         assertEquals(expectedModel.getFilteredPersonList(), model.getFilteredPersonList());
@@ -51,6 +52,7 @@ public class SortDateCommandTest {
                 java.util.Comparator.comparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
                                     .thenComparing(p -> p.getName().fullName)
         );
+        expectedModel.updateFilteredPersonList(seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS);
 
         assertCommandSuccess(sortDateCommand, model, expectedMessage, expectedModel);
         assertEquals(expectedModel.getFilteredPersonList(), model.getFilteredPersonList());

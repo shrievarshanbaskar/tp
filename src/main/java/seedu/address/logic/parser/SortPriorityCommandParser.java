@@ -11,7 +11,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class SortPriorityCommandParser implements Parser<SortPriorityCommand> {
 
     public static final String MESSAGE_INVALID_ORDER =
-            "Invalid sort order. Please use 'asc' for oldest-first or 'desc' for newest-first.";
+            "Invalid sort order. Please use 'asc' for high-priority-first or 'desc' for high-priority-last.";
 
     public static final String MESSAGE_INVALID_FORMAT =
             "Invalid command format! \nFormat: sort pr o/ORDER \nExample: sort pr o/asc";
@@ -25,15 +25,16 @@ public class SortPriorityCommandParser implements Parser<SortPriorityCommand> {
     public SortPriorityCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_ORDER);
 
-        // Preamble must be exactly "pr"
         String preamble = argMultimap.getPreamble().trim();
-        if (!preamble.toLowerCase().equals("pr")) {
+        if (!preamble.equalsIgnoreCase("pr")) {
             throw new ParseException(MESSAGE_INVALID_FORMAT);
         }
 
         if (!argMultimap.getValue(PREFIX_ORDER).isPresent()) {
             throw new ParseException(MESSAGE_INVALID_FORMAT);
         }
+
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_ORDER);
 
         String orderStr = argMultimap.getValue(PREFIX_ORDER).get().trim().toLowerCase();
 
@@ -46,3 +47,4 @@ public class SortPriorityCommandParser implements Parser<SortPriorityCommand> {
         }
     }
 }
+

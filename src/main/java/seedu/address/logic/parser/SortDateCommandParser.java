@@ -24,18 +24,16 @@ public class SortDateCommandParser implements Parser<SortDateCommand> {
     public SortDateCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_ORDER);
 
-        // Preamble must be exactly "date" (case-insensitive perhaps, but exactly "date")
         String preamble = argMultimap.getPreamble().trim();
-        if (!preamble.toLowerCase().equals("date")) {
+        if (!preamble.equalsIgnoreCase("date")) {
             throw new ParseException(MESSAGE_INVALID_FORMAT);
-            // Wait, the prompt specified "Invalid format" error strictly if `date` is missing or wrong.
-            // Oh wait, if the preamble is not "date", it throws the exact specified error message.
-            // "Invalid command format! \nFormat: sort date o/ORDER \nExample: sort date o/desc"
         }
 
         if (!argMultimap.getValue(PREFIX_ORDER).isPresent()) {
             throw new ParseException(MESSAGE_INVALID_FORMAT);
         }
+
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_ORDER);
 
         String orderStr = argMultimap.getValue(PREFIX_ORDER).get().trim().toLowerCase();
 
@@ -48,3 +46,4 @@ public class SortDateCommandParser implements Parser<SortDateCommand> {
         }
     }
 }
+

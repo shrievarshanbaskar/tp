@@ -81,7 +81,15 @@ public class AddCommand extends Command {
         }
 
         AddCommand otherAddCommand = (AddCommand) other;
-        return toAdd.equals(otherAddCommand.toAdd);
+        // dateAdded is auto-generated at parse time, so we compare using isSamePerson
+        // (phone/email identity) plus name, address, tags, status, priority, and notes.
+        return toAdd.isSamePerson(otherAddCommand.toAdd)
+                && toAdd.getName().equals(otherAddCommand.toAdd.getName())
+                && toAdd.getAddress().equals(otherAddCommand.toAdd.getAddress())
+                && toAdd.getTags().equals(otherAddCommand.toAdd.getTags())
+                && toAdd.getStatus().equals(otherAddCommand.toAdd.getStatus())
+                && toAdd.getPriority().equals(otherAddCommand.toAdd.getPriority())
+                && toAdd.getNotes().equals(otherAddCommand.toAdd.getNotes());
     }
 
     @Override

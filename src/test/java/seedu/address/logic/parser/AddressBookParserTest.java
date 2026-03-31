@@ -159,8 +159,8 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_sort() throws Exception {
-        assertTrue(parser.parseCommand(SortDateCommand.COMMAND_WORD + " date o/asc") instanceof SortDateCommand);
-        assertTrue(parser.parseCommand(SortDateCommand.COMMAND_WORD + " date o/desc") instanceof SortDateCommand);
+        assertTrue(parser.parseCommand(SortCommandParser.COMMAND_WORD + " date o/asc") instanceof SortDateCommand);
+        assertTrue(parser.parseCommand(SortCommandParser.COMMAND_WORD + " date o/desc") instanceof SortDateCommand);
     }
 
     @Test

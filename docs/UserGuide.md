@@ -169,8 +169,9 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY] [s/ST
 * `INDEX` refers to the number shown in the current list. Must be a positive integer.
 * At least one field must be provided.
 * Unspecified fields are unchanged.
-* `PRIORITY`: `yes` or `no`.
+* `PRIORITY`: `yes` or `no` (case-insensitive — `YES`, `Yes`, `NO` are all accepted).
 * `STATUS`: `active`, `rejected`, `hired`, `blacklisted` (case-insensitive).
+* If the new values are identical to the existing ones, a message indicating no changes were detected is shown and no modification is made.
 
 <div markdown="span" class="alert alert-primary">
 :bulb: **Tip:** To re-activate a previously rejected candidate, use `edit INDEX s/active`. Their rejection history is preserved.
@@ -344,8 +345,9 @@ Sorts all candidates by the date they were added.
 
 Format: `sort date o/ORDER`
 
-* `ORDER`: `asc` (oldest first) or `desc` (newest first).
-* Candidates added on the same date are sorted alphabetically by name.
+* `ORDER`: `asc` (oldest first) or `desc` (newest first). Case-insensitive (`ASC`, `Desc`, etc. are accepted).
+* Candidates added at the **exact same date and time** are sorted alphabetically by name.
+* After sorting, any active filter is cleared and all candidates are displayed in the new order.
 
 <div markdown="span" class="alert alert-warning">
 :warning: **Warning:** Cannot sort an empty candidate list — an error is shown if Talently has no candidates.
@@ -365,8 +367,9 @@ Sorts all candidates by their priority flag.
 
 Format: `sort pr o/ORDER`
 
-* `ORDER`: `asc` (high-priority first) or `desc` (high-priority last).
-* Secondary sort: by date added (newest first), then alphabetically.
+* `ORDER`: `asc` (high-priority first) or `desc` (high-priority last). Case-insensitive (`ASC`, `Desc`, etc. are accepted).
+* Secondary sort: by date added (newest first), then alphabetically by name.
+* After sorting, any active filter is cleared and all candidates are displayed in the new order.
 
 <div markdown="span" class="alert alert-primary">
 :bulb: **Tip:** Use `sort pr o/asc` to immediately surface your most important candidates.

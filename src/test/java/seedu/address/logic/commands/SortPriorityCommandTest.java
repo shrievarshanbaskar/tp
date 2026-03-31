@@ -29,13 +29,14 @@ public class SortPriorityCommandTest {
     @Test
     public void execute_sortPriorityAscending_success() {
         SortPriorityCommand sortPriorityCommand = new SortPriorityCommand(true);
-        String expectedMessage = SortPriorityCommand.MESSAGE_SUCCESS;
+        String expectedMessage = SortPriorityCommand.MESSAGE_SUCCESS_ASC;
 
         expectedModel.sortFilteredPersonList(
                 java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority ? 0 : 1)
                                     .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
                                     .thenComparing(p -> p.getName().fullName)
         );
+        expectedModel.updateFilteredPersonList(seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS);
 
         assertCommandSuccess(sortPriorityCommand, model, expectedMessage, expectedModel);
         assertEquals(expectedModel.getFilteredPersonList(), model.getFilteredPersonList());
@@ -44,13 +45,14 @@ public class SortPriorityCommandTest {
     @Test
     public void execute_sortPriorityDescending_success() {
         SortPriorityCommand sortPriorityCommand = new SortPriorityCommand(false);
-        String expectedMessage = SortPriorityCommand.MESSAGE_SUCCESS;
+        String expectedMessage = SortPriorityCommand.MESSAGE_SUCCESS_DESC;
 
         expectedModel.sortFilteredPersonList(
                 java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority ? 1 : 0)
                                     .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
                                     .thenComparing(p -> p.getName().fullName)
         );
+        expectedModel.updateFilteredPersonList(seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS);
 
         assertCommandSuccess(sortPriorityCommand, model, expectedMessage, expectedModel);
         assertEquals(expectedModel.getFilteredPersonList(), model.getFilteredPersonList());

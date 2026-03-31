@@ -6,6 +6,7 @@ import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Priority;
 import seedu.address.model.person.Status;
 
 /**
@@ -32,6 +33,8 @@ public class EditPersonDescriptorBuilder {
         descriptor.setPhone(person.getPhone());
         descriptor.setEmail(person.getEmail());
         descriptor.setAddress(person.getAddress());
+        descriptor.setPriority(person.getPriority());
+        descriptor.setStatus(person.getStatus());
     }
 
     /**
@@ -67,6 +70,14 @@ public class EditPersonDescriptorBuilder {
     }
 
     /**
+     * Sets the {@code Priority} of the {@code EditPersonDescriptor} that we are building.
+     */
+    public EditPersonDescriptorBuilder withPriority(String priority) {
+        descriptor.setPriority(new Priority(priority));
+        return this;
+    }
+
+    /**
      * Sets the {@code Status} of the {@code EditPersonDescriptor} that we are building.
      */
     public EditPersonDescriptorBuilder withStatus(Status status) {
@@ -78,3 +89,4 @@ public class EditPersonDescriptorBuilder {
         return descriptor;
     }
 }
+

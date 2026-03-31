@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ORDER;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import java.util.Comparator;
 
@@ -20,13 +21,19 @@ public class SortPriorityCommand extends Command {
             + "Parameters: " + PREFIX_ORDER + "ORDER\n"
             + "Example: " + COMMAND_WORD + " pr " + PREFIX_ORDER + "desc";
 
-    public static final String MESSAGE_SUCCESS = "Sorted all candidates by priority status.";
+    public static final String MESSAGE_SUCCESS_ASC =
+            "Sorted all candidates by priority status (high-priority first).";
+    public static final String MESSAGE_SUCCESS_DESC =
+            "Sorted all candidates by priority status (high-priority last).";
     public static final String MESSAGE_EMPTY_ADDRESS_BOOK = "The address book is currently empty. Nothing to sort.";
 
     private final boolean isAscending;
 
     /**
-     * @param isAscending whether to sort high priority to the top (true) or bottom (false).
+     * Creates a SortPriorityCommand.
+     *
+     * @param isAscending if true, high-priority candidates appear first (asc);
+     *                    if false, high-priority candidates appear last (desc).
      */
     public SortPriorityCommand(boolean isAscending) {
         this.isAscending = isAscending;
@@ -50,8 +57,9 @@ public class SortPriorityCommand extends Command {
         }
 
         model.sortFilteredPersonList(comparator);
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
 
-        return new CommandResult(MESSAGE_SUCCESS);
+        return new CommandResult(isAscending ? MESSAGE_SUCCESS_ASC : MESSAGE_SUCCESS_DESC);
     }
 
     @Override
