@@ -44,8 +44,6 @@ public class SortDateCommandParserTest {
 
         // empty arguments
         assertParseFailure(parser, "", SortDateCommandParser.MESSAGE_INVALID_FORMAT);
-
-        // duplicate prefixes (not rigorously tested, but should be invalid format or error depending on parser)
-        // For argumentTokenizer, the last prefix is usually taken, but "date" format enforces stringent checks
     }
 }
+

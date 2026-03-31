@@ -24,6 +24,7 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_STATUS_HIRED;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PRIORITY;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -44,6 +45,9 @@ import seedu.address.model.person.Phone;
 import seedu.address.model.person.Status;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 
+/**
+ * Contains unit tests for {@code EditCommandParser}.
+ */
 public class EditCommandParserTest {
 
     private static final String MESSAGE_INVALID_FORMAT =
@@ -147,6 +151,53 @@ public class EditCommandParserTest {
     }
 
     @Test
+    public void parse_priorityFieldSpecifiedYes_success() {
+        // pr/yes
+        Index targetIndex = INDEX_FIRST_PERSON;
+        String userInput = targetIndex.getOneBased() + " " + PREFIX_PRIORITY + "yes";
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withPriority("yes").build();
+        assertParseSuccess(parser, userInput, new EditCommand(targetIndex, descriptor));
+    }
+
+    @Test
+    public void parse_priorityFieldSpecifiedNo_success() {
+        // pr/no
+        Index targetIndex = INDEX_FIRST_PERSON;
+        String userInput = targetIndex.getOneBased() + " " + PREFIX_PRIORITY + "no";
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withPriority("no").build();
+        assertParseSuccess(parser, userInput, new EditCommand(targetIndex, descriptor));
+    }
+
+    @Test
+    public void parse_priorityCaseInsensitive_success() {
+        // pr/YES should parse like pr/yes
+        Index targetIndex = INDEX_FIRST_PERSON;
+        String userInputYes = targetIndex.getOneBased() + " " + PREFIX_PRIORITY + "YES";
+        EditPersonDescriptor descriptorYes = new EditPersonDescriptorBuilder()
+                .withPriority("yes").build();
+        assertParseSuccess(parser, userInputYes, new EditCommand(targetIndex, descriptorYes));
+
+        // pr/NO
+        String userInputNo = targetIndex.getOneBased() + " " + PREFIX_PRIORITY + "NO";
+        EditPersonDescriptor descriptorNo = new EditPersonDescriptorBuilder()
+                .withPriority("no").build();
+        assertParseSuccess(parser, userInputNo, new EditCommand(targetIndex, descriptorNo));
+    }
+
+    @Test
+    public void parse_priorityAndOtherFields_success() {
+        // Editing priority together with name
+        Index targetIndex = INDEX_SECOND_PERSON;
+        String userInput = targetIndex.getOneBased() + NAME_DESC_AMY + " " + PREFIX_PRIORITY + "yes";
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withName(VALID_NAME_AMY)
+                .withPriority("yes").build();
+        assertParseSuccess(parser, userInput, new EditCommand(targetIndex, descriptor));
+    }
+
+    @Test
     public void parse_statusFieldSpecified_success() {
         // s/active
         Index targetIndex = INDEX_FIRST_PERSON;
@@ -171,6 +222,13 @@ public class EditCommandParserTest {
     public void parse_duplicateStatus_failure() {
         assertParseFailure(parser, "1" + STATUS_DESC_ACTIVE + STATUS_DESC_HIRED,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_STATUS));
+    }
+
+    @Test
+    public void parse_duplicatePriority_failure() {
+        assertParseFailure(parser,
+                "1 " + PREFIX_PRIORITY + "yes " + PREFIX_PRIORITY + "no",
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PRIORITY));
     }
 
     @Test
@@ -204,5 +262,4 @@ public class EditCommandParserTest {
         assertParseFailure(parser, userInput,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS));
     }
-
 }

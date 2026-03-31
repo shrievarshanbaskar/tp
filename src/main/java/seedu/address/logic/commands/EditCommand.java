@@ -94,21 +94,14 @@ public class EditCommand extends Command {
             return new CommandResult("Note: No changes detected; candidate details remain the same.");
         }
 
-        // Duplicate Exclusion validation
-        if (!personToEdit.isSamePerson(editedPerson) || model.hasPerson(editedPerson)) {
-            Person duplicatePerson = null;
-            for (Person p : model.getAddressBook().getPersonList()) {
-                if (!p.equals(personToEdit) && p.isSamePerson(editedPerson)) {
-                    duplicatePerson = p;
-                    break;
-                }
-            }
-            if (duplicatePerson != null) {
+        // Duplicate exclusion validation: check if any OTHER person conflicts with the edited identity
+        for (Person p : model.getAddressBook().getPersonList()) {
+            if (!p.equals(personToEdit) && p.isSamePerson(editedPerson)) {
                 String conflictMsg = String.format("Error: This edit would duplicate an existing candidate. "
                         + "Phone %s or Email %s is already assigned to %s.",
                         editedPerson.getPhone().value,
                         editedPerson.getEmail().value,
-                        duplicatePerson.getName().fullName);
+                        p.getName().fullName);
                 throw new CommandException(conflictMsg);
             }
         }

@@ -34,3 +34,5 @@ public class SortPriorityCommandParserTest {
         assertParseFailure(parser, "pr o/xyz", SortPriorityCommandParser.MESSAGE_INVALID_ORDER);
     }
 }
+
+

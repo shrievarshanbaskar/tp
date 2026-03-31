@@ -165,6 +165,7 @@ public class Person {
                 && tags.equals(otherPerson.tags)
                 && status.equals(otherPerson.status)
                 && rejectionReasons.equals(otherPerson.rejectionReasons)
+                && dateAdded.equals(otherPerson.dateAdded)
                 && priority.equals(otherPerson.priority)
                 && notes.equals(otherPerson.notes);
     }
@@ -172,7 +173,7 @@ public class Person {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, tags, status, rejectionReasons, priority, notes);
+        return Objects.hash(name, phone, email, address, tags, status, rejectionReasons, dateAdded, priority, notes);
     }
 
     @Override

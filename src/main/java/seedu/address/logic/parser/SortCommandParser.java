@@ -8,6 +8,8 @@ import seedu.address.logic.parser.exceptions.ParseException;
  */
 public class SortCommandParser implements Parser<Command> {
 
+    public static final String COMMAND_WORD = "sort";
+
     public static final String MESSAGE_INVALID_SORT_TYPE =
             "Invalid sort type. Please use 'sort date' or 'sort pr'.";
 
