@@ -56,7 +56,8 @@ public class EditPersonDescriptorTest {
         assertFalse(DESC_AMY.equals(editedAmy));
 
         // different status -> returns false
-        editedAmy = new EditPersonDescriptorBuilder(DESC_AMY).withStatus(seedu.address.model.person.Status.HIRED).build();
+        editedAmy = new EditPersonDescriptorBuilder(DESC_AMY).withStatus
+                (seedu.address.model.person.Status.HIRED).build();
         assertFalse(DESC_AMY.equals(editedAmy));
     }
 
