@@ -24,6 +24,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.Priority;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 import seedu.address.testutil.PersonBuilder;
 
@@ -71,10 +72,9 @@ public class EditCommandTest {
     }
 
     @Test
-    public void execute_noFieldSpecifiedUnfilteredList_success() {
+    public void execute_noFieldSpecifiedUnfilteredList_noChangeDetected() {
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, new EditPersonDescriptor());
-        Person editedPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-
+        // No fields edited -> returns no-change message
         String expectedMessage = "Note: No changes detected; candidate details remain the same.";
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
@@ -100,13 +100,69 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_priorityFieldSpecifiedUnfilteredList_success() {
+        // Edit only the priority field to "yes"
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person editedPerson = new PersonBuilder(firstPerson).withPriority("yes").build();
+
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withPriority("yes").build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(firstPerson, editedPerson);
+
+        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_priorityFieldSetToNo_success() {
+        // Edit only the priority field to "no"
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        // First set to "yes" so the edit from "no" to "no" is a real change
+        Person personWithPriority = new PersonBuilder(firstPerson).withPriority("yes").build();
+
+        Model freshModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        freshModel.setPerson(firstPerson, personWithPriority);
+
+        Person editedPerson = new PersonBuilder(personWithPriority).withPriority("no").build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withPriority("no").build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+
+        Model expectedModel = new ModelManager(freshModel.getAddressBook(), new UserPrefs());
+        expectedModel.setPerson(personWithPriority, editedPerson);
+
+        assertCommandSuccess(editCommand, freshModel, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_priorityUnchanged_noChangeDetected() {
+        // Person already has priority "no" (default); editing with "no" again => no change
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withPriority("no").build();
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+
+        // Only detect no-change if all resulting fields are identical
+        Person editedPerson = new PersonBuilder(firstPerson).withPriority("no").build();
+        if (firstPerson.equals(editedPerson)) {
+            EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+            String expectedMessage = "Note: No changes detected; candidate details remain the same.";
+            Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+            assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        }
+    }
+
+    @Test
     public void execute_duplicatePersonUnfilteredList_failure() {
         Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder(firstPerson).build();
         EditCommand editCommand = new EditCommand(INDEX_SECOND_PERSON, descriptor);
 
         String expectedMessage = String.format("Error: This edit would duplicate an existing candidate. "
-                + "Phone %s or Email %s is already assigned to %s.",
+                        + "Phone %s or Email %s is already assigned to %s.",
                 firstPerson.getPhone().value, firstPerson.getEmail().value, firstPerson.getName().fullName);
 
         assertCommandFailure(editCommand, model, expectedMessage);
@@ -122,7 +178,7 @@ public class EditCommandTest {
                 new EditPersonDescriptorBuilder(personInList).build());
 
         String expectedMessage = String.format("Error: This edit would duplicate an existing candidate. "
-                + "Phone %s or Email %s is already assigned to %s.",
+                        + "Phone %s or Email %s is already assigned to %s.",
                 personInList.getPhone().value, personInList.getEmail().value, personInList.getName().fullName);
 
         assertCommandFailure(editCommand, model, expectedMessage);
@@ -135,7 +191,7 @@ public class EditCommandTest {
         EditCommand editCommand = new EditCommand(outOfBoundIndex, descriptor);
 
         String expectedMessage = String.format("Error: Index %d is out of range. "
-                + "The current list has %d candidate(s). Please provide an index between 1 and %d.",
+                        + "The current list has %d candidate(s). Please provide an index between 1 and %d.",
                 outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size(),
                 model.getFilteredPersonList().size());
 
@@ -144,7 +200,7 @@ public class EditCommandTest {
 
     /**
      * Edit filtered list where index is larger than size of filtered list,
-     * but smaller than size of address book
+     * but smaller than size of address book.
      */
     @Test
     public void execute_invalidPersonIndexFilteredList_failure() {
@@ -157,7 +213,7 @@ public class EditCommandTest {
                 new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
         String expectedMessage = String.format("Error: Index %d is out of range. "
-                + "The current list has %d candidate(s). Please provide an index between 1 and %d.",
+                        + "The current list has %d candidate(s). Please provide an index between 1 and %d.",
                 outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size(),
                 model.getFilteredPersonList().size());
 
@@ -199,4 +255,19 @@ public class EditCommandTest {
         assertEquals(expected, editCommand.toString());
     }
 
+    @Test
+    public void editDescriptor_priorityField_success() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptor();
+        descriptor.setPriority(new Priority("yes"));
+        assertTrue(descriptor.getPriority().isPresent());
+        assertEquals(new Priority("yes"), descriptor.getPriority().get());
+    }
+
+    @Test
+    public void editDescriptor_priorityFieldEdited_returnsTrue() {
+        EditPersonDescriptor descriptor = new EditPersonDescriptor();
+        assertFalse(descriptor.isAnyFieldEdited());
+        descriptor.setPriority(new Priority("yes"));
+        assertTrue(descriptor.isAnyFieldEdited());
+    }
 }

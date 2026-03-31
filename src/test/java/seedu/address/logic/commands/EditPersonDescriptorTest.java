@@ -50,6 +50,14 @@ public class EditPersonDescriptorTest {
         // different address -> returns false
         editedAmy = new EditPersonDescriptorBuilder(DESC_AMY).withAddress(VALID_ADDRESS_BOB).build();
         assertFalse(DESC_AMY.equals(editedAmy));
+
+        // different priority -> returns false
+        editedAmy = new EditPersonDescriptorBuilder(DESC_AMY).withPriority("yes").build();
+        assertFalse(DESC_AMY.equals(editedAmy));
+
+        // different status -> returns false
+        editedAmy = new EditPersonDescriptorBuilder(DESC_AMY).withStatus(seedu.address.model.person.Status.HIRED).build();
+        assertFalse(DESC_AMY.equals(editedAmy));
     }
 
     @Test
