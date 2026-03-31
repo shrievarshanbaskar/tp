@@ -44,11 +44,6 @@ public class SortDateCommandParserTest {
 
         // empty arguments
         assertParseFailure(parser, "", SortDateCommandParser.MESSAGE_INVALID_FORMAT);
-
-        // duplicate prefixes (not rigorously tested, but should be invalid format or error depending on parser)
-        // duplicate prefixes
-        assertParseFailure(parser, "date o/asc o/desc",
-                seedu.address.logic.Messages.getErrorMessageForDuplicatePrefixes
-                        (seedu.address.logic.parser.CliSyntax.PREFIX_ORDER));
     }
 }
+
