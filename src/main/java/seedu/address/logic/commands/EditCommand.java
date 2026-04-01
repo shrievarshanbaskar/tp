@@ -90,7 +90,7 @@ public class EditCommand extends Command {
 
         Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
 
-        if (personToEdit.equals(editedPerson)) {
+        if (hasIdenticalFields(personToEdit, editedPerson)) {
             return new CommandResult("Note: No changes detected; candidate details remain the same.");
         }
 
@@ -118,6 +118,24 @@ public class EditCommand extends Command {
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         logger.info("Edited candidate: " + editedPerson.getName());
         return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)));
+    }
+
+    /**
+     * Returns true if both persons have identical field values, including case-sensitive string comparison.
+     * This is stricter than {@code Person.equals()} which uses case-insensitive comparison for names,
+     * ensuring that case-only changes (e.g., "alice" → "Alice") are detected as actual edits.
+     */
+    private static boolean hasIdenticalFields(Person a, Person b) {
+        return a.getName().fullName.equals(b.getName().fullName)
+                && a.getPhone().value.equals(b.getPhone().value)
+                && a.getEmail().value.equals(b.getEmail().value)
+                && a.getAddress().value.equals(b.getAddress().value)
+                && a.getTags().equals(b.getTags())
+                && a.getStatus().equals(b.getStatus())
+                && a.getRejectionReasons().equals(b.getRejectionReasons())
+                && a.getDateAdded().equals(b.getDateAdded())
+                && a.getPriority().equals(b.getPriority())
+                && a.getNotes().equals(b.getNotes());
     }
 
     /**

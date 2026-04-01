@@ -11,7 +11,7 @@ public class Tag {
 
     public static final String MESSAGE_CONSTRAINTS =
             "Tag names must contain only letters, numbers, hyphens, dots, or plus signs, "
-            + "with no spaces, and be between 1\u201330 characters.";
+            + "with no spaces, and be between 1\u201330 characters. First character must be alphanumeric.";
     public static final String VALIDATION_REGEX = "^[a-zA-Z0-9][a-zA-Z0-9.+\\-]{0,29}$";
 
     public final String tagName;

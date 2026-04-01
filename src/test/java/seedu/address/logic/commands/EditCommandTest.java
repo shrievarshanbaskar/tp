@@ -185,6 +185,55 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_duplicatePhoneOnly_failure() {
+        // Edit second person to have first person's phone but a unique email
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withPhone(firstPerson.getPhone().value)
+                .withEmail("unique999@example.com").build();
+        EditCommand editCommand = new EditCommand(INDEX_SECOND_PERSON, descriptor);
+
+        String expectedMessage = String.format("Error: This edit would duplicate an existing candidate. "
+                        + "Phone %s is already assigned to %s.",
+                firstPerson.getPhone().value, firstPerson.getName().fullName);
+
+        assertCommandFailure(editCommand, model, expectedMessage);
+    }
+
+    @Test
+    public void execute_duplicateEmailOnly_failure() {
+        // Edit second person to have first person's email but a unique phone
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder()
+                .withEmail(firstPerson.getEmail().value)
+                .withPhone("99999999").build();
+        EditCommand editCommand = new EditCommand(INDEX_SECOND_PERSON, descriptor);
+
+        String expectedMessage = String.format("Error: This edit would duplicate an existing candidate. "
+                        + "Email %s is already assigned to %s.",
+                firstPerson.getEmail().value, firstPerson.getName().fullName);
+
+        assertCommandFailure(editCommand, model, expectedMessage);
+    }
+
+    @Test
+    public void execute_caseOnlyNameChange_success() {
+        // Changing "Alice Pauline" to "alice pauline" should be detected as a real edit
+        Person firstPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        String lowerCaseName = firstPerson.getName().fullName.toLowerCase();
+        Person editedPerson = new PersonBuilder(firstPerson).withName(lowerCaseName).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(lowerCaseName).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(firstPerson, editedPerson);
+
+        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
     public void execute_invalidPersonIndexUnfilteredList_failure() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build();
