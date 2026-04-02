@@ -22,6 +22,8 @@ import seedu.address.model.person.Status;
 public class CandidateDetailPanel extends UiPart<Region> {
 
     private static final String FXML = "CandidateDetailPanel.fxml";
+    private static final DateTimeFormatter NOTE_DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
 
     @FXML
     private ScrollPane detailScrollPane;
@@ -111,9 +113,6 @@ public class CandidateDetailPanel extends UiPart<Region> {
                     detailTags.getChildren().add(tagLabel);
                 });
     }
-
-    private static final DateTimeFormatter NOTE_DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
 
     private void renderNotes(List<Note> notes) {
         detailNotes.getChildren().clear();
