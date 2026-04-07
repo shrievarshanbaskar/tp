@@ -40,9 +40,9 @@ public class TagCommand extends Command {
     public static final String MESSAGE_TAG_NOT_IN_POOL =
             "Error: The tag '%s' does not exist in the system. Please create it first using 'tagpool'.";
     public static final String MESSAGE_TAG_NOT_ON_CANDIDATE =
-            "Error: Cannot delete tag '%s' because the candidate does not currently have it.";
+            "Error: Cannot delete tag '%s' from candidate '%s' because they do not currently have it.";
     public static final String MESSAGE_TAG_ALREADY_ON_CANDIDATE =
-            "Error: The candidate already has the tag '%s'.";
+            "Error: Candidate '%s' already has the tag '%s'.";
 
     private final List<Index> indices;
     private final List<Tag> tagsToAdd;
@@ -109,7 +109,9 @@ public class TagCommand extends Command {
         for (Person personToEdit : personsToEdit) {
             for (Tag tag : tagsToDelete) {
                 if (!personToEdit.getTags().contains(tag)) {
-                    throw new CommandException(String.format(MESSAGE_TAG_NOT_ON_CANDIDATE, tag.tagName));
+                    throw new CommandException(String.format(
+                            MESSAGE_TAG_NOT_ON_CANDIDATE, tag.tagName,
+                            personToEdit.getName().fullName));
                 }
             }
         }
@@ -118,7 +120,9 @@ public class TagCommand extends Command {
         for (Person personToEdit : personsToEdit) {
             for (Tag tag : tagsToAdd) {
                 if (personToEdit.getTags().contains(tag)) {
-                    throw new CommandException(String.format(MESSAGE_TAG_ALREADY_ON_CANDIDATE, tag.tagName));
+                    throw new CommandException(String.format(
+                            MESSAGE_TAG_ALREADY_ON_CANDIDATE,
+                            personToEdit.getName().fullName, tag.tagName));
                 }
             }
         }

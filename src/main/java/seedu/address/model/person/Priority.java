@@ -33,6 +33,20 @@ public class Priority {
     }
 
     /**
+     * Returns true if this candidate is high-priority.
+     */
+    public boolean isPriority() {
+        return isPriority;
+    }
+
+    /**
+     * Returns the string representation of this priority ("yes" or "no").
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
      * Returns true if a given string is a valid priority status.
      */
     public static boolean isValidPriority(String test) {

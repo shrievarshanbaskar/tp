@@ -58,7 +58,7 @@ public class TagCommandTest {
         TagCommand command = new TagCommand(outOfBounds, List.of(), List.of());
         assertCommandFailure(command, model,
                 String.format("Error: Index %d is out of range. The current list has %d candidate(s). "
-                        + "Please provide an index between 1 and %d.",
+                                + "Please provide an index between 1 and %d.",
                         outOfBounds.getOneBased(),
                         model.getFilteredPersonList().size(),
                         model.getFilteredPersonList().size()));
@@ -71,7 +71,7 @@ public class TagCommandTest {
         TagCommand command = new TagCommand(INDEX_SECOND_PERSON, List.of(), List.of());
         assertCommandFailure(command, model,
                 String.format("Error: Index %d is out of range. The current list has %d candidate(s). "
-                        + "Please provide an index between 1 and %d.",
+                                + "Please provide an index between 1 and %d.",
                         INDEX_SECOND_PERSON.getOneBased(), 1, 1));
     }
 
@@ -128,8 +128,9 @@ public class TagCommandTest {
         model.addTag(new Tag("Java"));
         TagCommand command = new TagCommand(INDEX_FIRST_PERSON,
                 List.of(), List.of(new Tag("Java")));
-        assertCommandFailure(command, model,
-                String.format(TagCommand.MESSAGE_TAG_NOT_ON_CANDIDATE, "Java"));
+        String expectedMessage = String.format(TagCommand.MESSAGE_TAG_NOT_ON_CANDIDATE, "Java",
+                model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()).getName().fullName);
+        assertCommandFailure(command, model, expectedMessage);
     }
 
     @Test
@@ -137,8 +138,10 @@ public class TagCommandTest {
         // ALICE already has "friends" and it is already in the pool (from TypicalPersons)
         TagCommand command = new TagCommand(INDEX_FIRST_PERSON,
                 List.of(new Tag("friends")), List.of());
-        assertCommandFailure(command, model,
-                String.format(TagCommand.MESSAGE_TAG_ALREADY_ON_CANDIDATE, "friends"));
+        String expectedMessage = String.format(TagCommand.MESSAGE_TAG_ALREADY_ON_CANDIDATE,
+                model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()).getName().fullName,
+                "friends");
+        assertCommandFailure(command, model, expectedMessage);
     }
 
     // ── Successful mutations ──────────────────────────────────────────────────
@@ -219,8 +222,9 @@ public class TagCommandTest {
         TagCommand command = new TagCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON),
                 List.of(), List.of(new Tag("owesMoney")));
 
-        assertCommandFailure(command, model,
-                String.format(TagCommand.MESSAGE_TAG_NOT_ON_CANDIDATE, "owesMoney"));
+        String expectedMessage = String.format(TagCommand.MESSAGE_TAG_NOT_ON_CANDIDATE, "owesMoney",
+                model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()).getName().fullName);
+        assertCommandFailure(command, model, expectedMessage);
 
         Person benson = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
         assertTrue(benson.getTags().stream().anyMatch(t -> t.tagName.equalsIgnoreCase("owesMoney")));
@@ -251,7 +255,7 @@ public class TagCommandTest {
         Person bensonInFilteredList =
                 model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         assertTrue(bensonInFilteredList.getTags().stream()
-                .anyMatch(t -> t.tagName.equalsIgnoreCase("owesMoney")),
+                        .anyMatch(t -> t.tagName.equalsIgnoreCase("owesMoney")),
                 "BENSON must have owesMoney before the command");
 
         TagCommand command = new TagCommand(INDEX_FIRST_PERSON,
@@ -263,7 +267,7 @@ public class TagCommandTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("BENSON not found in master list"));
         assertFalse(bensonAfter.getTags().stream()
-                .anyMatch(t -> t.tagName.equalsIgnoreCase("owesMoney")),
+                        .anyMatch(t -> t.tagName.equalsIgnoreCase("owesMoney")),
                 "BENSON must not have owesMoney after the command");
 
         Person aliceAfter = model.getAddressBook().getPersonList().stream()
@@ -271,7 +275,7 @@ public class TagCommandTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("ALICE not found in master list"));
         assertFalse(aliceAfter.getTags().stream()
-                .anyMatch(t -> t.tagName.equalsIgnoreCase("owesMoney")),
+                        .anyMatch(t -> t.tagName.equalsIgnoreCase("owesMoney")),
                 "ALICE must not have owesMoney — she was not the target");
     }
 
