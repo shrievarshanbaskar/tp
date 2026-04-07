@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddRejectCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteNoteCommand;
 import seedu.address.logic.commands.EditCommand;
@@ -26,7 +27,6 @@ import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.NoteCommand;
-import seedu.address.logic.commands.RejectCommand;
 import seedu.address.logic.commands.RemoveCommand;
 import seedu.address.logic.commands.SortDateCommand;
 import seedu.address.logic.commands.TagCommand;
@@ -124,11 +124,11 @@ public class AddressBookParserTest {
     }
 
     @Test
-    public void parseCommand_reject() throws Exception {
+    public void parseCommand_addreject() throws Exception {
         RejectionReason reason = new RejectionReason("Failed interview");
-        RejectCommand command = (RejectCommand) parser.parseCommand(
-                RejectCommand.COMMAND_WORD + " " + INDEX_FIRST_PERSON.getOneBased() + " Failed interview");
-        assertEquals(new RejectCommand(INDEX_FIRST_PERSON, reason), command);
+        AddRejectCommand command = (AddRejectCommand) parser.parseCommand(
+                AddRejectCommand.COMMAND_WORD + " " + INDEX_FIRST_PERSON.getOneBased() + " Failed interview");
+        assertEquals(new AddRejectCommand(INDEX_FIRST_PERSON, reason), command);
     }
 
     @Test
