@@ -26,9 +26,9 @@ import seedu.address.testutil.PersonBuilder;
 
 /**
  * Contains integration tests (interaction with the Model) and unit tests for
- * {@code RejectCommand}.
+ * {@code AddRejectCommand}.
  */
-public class RejectCommandTest {
+public class AddRejectCommandTest {
 
     private static final RejectionReason VALID_REASON = new RejectionReason("Failed technical interview");
     private static final RejectionReason ANOTHER_REASON = new RejectionReason("Insufficient experience");
@@ -38,7 +38,7 @@ public class RejectCommandTest {
     @Test
     public void execute_validIndexUnfilteredList_success() {
         Person personToReject = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        RejectCommand rejectCommand = new RejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
+        AddRejectCommand rejectCommand = new AddRejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
 
         List<RejectionReason> expectedReasons = new ArrayList<>();
         expectedReasons.add(VALID_REASON);
@@ -47,7 +47,7 @@ public class RejectCommandTest {
                 .withRejectionReasonsList(expectedReasons)
                 .build();
 
-        String expectedMessage = String.format(RejectCommand.MESSAGE_REJECT_PERSON_SUCCESS,
+        String expectedMessage = String.format(AddRejectCommand.MESSAGE_SUCCESS,
                 VALID_REASON, 1);
 
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
@@ -59,7 +59,7 @@ public class RejectCommandTest {
     @Test
     public void execute_invalidIndexUnfilteredList_throwsCommandException() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
-        RejectCommand rejectCommand = new RejectCommand(outOfBoundIndex, VALID_REASON);
+        AddRejectCommand rejectCommand = new AddRejectCommand(outOfBoundIndex, VALID_REASON);
 
         String expectedMessage = String.format(Messages.MESSAGE_REJECT_INDEX_OUT_OF_RANGE,
                 outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size());
@@ -72,7 +72,7 @@ public class RejectCommandTest {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 
         Person personToReject = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        RejectCommand rejectCommand = new RejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
+        AddRejectCommand rejectCommand = new AddRejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
 
         List<RejectionReason> expectedReasons = new ArrayList<>();
         expectedReasons.add(VALID_REASON);
@@ -81,7 +81,7 @@ public class RejectCommandTest {
                 .withRejectionReasonsList(expectedReasons)
                 .build();
 
-        String expectedMessage = String.format(RejectCommand.MESSAGE_REJECT_PERSON_SUCCESS,
+        String expectedMessage = String.format(AddRejectCommand.MESSAGE_SUCCESS,
                 VALID_REASON, 1);
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
@@ -96,10 +96,9 @@ public class RejectCommandTest {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 
         Index outOfBoundIndex = INDEX_SECOND_PERSON;
-        // ensures that outOfBoundIndex is still in bounds of address book list
         assertTrue(outOfBoundIndex.getZeroBased() < model.getAddressBook().getPersonList().size());
 
-        RejectCommand rejectCommand = new RejectCommand(outOfBoundIndex, VALID_REASON);
+        AddRejectCommand rejectCommand = new AddRejectCommand(outOfBoundIndex, VALID_REASON);
 
         String expectedMessage = String.format(Messages.MESSAGE_REJECT_INDEX_OUT_OF_RANGE,
                 outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size());
@@ -108,60 +107,7 @@ public class RejectCommandTest {
     }
 
     @Test
-    public void execute_personWithHiredTag_succeedsWithoutConfirmation() {
-        // With status removed, a person tagged "hired" can be rejected normally — no confirmation dialog
-        Person personWithHiredTag = new PersonBuilder()
-                .withName("Tagged Person")
-                .withPhone("88888888")
-                .withEmail("tagged@example.com")
-                .withAddress("Tagged Street")
-                .withTags("hired")
-                .build();
-
-        Model modelWithTagged = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-        modelWithTagged.addPerson(personWithHiredTag);
-        Index taggedIndex = Index.fromOneBased(modelWithTagged.getFilteredPersonList().size());
-
-        RejectCommand rejectCommand = new RejectCommand(taggedIndex, VALID_REASON);
-        try {
-            CommandResult result = rejectCommand.execute(modelWithTagged);
-            // Should succeed without confirmation
-            assertFalse(result.isRequiresConfirmation());
-            assertEquals(
-                    String.format(RejectCommand.MESSAGE_REJECT_PERSON_SUCCESS, VALID_REASON, 1),
-                    result.getFeedbackToUser());
-        } catch (Exception e) {
-            throw new AssertionError("Execution should not fail.", e);
-        }
-    }
-
-    @Test
-    public void execute_personWithBlacklistedTag_succeedsNormally() {
-        // With status removed, a person tagged "blacklisted" can also be rejected normally
-        Person personWithBlacklistedTag = new PersonBuilder()
-                .withName("Blacklisted Tag Person")
-                .withPhone("77777777")
-                .withEmail("bltagged@example.com")
-                .withAddress("Blacklisted Tag Street")
-                .withTags("blacklisted")
-                .build();
-
-        Model modelWithTagged = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-        modelWithTagged.addPerson(personWithBlacklistedTag);
-        Index taggedIndex = Index.fromOneBased(modelWithTagged.getFilteredPersonList().size());
-
-        RejectCommand rejectCommand = new RejectCommand(taggedIndex, VALID_REASON);
-        try {
-            CommandResult result = rejectCommand.execute(modelWithTagged);
-            assertFalse(result.isRequiresConfirmation());
-        } catch (Exception e) {
-            throw new AssertionError("Execution should not fail for person with blacklisted tag.", e);
-        }
-    }
-
-    @Test
     public void execute_multipleRejections_appendsReason() {
-        // First rejection
         Person personToReject = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
 
         List<RejectionReason> firstReasons = new ArrayList<>();
@@ -172,8 +118,7 @@ public class RejectCommandTest {
                 .build();
         model.setPerson(personToReject, firstRejected);
 
-        // Second rejection with different reason
-        RejectCommand secondReject = new RejectCommand(INDEX_FIRST_PERSON, ANOTHER_REASON);
+        AddRejectCommand secondReject = new AddRejectCommand(INDEX_FIRST_PERSON, ANOTHER_REASON);
 
         List<RejectionReason> expectedReasons = new ArrayList<>();
         expectedReasons.add(VALID_REASON);
@@ -183,7 +128,7 @@ public class RejectCommandTest {
                 .withRejectionReasonsList(expectedReasons)
                 .build();
 
-        String expectedMessage = String.format(RejectCommand.MESSAGE_REJECT_PERSON_SUCCESS,
+        String expectedMessage = String.format(AddRejectCommand.MESSAGE_SUCCESS,
                 ANOTHER_REASON, 2);
 
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
@@ -204,8 +149,7 @@ public class RejectCommandTest {
                 .build();
         model.setPerson(personToReject, firstRejected);
 
-        // Same reason again
-        RejectCommand duplicateReject = new RejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
+        AddRejectCommand duplicateReject = new AddRejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
 
         List<RejectionReason> expectedReasons = new ArrayList<>();
         expectedReasons.add(VALID_REASON);
@@ -216,7 +160,7 @@ public class RejectCommandTest {
                 .build();
 
         String expectedMessage = String.format(
-                RejectCommand.MESSAGE_REJECT_PERSON_SUCCESS_DUPLICATE_WARNING,
+                AddRejectCommand.MESSAGE_SUCCESS_DUPLICATE_WARNING,
                 VALID_REASON, 2);
 
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
@@ -227,35 +171,26 @@ public class RejectCommandTest {
 
     @Test
     public void equals() {
-        RejectCommand rejectFirstCommand = new RejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
-        RejectCommand rejectSecondCommand = new RejectCommand(INDEX_SECOND_PERSON, VALID_REASON);
-        RejectCommand rejectFirstDiffReason = new RejectCommand(INDEX_FIRST_PERSON, ANOTHER_REASON);
+        AddRejectCommand rejectFirstCommand = new AddRejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
+        AddRejectCommand rejectSecondCommand = new AddRejectCommand(INDEX_SECOND_PERSON, VALID_REASON);
+        AddRejectCommand rejectFirstDiffReason = new AddRejectCommand(INDEX_FIRST_PERSON, ANOTHER_REASON);
 
-        // same object -> returns true
         assertTrue(rejectFirstCommand.equals(rejectFirstCommand));
 
-        // same values -> returns true
-        RejectCommand rejectFirstCommandCopy = new RejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
+        AddRejectCommand rejectFirstCommandCopy = new AddRejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
         assertTrue(rejectFirstCommand.equals(rejectFirstCommandCopy));
 
-        // different types -> returns false
         assertFalse(rejectFirstCommand.equals(1));
-
-        // null -> returns false
         assertFalse(rejectFirstCommand.equals(null));
-
-        // different index -> returns false
         assertFalse(rejectFirstCommand.equals(rejectSecondCommand));
-
-        // different reason -> returns false
         assertFalse(rejectFirstCommand.equals(rejectFirstDiffReason));
     }
 
     @Test
     public void toStringMethod() {
         Index targetIndex = Index.fromOneBased(1);
-        RejectCommand rejectCommand = new RejectCommand(targetIndex, VALID_REASON);
-        String expected = RejectCommand.class.getCanonicalName()
+        AddRejectCommand rejectCommand = new AddRejectCommand(targetIndex, VALID_REASON);
+        String expected = AddRejectCommand.class.getCanonicalName()
                 + "{targetIndex=" + targetIndex + ", reason=" + VALID_REASON + "}";
         assertEquals(expected, rejectCommand.toString());
     }

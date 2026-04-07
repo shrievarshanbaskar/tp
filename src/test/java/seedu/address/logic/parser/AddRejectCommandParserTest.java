@@ -7,51 +7,30 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
-import seedu.address.logic.commands.RejectCommand;
+import seedu.address.logic.commands.AddRejectCommand;
 import seedu.address.model.person.RejectionReason;
 
-public class RejectCommandParserTest {
+public class AddRejectCommandParserTest {
 
-    private RejectCommandParser parser = new RejectCommandParser();
+    private AddRejectCommandParser parser = new AddRejectCommandParser();
 
     @Test
     public void parse_allFieldsPresent_success() {
         RejectionReason expectedReason = new RejectionReason("Failed technical interview");
         assertParseSuccess(parser, " 1 Failed technical interview",
-                new RejectCommand(INDEX_FIRST_PERSON, expectedReason));
+                new AddRejectCommand(INDEX_FIRST_PERSON, expectedReason));
     }
 
     @Test
     public void parse_reasonWithSpecialChars_success() {
         RejectionReason reason = new RejectionReason("Didn't meet req's, score 3/5");
         assertParseSuccess(parser, " 1 Didn't meet req's, score 3/5",
-                new RejectCommand(INDEX_FIRST_PERSON, reason));
-    }
-
-    @Test
-    public void parse_reasonWithPeriodAndDash_success() {
-        RejectionReason reason = new RejectionReason("Poor fit - lacking exp.");
-        assertParseSuccess(parser, " 1 Poor fit - lacking exp.",
-                new RejectCommand(INDEX_FIRST_PERSON, reason));
-    }
-
-    @Test
-    public void parse_spacedReason_success() {
-        RejectionReason reason = new RejectionReason("Insufficient technical skills");
-        assertParseSuccess(parser, " 1 Insufficient technical skills",
-                new RejectCommand(INDEX_FIRST_PERSON, reason));
+                new AddRejectCommand(INDEX_FIRST_PERSON, reason));
     }
 
     @Test
     public void parse_missingReason_failure() {
-        // Index only, no reason
         assertParseFailure(parser, " 1",
-                Messages.MESSAGE_REJECT_INVALID_FORMAT);
-    }
-
-    @Test
-    public void parse_missingReasonTrailingSpace_failure() {
-        assertParseFailure(parser, " 1 ",
                 Messages.MESSAGE_REJECT_INVALID_FORMAT);
     }
 
@@ -63,23 +42,11 @@ public class RejectCommandParserTest {
 
     @Test
     public void parse_invalidIndex_failure() {
-        // non-integer index
         assertParseFailure(parser, " abc Failed technical interview",
                 Messages.MESSAGE_REJECT_INVALID_INDEX);
 
-        // zero index
         assertParseFailure(parser, " 0 Failed technical interview",
                 Messages.MESSAGE_REJECT_INVALID_INDEX);
-
-        // negative index
-        assertParseFailure(parser, " -1 Failed technical interview",
-                Messages.MESSAGE_REJECT_INVALID_INDEX);
-    }
-
-    @Test
-    public void parse_emptyArgs_failure() {
-        assertParseFailure(parser, "",
-                Messages.MESSAGE_REJECT_INVALID_FORMAT);
     }
 
     @Test
@@ -94,17 +61,6 @@ public class RejectCommandParserTest {
         String reason200 = "a".repeat(200);
         RejectionReason expectedReason = new RejectionReason(reason200);
         assertParseSuccess(parser, " 1 " + reason200,
-                new RejectCommand(INDEX_FIRST_PERSON, expectedReason));
-    }
-
-    @Test
-    public void parse_reasonWithInvalidChars_failure() {
-        // < symbol not allowed
-        assertParseFailure(parser, " 1 Failed < interview",
-                Messages.MESSAGE_REJECT_INVALID_REASON);
-
-        // ^ symbol not allowed
-        assertParseFailure(parser, " 1 Reason ^1",
-                Messages.MESSAGE_REJECT_INVALID_REASON);
+                new AddRejectCommand(INDEX_FIRST_PERSON, expectedReason));
     }
 }

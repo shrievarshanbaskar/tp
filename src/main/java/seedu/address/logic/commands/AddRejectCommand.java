@@ -16,11 +16,11 @@ import seedu.address.model.person.Person;
 import seedu.address.model.person.RejectionReason;
 
 /**
- * Rejects a candidate identified by index and records a rejection reason.
+ * Adds a rejection reason to a candidate identified by index.
  */
-public class RejectCommand extends Command {
+public class AddRejectCommand extends Command {
 
-    public static final String COMMAND_WORD = "reject";
+    public static final String COMMAND_WORD = "addreject";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Records a rejection reason for the candidate identified by the index number "
@@ -28,22 +28,21 @@ public class RejectCommand extends Command {
             + "Parameters: INDEX (must be a positive integer) REASON\n"
             + "Example: " + COMMAND_WORD + " 1 Failed technical interview";
 
-    public static final String MESSAGE_REJECT_PERSON_SUCCESS =
+    public static final String MESSAGE_SUCCESS =
             "Rejection reason recorded. New Reason added: %1$s (Total rejections on record: %2$d)";
-    public static final String MESSAGE_REJECT_PERSON_SUCCESS_DUPLICATE_WARNING =
+    public static final String MESSAGE_SUCCESS_DUPLICATE_WARNING =
             "Rejection reason recorded. New Reason added: %1$s (Total rejections on record: %2$d)\n"
             + "Note: This reason is the same as the previous rejection reason.";
 
-    private static final Logger logger = LogsCenter.getLogger(RejectCommand.class);
+    private static final Logger logger = LogsCenter.getLogger(AddRejectCommand.class);
 
     private final Index targetIndex;
     private final RejectionReason reason;
 
     /**
-     * Creates a RejectCommand to reject the person at the specified {@code targetIndex}
-     * with the given {@code reason}.
+     * Creates an AddRejectCommand to add a rejection reason to the person at the specified {@code targetIndex}.
      */
-    public RejectCommand(Index targetIndex, RejectionReason reason) {
+    public AddRejectCommand(Index targetIndex, RejectionReason reason) {
         requireNonNull(targetIndex);
         requireNonNull(reason);
         this.targetIndex = targetIndex;
@@ -61,13 +60,7 @@ public class RejectCommand extends Command {
         }
 
         Person personToReject = lastShownList.get(targetIndex.getZeroBased());
-        return executeRejection(model, personToReject);
-    }
 
-    /**
-     * Performs the rejection of {@code personToReject} and returns the success {@code CommandResult}.
-     */
-    private CommandResult executeRejection(Model model, Person personToReject) throws CommandException {
         boolean isDuplicateReason = isSequentialDuplicate(personToReject, reason);
         Person rejectedPerson = createRejectedPerson(personToReject, reason);
 
@@ -76,8 +69,8 @@ public class RejectCommand extends Command {
 
         int totalReasons = rejectedPerson.getRejectionReasons().size();
         String resultMessage = isDuplicateReason
-                ? String.format(MESSAGE_REJECT_PERSON_SUCCESS_DUPLICATE_WARNING, reason, totalReasons)
-                : String.format(MESSAGE_REJECT_PERSON_SUCCESS, reason, totalReasons);
+                ? String.format(MESSAGE_SUCCESS_DUPLICATE_WARNING, reason, totalReasons)
+                : String.format(MESSAGE_SUCCESS, reason, totalReasons);
 
         return new CommandResult(resultMessage);
     }
@@ -122,14 +115,12 @@ public class RejectCommand extends Command {
         if (other == this) {
             return true;
         }
-
-        if (!(other instanceof RejectCommand)) {
+        if (!(other instanceof AddRejectCommand)) {
             return false;
         }
-
-        RejectCommand otherRejectCommand = (RejectCommand) other;
-        return targetIndex.equals(otherRejectCommand.targetIndex)
-                && reason.equals(otherRejectCommand.reason);
+        AddRejectCommand otherCmd = (AddRejectCommand) other;
+        return targetIndex.equals(otherCmd.targetIndex)
+                && reason.equals(otherCmd.reason);
     }
 
     @Override
