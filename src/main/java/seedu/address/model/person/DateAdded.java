@@ -7,6 +7,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Represents a Person's creation date in the address book.
@@ -19,7 +21,7 @@ public class DateAdded implements Comparable<DateAdded> {
 
     // We strictly follow the 'DD/MM/YYYY HH:mm Z' format
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/uuuu HH:mm Z")
-            .withResolverStyle(java.time.format.ResolverStyle.STRICT);
+            .withResolverStyle(ResolverStyle.STRICT);
     public static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     public final String value;
@@ -30,7 +32,7 @@ public class DateAdded implements Comparable<DateAdded> {
      */
     public DateAdded() {
         this.date = ZonedDateTime.now(ZoneId.systemDefault())
-                .truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
+                .truncatedTo(ChronoUnit.MINUTES);
         this.value = this.date.format(FORMATTER);
     }
 

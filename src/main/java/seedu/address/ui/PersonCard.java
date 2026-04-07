@@ -75,7 +75,7 @@ public class PersonCard extends UiPart<Region> {
             rejectionCountTag.setVisible(true);
             rejectionCountTag.setManaged(true);
         }
-        if (person.getPriority().isPriority) {
+        if (person.getPriority().isPriority()) {
             priorityTag.setText("⭐ PRIORITY");
             priorityTag.setStyle("-fx-background-color: #f0ad4e; -fx-text-fill: black; "
                     + "-fx-font-family: 'Segoe UI Semibold'; -fx-font-size: 16px; "

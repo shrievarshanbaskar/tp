@@ -17,8 +17,8 @@ public class Priority {
      */
     public static final String VALIDATION_REGEX = "^(?i)(yes|no)$";
 
-    public final String value;
-    public final boolean isPriority;
+    private final String value;
+    private final boolean isPriority;
 
     /**
      * Constructs a {@code Priority}.

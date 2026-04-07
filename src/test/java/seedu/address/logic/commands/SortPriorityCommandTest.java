@@ -36,7 +36,7 @@ public class SortPriorityCommandTest {
         String expectedMessage = SortPriorityCommand.MESSAGE_SUCCESS_ASC;
 
         expectedModel.sortFilteredPersonList(
-                java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority ? 0 : 1)
+                java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 0 : 1)
                         .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
                         .thenComparing(p -> p.getName().fullName)
         );
@@ -52,7 +52,7 @@ public class SortPriorityCommandTest {
         String expectedMessage = SortPriorityCommand.MESSAGE_SUCCESS_DESC;
 
         expectedModel.sortFilteredPersonList(
-                java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority ? 1 : 0)
+                java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 1 : 0)
                         .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
                         .thenComparing(p -> p.getName().fullName)
         );

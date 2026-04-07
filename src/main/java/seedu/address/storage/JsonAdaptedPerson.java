@@ -91,7 +91,7 @@ class JsonAdaptedPerson {
                 .map(JsonAdaptedRejectionReason::new)
                 .collect(Collectors.toList()));
         dateAdded = source.getDateAdded().value;
-        priority = source.getPriority().value;
+        priority = source.getPriority().getValue();
         notes.addAll(source.getNotes().stream()
                 .map(JsonAdaptedNote::new)
                 .collect(Collectors.toList()));
