@@ -180,6 +180,9 @@ public class HelpWindow extends UiPart<Stage> {
         private final StringProperty action;
         private final StringProperty format;
 
+        /**
+         * Constructs a {@code CommandEntry} for display in the help command summary table.
+         */
         public CommandEntry(String action, String format) {
             this.action = new SimpleStringProperty(action);
             this.format = new SimpleStringProperty(format);
