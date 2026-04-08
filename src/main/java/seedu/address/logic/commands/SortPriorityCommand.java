@@ -5,7 +5,10 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_ORDER;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import java.util.Comparator;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
+import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 
@@ -27,6 +30,8 @@ public class SortPriorityCommand extends Command {
             "Sorted all candidates by priority status (high-priority last).";
     public static final String MESSAGE_EMPTY_ADDRESS_BOOK = "The address book is currently empty. Nothing to sort.";
 
+    private static final Logger logger = LogsCenter.getLogger(SortPriorityCommand.class);
+
     private final boolean isAscending;
 
     /**
@@ -46,26 +51,47 @@ public class SortPriorityCommand extends Command {
             return new CommandResult(MESSAGE_EMPTY_ADDRESS_BOOK);
         }
 
-        Comparator<Person> comparator = Comparator.comparing((Person p) -> p.getPriority().isPriority ? 0 : 1)
-                .thenComparing(Person::getDateAdded, Comparator.reverseOrder())
-                .thenComparing(p -> p.getName().fullName);
-
-        if (!isAscending) {
-            comparator = Comparator.comparing((Person p) -> p.getPriority().isPriority ? 1 : 0)
-                    .thenComparing(Person::getDateAdded, Comparator.reverseOrder())
-                    .thenComparing(p -> p.getName().fullName);
-        }
+        Comparator<Person> comparator = buildComparator(isAscending);
 
         model.sortFilteredPersonList(comparator);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
 
-        return new CommandResult(isAscending ? MESSAGE_SUCCESS_ASC : MESSAGE_SUCCESS_DESC);
+        String resultMessage = isAscending ? MESSAGE_SUCCESS_ASC : MESSAGE_SUCCESS_DESC;
+        logger.fine("SortPriorityCommand executed: " + resultMessage);
+        return new CommandResult(resultMessage);
+    }
+
+    /**
+     * Builds the sort comparator for the given order direction.
+     * Priority candidates (isPriority=true) sort to position 0 in asc order
+     * and position 1 in desc order. Secondary sort is by Date Added descending,
+     * then by Name ascending.
+     *
+     * @param ascending true for high-priority first, false for high-priority last.
+     * @return the composed {@code Comparator<Person>}.
+     */
+    private static Comparator<Person> buildComparator(boolean ascending) {
+        if (ascending) {
+            return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 0 : 1)
+                    .thenComparing(Person::getDateAdded, Comparator.reverseOrder())
+                    .thenComparing(p -> p.getName().fullName);
+        }
+        return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 1 : 0)
+                .thenComparing(Person::getDateAdded, Comparator.reverseOrder())
+                .thenComparing(p -> p.getName().fullName);
     }
 
     @Override
     public boolean equals(Object other) {
-        return other == this // short circuit if same object
-                || (other instanceof SortPriorityCommand // instanceof handles nulls
-                && isAscending == ((SortPriorityCommand) other).isAscending); // state check
+        return other == this
+                || (other instanceof SortPriorityCommand
+                && isAscending == ((SortPriorityCommand) other).isAscending);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .add("isAscending", isAscending)
+                .toString();
     }
 }

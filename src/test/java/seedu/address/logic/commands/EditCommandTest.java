@@ -380,7 +380,7 @@ public class EditCommandTest {
                 .withPhone(firstPerson.getPhone().value)
                 .withEmail(firstPerson.getEmail().value)
                 .withAddress(firstPerson.getAddress().value)
-                .withPriority(firstPerson.getPriority().value)
+                .withPriority(firstPerson.getPriority().getValue())
                 .build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
 

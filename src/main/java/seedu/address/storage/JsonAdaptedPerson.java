@@ -17,11 +17,13 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.DateAdded;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Note;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Priority;
 import seedu.address.model.person.RejectionReason;
 import seedu.address.model.tag.Tag;
 
@@ -51,12 +53,12 @@ class JsonAdaptedPerson {
      */
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
-            @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("tags") List<JsonAdaptedTag> tags,
-            @JsonProperty("rejectionReasons") List<JsonAdaptedRejectionReason> rejectionReasons,
-            @JsonProperty("dateAdded") String dateAdded,
-            @JsonProperty("priority") String priority,
-            @JsonProperty("notes") List<JsonAdaptedNote> notes) {
+                             @JsonProperty("email") String email, @JsonProperty("address") String address,
+                             @JsonProperty("tags") List<JsonAdaptedTag> tags,
+                             @JsonProperty("rejectionReasons") List<JsonAdaptedRejectionReason> rejectionReasons,
+                             @JsonProperty("dateAdded") String dateAdded,
+                             @JsonProperty("priority") String priority,
+                             @JsonProperty("notes") List<JsonAdaptedNote> notes) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -89,7 +91,7 @@ class JsonAdaptedPerson {
                 .map(JsonAdaptedRejectionReason::new)
                 .collect(Collectors.toList()));
         dateAdded = source.getDateAdded().value;
-        priority = source.getPriority().value;
+        priority = source.getPriority().getValue();
         notes.addAll(source.getNotes().stream()
                 .map(JsonAdaptedNote::new)
                 .collect(Collectors.toList()));
@@ -108,10 +110,13 @@ class JsonAdaptedPerson {
             if (!masterAddressBook.hasTag(parsedTag)) {
                 throw new IllegalValueException("Candidate contains a tag that does not exist in the master tag list.");
             }
+            // A-6: use orElseThrow instead of unsafe get()
             Tag canonicalTag = masterAddressBook.getTagList().stream()
                     .filter(t -> t.equals(parsedTag))
                     .findFirst()
-                    .get();
+                    .orElseThrow(() -> new IllegalValueException(
+                            "Candidate tag '" + parsedTag.tagName + "' is missing from the master tag list "
+                                    + "despite passing hasTag() check. This indicates a data integrity issue."));
             personTags.add(canonicalTag);
         }
 
@@ -154,31 +159,10 @@ class JsonAdaptedPerson {
             modelRejectionReasons.add(reason.toModelType());
         }
 
-        final seedu.address.model.person.DateAdded modelDateAdded;
-        if (dateAdded == null) {
-            modelDateAdded = new seedu.address.model.person.DateAdded();
-        } else if (!seedu.address.model.person.DateAdded.isValidDateAdded(dateAdded)) {
-            throw new IllegalValueException(seedu.address.model.person.DateAdded.MESSAGE_CONSTRAINTS);
-        } else {
-            ZonedDateTime parsedDateAdded = ZonedDateTime.parse(dateAdded,
-                    seedu.address.model.person.DateAdded.FORMATTER);
-            if (parsedDateAdded.isAfter(ZonedDateTime.now(ZoneId.systemDefault()))) {
-                logger.warning("Candidate dateAdded is in the future (" + parsedDateAdded
-                        + "). Clamping to current time.");
-                modelDateAdded = new seedu.address.model.person.DateAdded();
-            } else {
-                modelDateAdded = new seedu.address.model.person.DateAdded(dateAdded);
-            }
-        }
+        // D-3: DateAdded and Priority now use proper imports (no FQNs in method bodies)
+        final DateAdded modelDateAdded = parseDateAdded();
 
-        final seedu.address.model.person.Priority modelPriority;
-        if (priority == null) {
-            modelPriority = new seedu.address.model.person.Priority("no");
-        } else if (!seedu.address.model.person.Priority.isValidPriority(priority)) {
-            throw new IllegalValueException(seedu.address.model.person.Priority.MESSAGE_CONSTRAINTS);
-        } else {
-            modelPriority = new seedu.address.model.person.Priority(priority);
-        }
+        final Priority modelPriority = parsePriority();
 
         final List<Note> modelNotes = new ArrayList<>();
         for (JsonAdaptedNote note : notes) {
@@ -187,6 +171,49 @@ class JsonAdaptedPerson {
 
         return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags,
                 modelRejectionReasons, modelDateAdded, modelPriority, modelNotes);
+    }
+
+    /**
+     * Parses the {@code dateAdded} string and returns the corresponding {@code DateAdded}.
+     * D-2: If {@code dateAdded} is null in the JSON (e.g. from a hand-edited file), a WARNING
+     * is logged before silently healing to the current timestamp, ensuring operators can
+     * diagnose unexpected data normalisation in the log output.
+     *
+     * @throws IllegalValueException if the dateAdded string is present but invalid.
+     */
+    private DateAdded parseDateAdded() throws IllegalValueException {
+        if (dateAdded == null) {
+            // D-2: Log a warning so operators can diagnose this silent normalisation
+            logger.warning("Candidate dateAdded field is missing from JSON. "
+                    + "Healing to current timestamp. Name=" + name);
+            return new DateAdded();
+        }
+        if (!DateAdded.isValidDateAdded(dateAdded)) {
+            throw new IllegalValueException(DateAdded.MESSAGE_CONSTRAINTS);
+        }
+        ZonedDateTime parsedDateAdded = ZonedDateTime.parse(dateAdded, DateAdded.FORMATTER);
+        if (parsedDateAdded.isAfter(ZonedDateTime.now(ZoneId.systemDefault()))) {
+            logger.warning("Candidate dateAdded is in the future ("
+                    + parsedDateAdded + "). Clamping to current time. Name=" + name);
+            return new DateAdded();
+        }
+        return new DateAdded(dateAdded);
+    }
+
+    /**
+     * Parses the {@code priority} string and returns the corresponding {@code Priority}.
+     * If {@code priority} is null (e.g. from a legacy file), defaults to "no".
+     *
+     * @throws IllegalValueException if the priority string is present but invalid.
+     */
+    private Priority parsePriority() throws IllegalValueException {
+        if (priority == null) {
+            return new Priority("no");
+        }
+        if (!Priority.isValidPriority(priority)) {
+            throw new IllegalValueException(Priority.MESSAGE_CONSTRAINTS);
+        }
+        return new Priority(priority);
     }
 
 }

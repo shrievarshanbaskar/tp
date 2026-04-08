@@ -90,7 +90,7 @@ public class CandidateDetailPanel extends UiPart<Region> {
         detailPhone.setText("Phone: " + person.getPhone().value);
         detailEmail.setText("Email: " + person.getEmail().value);
         detailAddress.setText("Address: " + person.getAddress().value);
-        detailPriority.setText("Priority: " + (person.getPriority().isPriority ? "\u2b50 High" : "Normal"));
+        detailPriority.setText("Priority: " + (person.getPriority().isPriority() ? "\u2b50 High" : "Normal"));
         detailDateAdded.setText("Added: " + person.getDateAdded().getDisplayFormat());
     }
 

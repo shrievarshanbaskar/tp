@@ -42,10 +42,10 @@ public class PriorityTest {
     @Test
     public void isPriority_correctlyAssigned() {
         Priority priorityYes = new Priority("yes");
-        assertTrue(priorityYes.isPriority);
+        assertTrue(priorityYes.isPriority());
 
         Priority priorityNo = new Priority("no");
-        assertFalse(priorityNo.isPriority);
+        assertFalse(priorityNo.isPriority());
     }
 
     @Test

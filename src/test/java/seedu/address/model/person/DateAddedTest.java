@@ -21,6 +21,13 @@ public class DateAddedTest {
     }
 
     @Test
+    public void constructor_truncatesToMinutes() {
+        DateAdded defaultDate = new DateAdded();
+        assertEquals(0, defaultDate.date.getSecond(), "Seconds should be truncated to 0");
+        assertEquals(0, defaultDate.date.getNano(), "Nanoseconds should be truncated to 0");
+    }
+
+    @Test
     public void isValidDateAdded() {
         // null date
         assertThrows(NullPointerException.class, () -> DateAdded.isValidDateAdded(null));
@@ -32,6 +39,8 @@ public class DateAddedTest {
         assertFalse(DateAdded.isValidDateAdded("01-01-2024 10:00 +0800")); // dashes instead of slashes
         assertFalse(DateAdded.isValidDateAdded("32/01/2024 10:00 +0800")); // invalid day
         assertFalse(DateAdded.isValidDateAdded("01/13/2024 10:00 +0800")); // invalid month
+        assertFalse(DateAdded.isValidDateAdded("31/04/2024 10:00 +0800")); // April has 30 days
+        assertFalse(DateAdded.isValidDateAdded("29/02/2023 10:00 +0800")); // 2023 is not a leap year
 
         // valid dates
         assertTrue(DateAdded.isValidDateAdded("01/01/2024 10:00 +0800")); // Typical valid format

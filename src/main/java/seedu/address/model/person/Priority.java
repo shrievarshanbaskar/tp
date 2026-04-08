@@ -17,8 +17,8 @@ public class Priority {
      */
     public static final String VALIDATION_REGEX = "^(?i)(yes|no)$";
 
-    public final String value;
-    public final boolean isPriority;
+    private final String value;
+    private final boolean isPriority;
 
     /**
      * Constructs a {@code Priority}.
@@ -30,6 +30,20 @@ public class Priority {
         checkArgument(isValidPriority(priority), MESSAGE_CONSTRAINTS);
         this.value = priority.toLowerCase();
         this.isPriority = "yes".equals(this.value);
+    }
+
+    /**
+     * Returns true if this candidate is high-priority.
+     */
+    public boolean isPriority() {
+        return isPriority;
+    }
+
+    /**
+     * Returns the string representation of this priority ("yes" or "no").
+     */
+    public String getValue() {
+        return value;
     }
 
     /**
