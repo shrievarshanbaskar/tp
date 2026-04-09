@@ -10,8 +10,10 @@ title: Developer Guide
 
 ## **Acknowledgements**
 
-* This project is based on the [AddressBook-Level3 (AB3)](https://se-education.org/addressbook-level3/) project created
-  by the [SE-EDU initiative](https://se-education.org).
+* This project is based on the [AddressBook-Level3 (AB3)](https://se-education.org/addressbook-level3/) project created by the [SE-EDU initiative](https://se-education.org). The overall architecture (UI/Logic/Model/Storage split), command parsing/execution flow, and JSON storage design were adapted from AB3.
+* The structure and some sections/diagrams in this Developer Guide were adapted from the AddressBook-Level3 Developer Guide, then updated to reflect Talently-specific features and command formats.
+* PlantUML usage and conventions were guided by the [se-edu PlantUML tutorial](https://se-education.org/guides/tutorials/plantUml.html).
+* The Metro-style JavaFX button CSS in the dark theme is adapted from the JMetro styling example by [Pedro Duque Vieira (PixelDuke)](https://pixelduke.com/java-fx-themes-and-libraries/jmetro/) as cited in the stylesheet comments.
 
 --------------------------------------------------------------------------------------------------------------------
 
