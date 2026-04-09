@@ -15,17 +15,10 @@ public class MessagesTest {
         Person person = new PersonBuilder().withAddress("123 Main St").build();
         String result = Messages.format(person);
         assertTrue(result.contains("123 Main St"));
-        assertFalse(result.contains("Not provided"));
+        assertFalse(result.contains("No address recorded"));
     }
 
-    @Test
-    public void format_personWithEmptyAddress_showsNotProvided() {
-        // Address.EMPTY sentinel — address was not supplied at add time
-        Person person = new PersonBuilder().withAddress("").build();
-        String result = Messages.format(person);
-        assertTrue(result.contains("Not provided"));
-        assertTrue(person.getAddress().isEmpty());
-    }
+
 
     @Test
     public void format_personWithTags_containsTags() {

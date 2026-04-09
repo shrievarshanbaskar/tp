@@ -74,6 +74,10 @@ public class TagCommand extends Command {
 
         // ── Phase 1: Target Retrieval ──
         List<Person> lastShownList = model.getFilteredPersonList();
+        if (lastShownList.isEmpty()) {
+            throw new CommandException(Messages.MESSAGE_EMPTY_LIST);
+        }
+
         List<Person> personsToEdit = new ArrayList<>();
         for (Index index : indices) {
             if (index.getZeroBased() >= lastShownList.size()) {

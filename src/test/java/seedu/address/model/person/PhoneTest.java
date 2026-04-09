@@ -88,11 +88,11 @@ public class PhoneTest {
     }
 
     @Test
-    public void isValidPhone_allZeros_returnsFalse() {
-        assertFalse(Phone.isValidPhone("000"));
-        assertFalse(Phone.isValidPhone("0000000"));
-        assertFalse(Phone.isValidPhone("+000"));
-        assertFalse(Phone.isValidPhone("+00-0")); // separators don't save all-zero
+    public void isValidPhone_allZeros_returnsTrue() {
+        assertTrue(Phone.isValidPhone("000"));
+        assertTrue(Phone.isValidPhone("0000000"));
+        assertTrue(Phone.isValidPhone("+000"));
+        assertTrue(Phone.isValidPhone("+00-0"));
     }
 
     @Test

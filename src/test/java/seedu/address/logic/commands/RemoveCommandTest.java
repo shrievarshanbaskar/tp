@@ -42,6 +42,14 @@ public class RemoveCommandTest {
     }
 
     @Test
+    public void execute_emptyList_failure() {
+        Model emptyModel = new ModelManager();
+        RemoveCommand removeCommand = new RemoveCommand(INDEX_FIRST_PERSON);
+
+        assertCommandFailure(removeCommand, emptyModel, Messages.MESSAGE_EMPTY_LIST);
+    }
+
+    @Test
     public void execute_invalidIndexUnfilteredList_throwsCommandException() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
         RemoveCommand removeCommand = new RemoveCommand(outOfBoundIndex);
@@ -64,7 +72,6 @@ public class RemoveCommandTest {
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.deletePerson(personToRemove);
-        showNoPerson(expectedModel);
 
         assertCommandSuccess(removeCommand, model, expectedMessage, expectedModel);
     }

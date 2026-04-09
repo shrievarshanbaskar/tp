@@ -66,6 +66,8 @@ public class CandidateDetailPanel extends UiPart<Region> {
         renderTags(person);
         renderNotes(person.getNotes());
         renderRejections(person.getRejectionReasons());
+
+        detailScrollPane.setVvalue(0);
     }
 
     /**
@@ -89,14 +91,17 @@ public class CandidateDetailPanel extends UiPart<Region> {
         detailName.setText(person.getName().fullName);
         detailPhone.setText("Phone: " + person.getPhone().value);
         detailEmail.setText("Email: " + person.getEmail().value);
-        String addressText = person.getAddress().isEmpty() ? "Not provided" : person.getAddress().value;
-        detailAddress.setText("Address: " + addressText);
+        detailAddress.setText("Address: " + person.getAddress().value);
         detailPriority.setText("Priority: " + (person.getPriority().isPriority() ? "\u2b50 High" : "Normal"));
         detailDateAdded.setText("Added: " + person.getDateAdded().getDisplayFormat());
     }
 
     private void renderTags(Person person) {
         detailTags.getChildren().clear();
+        if (person.getTags().isEmpty()) {
+            detailTags.getChildren().add(makeFieldLabel("No tags recorded."));
+            return;
+        }
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> {

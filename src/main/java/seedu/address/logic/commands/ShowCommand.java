@@ -37,6 +37,10 @@ public class ShowCommand extends Command {
         requireNonNull(model);
         List<Person> lastShownList = model.getFilteredPersonList();
 
+        if (lastShownList.isEmpty()) {
+            throw new CommandException(Messages.MESSAGE_EMPTY_LIST);
+        }
+
         if (targetIndex.getZeroBased() >= lastShownList.size()) {
             throw new CommandException(String.format(Messages.MESSAGE_INDEX_OUT_OF_RANGE,
                     targetIndex.getOneBased(), lastShownList.size(), lastShownList.size()));

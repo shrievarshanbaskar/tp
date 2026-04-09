@@ -46,6 +46,9 @@ public class NameTest {
         assertTrue(Name.isValidName("John@Doe")); // @ symbol
         assertTrue(Name.isValidName("Doe, John")); // comma
         assertTrue(Name.isValidName("Smith, Jane @ HR")); // comma and @
+        assertTrue(Name.isValidName("John `Johnny` Doe")); // backticks
+        assertTrue(Name.isValidName("John (Johnny) Doe")); // parenthesis
+        assertTrue(Name.isValidName("Jean’Luc")); // curved apostrophe
         assertTrue(Name.isValidName("a".repeat(100))); // exactly 100 chars
     }
 

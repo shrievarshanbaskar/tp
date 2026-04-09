@@ -123,6 +123,7 @@ The data file `[JAR file location]/data/talently.json` is in JSON format. While 
 </div>
 * **Input normalization:** Names have extra whitespace collapsed (e.g., `John    Doe` becomes `John Doe`). Emails are automatically lowercased (e.g., `John@Gmail.COM` becomes `john@gmail.com`). Phone numbers are compared by their digits only — the `+` prefix, spaces, hyphens, and parentheses are stripped before comparing, so `+65-9123-4567`, `+6591234567`, and `6591234567` are all treated as the same number for duplicate detection.
 * **Providing duplicate prefixes** (e.g., `n/Alice n/Bob`) in a single command is not allowed and will be rejected with an error.
+* **Display resets:** Any filtered or sorted list order is reverted to the default alphabetical view whenever a command that changes candidate data (like `add`, `edit`, `remove`, `tag`, etc.) is executed.
 
 </div>
 
@@ -130,10 +131,10 @@ The data file `[JAR file location]/data/talently.json` is in JSON format. While 
 
 | Field | Prefix | Rules |
 |---|---|---|
-| NAME | `n/` | Letters, spaces, hyphens `-`, apostrophes `'`, periods `.`, slashes `/`, commas `,`, and `@`. Must start with a letter. No digits. Max 100 characters. |
-| PHONE | `p/` | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). All-zero numbers not allowed. Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+1 (415) 555-2671`. |
+| NAME | `n/` | Letters, spaces, hyphens `-`, apostrophes (both `'` and `’`), periods `.`, slashes `/`, commas `,`, `@` symbols, backticks (`` ` ``), and parentheses `()`. Must start with a letter. No digits. Max 100 characters. |
+| PHONE | `p/` | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). All-zero formatting (e.g. `000`) is allowed. Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+1 (415) 555-2671`. |
 | EMAIL | `e/` | `local@domain` format. Max 254 characters. Auto-lowercased on save. |
-| ADDRESS | `a/` | Optional. Any non-empty printable ASCII text. Max 100 characters. If omitted, recorded as "Not provided". |
+| ADDRESS | `a/` | Required. Any non-empty printable ASCII text. Max 100 characters. |
 | PRIORITY | `pr/` | `yes` (high priority) or `no` (normal). Case-insensitive. Default: `no`. |
 | TAG | `at/` / `dt/` | Letters, digits, `. + - _ ( ) @ # ! ? '`. No spaces. 1–30 characters. Case-insensitive. |
 | NOTE HEADING | `h/` | Optional. Printable ASCII only. Max 50 characters. Defaults to `General Note`. Max 50 notes per candidate. |
@@ -142,11 +143,15 @@ The data file `[JAR file location]/data/talently.json` is in JSON format. While 
 
 All text fields accept **printable ASCII characters only** — non-ASCII input (accented letters, emojis, CJK characters) is rejected. See [Environment assumptions](#environment-assumptions) for details.
 
+<div markdown="span" class="alert alert-info">
+:information_source: **Data Verification:** Talently does **not** verify whether emails, phone numbers, or names exist in the real world. This application acts purely as a local record management system (real-world validation will be part of a future enhancement). Duplicate people (same names) can be entered twice if they have different phone numbers or emails, but Talently is not responsible for reconciling these as there's no way of knowing if they represent real duplicate contacts.
+</div>
+
 ---
 
 ### Viewing help : `help`
 
-Opens a help window with a link to this User Guide.
+Opens a help window with a link to this User Guide. Note that the help window always opens with a default window size, even if you resized it previously.
 
 Format: `help`
 
@@ -158,16 +163,16 @@ Format: `help`
 
 Adds a new candidate to Talently.
 
-Format: `add n/NAME p/PHONE e/EMAIL [a/ADDRESS] [pr/PRIORITY]`
+Format: `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]`
 
 **Parameters:**
 
 | Parameter | Prefix | Required | Rules |
 |---|---|---|---|
-| NAME | `n/` | Yes | Letters, spaces, hyphens `-`, apostrophes `'`, periods `.`, slashes `/`, commas `,`, and `@`. Must start with a letter. No digits. Max 100 characters. |
-| PHONE | `p/` | Yes | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). All-zero numbers (e.g. `000`) are not allowed. Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+62 812 5555 1234`, `+1 (415) 555-2671`. |
+| NAME | `n/` | Yes | Letters, spaces, hyphens `-`, apostrophes (both `'` and `’`), periods `.`, slashes `/`, commas `,`, `@` symbols, backticks (`` ` ``), and parentheses `()`. Must start with a letter. No digits. Max 100 characters. |
+| PHONE | `p/` | Yes | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). All-zero formatting (e.g. `000`) is allowed. Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+62 812 5555 1234`, `+1 (415) 555-2671`. |
 | EMAIL | `e/` | Yes | `local@domain` format. Max 254 characters. |
-| ADDRESS | `a/` | No | Any non-empty text. Max 100 characters. If omitted, address is recorded as "Not provided". |
+| ADDRESS | `a/` | Yes | Any non-empty text. Max 100 characters. |
 | PRIORITY | `pr/` | No | `yes` (high) or `no` (normal). Default: `no`. |
 
 <div markdown="span" class="alert alert-info">
@@ -179,7 +184,7 @@ Format: `add n/NAME p/PHONE e/EMAIL [a/ADDRESS] [pr/PRIORITY]`
 </div>
 
 <div markdown="span" class="alert alert-primary">
-:bulb: **Tip:** Use `pr/yes` to flag high-priority candidates. Surface them later with `sort pr o/asc`.
+:bulb: **Tip:** Use `pr/yes` to flag high-priority candidates. Surface them later with `sort pr o/desc`.
 </div>
 
 <div markdown="span" class="alert alert-warning">
@@ -196,12 +201,13 @@ Examples:
 
 ### Listing all candidates : `list`
 
-Displays every candidate, sorted alphabetically by name.
+Displays every candidate, sorted alphabetically by name. Running `list` clears any active sorting or filtering and restores the default alphabetical order.
 
 Format: `list`
 
 * Shows total candidate count.
 * If Talently is empty, a prompt appears to add candidates.
+* Restores the default alphabetical listing, removing any previous `sort` or `find` results.
 
 <p align="center"><img src="images/list%20command.png" alt="Expected result after running the list command" width="730"/></p>
 
@@ -428,13 +434,13 @@ Sorts all candidates by their priority flag.
 
 Format: `sort pr o/ORDER`
 
-* `ORDER`: `asc` (high-priority first) or `desc` (high-priority last). Case-insensitive (`ASC`, `Desc`, etc. are accepted).
-* Secondary sort: by date added (newest first), then alphabetically by name.
+* `ORDER`: `asc` (low-priority first) or `desc` (high-priority first). Case-insensitive (`ASC`, `Desc`, etc. are accepted).
+* Secondary sort: by date and time added (newest first), then alphabetically by name.
 * After sorting, any active filter is cleared and all candidates are displayed in the new order.
 * This action is undoable with `undo`.
 
 <div markdown="span" class="alert alert-primary">
-:bulb: **Tip:** Use `sort pr o/asc` to immediately surface your most important candidates.
+:bulb: **Tip:** Use `sort pr o/desc` to immediately surface your most important candidates.
 </div>
 
 <div markdown="span" class="alert alert-warning">
@@ -442,8 +448,8 @@ Format: `sort pr o/ORDER`
 </div>
 
 Examples:
-* `sort pr o/asc` — High-priority candidates first (note: for priority, ascending order puts high values first).
-* `sort pr o/desc` — High-priority candidates last.
+* `sort pr o/asc` — Low-priority candidates first.
+* `sort pr o/desc` — High-priority candidates first.
 
 <p align="center"><img src="images/sort%20pr%20command.png" alt="Expected result after running sort pr" width="730"/></p>
 
@@ -573,7 +579,7 @@ Examples:
 
 ### Undoing the last modifying command : `undo`
 
-Reverts Talently to the state before the most recent data-changing command.
+Reverts Talently to the state before the most recent data-changing command. The undo functionality operates like a **stack**, meaning it remembers the exact sequence of your actions. When you type `undo`, it reverts the most recent action placed on the top of the stack. If you type `undo` again, it reverts the action before that, stepping backwards through your history.
 
 Format: `undo`
 
@@ -589,7 +595,7 @@ Examples:
 
 ### Redoing the last undone command : `redo`
 
-Re-applies the most recently undone command.
+Re-applies the most recently undone data-changing command. This applies to the same set of commands as `undo`: `add`, `edit`, `remove`, `addreject`, `editreject`, `deletereject`, `tag`, `tagpool`, `addnote`, `editnote`, `deletenote`, `sort`, and `clear`.
 
 Format: `redo`
 
@@ -621,7 +627,7 @@ Format: `clear`
 
 Closes Talently.
 
-Format: `exit`
+Format: `exit` (Alternatively, you can use `Cmd + Q` on macOS or `Ctrl + Q` on Windows/Linux)
 
 ---
 
@@ -685,7 +691,7 @@ A: Save files from older versions that contain a `status` field are loaded norma
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME p/PHONE e/EMAIL [a/ADDRESS] [pr/PRIORITY]` <br> e.g. `add n/James Ho p/22224444 e/jamesho@example.com a/123 Clementi Rd`
+**Add** | `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]` <br> e.g. `add n/James Ho p/22224444 e/jamesho@example.com a/123 Clementi Rd`
 **Clear** | `clear`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]`<br> e.g. `edit 2 n/James Lee e/jameslee@example.com`
 **Exit** | `exit`
@@ -703,7 +709,7 @@ Action | Format, Examples
 **Remove** | `remove INDEX`<br> e.g. `remove 3`
 **Show** | `show INDEX`<br> e.g. `show 1`
 **Sort (date)** | `sort date o/ORDER`<br> e.g. `sort date o/desc`
-**Sort (priority)** | `sort pr o/ORDER`<br> e.g. `sort pr o/asc`
+**Sort (priority)** | `sort pr o/ORDER`<br> e.g. `sort pr o/desc`
 **Tag** | `tag INDEX[,INDEX]... [at/TAG]... [dt/TAG]...`<br> e.g. `tag 1,2 at/Shortlisted dt/Applied`
 **Tag Pool** | `tagpool [at/TAG]... [dt/TAG]...`<br> e.g. `tagpool` (list all), `tagpool at/Shortlisted dt/Rejected`
 **Undo** | `undo`
@@ -723,7 +729,7 @@ Action | Format, Examples
 | **Tag pool** | The master registry of tags managed with `tagpool`. Only tags in the pool can be assigned to candidates. |
 | **Note** | A timestamped, free-form entry attached to a candidate, with optional heading. Notes are ordered and never overwritten by new additions. |
 | **Rejection reason** | A formal, audit-style record of why a candidate was rejected, added with `addreject`. Each candidate maintains a numbered history; the red badge on a candidate card shows the total count. |
-| **Priority** | A boolean flag (`yes` / `no`) that marks a candidate as high-priority. Surfaced by `sort pr o/asc`. |
+| **Priority** | A boolean flag (`yes` / `no`) that marks a candidate as high-priority. Surfaced by `sort pr o/desc`. |
 | **Detail panel** | The right-side panel opened by `show INDEX`. Displays all candidate information including notes and full rejection history. |
 | **Command box** | The text input at the top of the main window where you type commands. |
 | **Result display** | The area directly below the command box that shows feedback and error messages after each command. |

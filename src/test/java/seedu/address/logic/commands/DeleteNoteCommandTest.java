@@ -36,6 +36,14 @@ public class DeleteNoteCommandTest {
     private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
     @Test
+    public void execute_emptyList_failure() {
+        Model emptyModel = new ModelManager();
+        DeleteNoteCommand command = new DeleteNoteCommand(INDEX_FIRST_PERSON, Index.fromOneBased(1));
+
+        assertCommandFailure(command, emptyModel, seedu.address.logic.Messages.MESSAGE_EMPTY_LIST);
+    }
+
+    @Test
     public void execute_validIndices_success() {
         // Add a note to the first person first
         Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
@@ -133,7 +141,6 @@ public class DeleteNoteCommandTest {
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.setPerson(personWithNote, expectedPerson);
-        showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
 
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
     }

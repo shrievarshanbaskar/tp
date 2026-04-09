@@ -36,6 +36,14 @@ public class NoteCommandTest {
     private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
     @Test
+    public void execute_emptyList_failure() {
+        Model emptyModel = new ModelManager();
+        NoteCommand noteCommand = new NoteCommand(INDEX_FIRST_PERSON, VALID_NOTE);
+
+        assertCommandFailure(noteCommand, emptyModel, seedu.address.logic.Messages.MESSAGE_EMPTY_LIST);
+    }
+
+    @Test
     public void execute_validIndexUnfilteredList_success() {
         Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         NoteCommand noteCommand = new NoteCommand(INDEX_FIRST_PERSON, VALID_NOTE);
@@ -79,7 +87,6 @@ public class NoteCommandTest {
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.setPerson(personToEdit, editedPerson);
-        showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
 
         assertCommandSuccess(noteCommand, model, expectedMessage, expectedModel);
     }

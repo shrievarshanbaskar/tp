@@ -14,11 +14,10 @@ public class Phone {
             "Error: Invalid phone number. Phone numbers may start with an optional '+', "
             + "followed by digits, spaces, hyphens '-', or parentheses '()' as separators "
             + "(e.g. +65-9123-4567, +1 (415) 555-2671, 91234567). "
-            + "Must contain 3 to 15 digits (separators excluded). "
-            + "All-zero numbers (e.g. 000) are not allowed.";
+            + "Must contain 3 to 15 digits (separators excluded).";
     /**
      * Matches an optional leading '+', then a digit, then any mix of digits/spaces/hyphens/parentheses.
-     * Digit-count and all-zero checks are performed separately in {@link #isValidPhone(String)}.
+     * Digit-count check is performed separately in {@link #isValidPhone(String)}.
      */
     public static final String VALIDATION_REGEX = "\\+?\\d[\\d ()\\-]*";
     public final String value;
@@ -38,7 +37,7 @@ public class Phone {
     /**
      * Returns true if a given string is a valid phone number.
      * Accepts international formats with '+', spaces, hyphens, and parentheses as separators.
-     * Rejects numbers with fewer than 3 or more than 15 digits, and all-zero numbers.
+     * Rejects numbers with fewer than 3 or more than 15 digits.
      */
     public static boolean isValidPhone(String test) {
         if (!test.matches(VALIDATION_REGEX)) {
@@ -48,7 +47,7 @@ public class Phone {
         if (digitsOnly.length() < 3 || digitsOnly.length() > 15) {
             return false;
         }
-        return !digitsOnly.matches("0+");
+        return true;
     }
 
     @Override

@@ -103,7 +103,9 @@ public class TagPoolCommand extends Command {
         for (int i = 0; i < toAdd.size(); i++) {
             for (int j = i + 1; j < toAdd.size(); j++) {
                 if (toAdd.get(i).equals(toAdd.get(j))) {
-                    throw new CommandException(String.format(MESSAGE_DUPLICATE_ADD, toAdd.get(j).tagName));
+                    throw new CommandException(String.format(
+                            "Error: Duplicate tag '%s' in your add list. "
+                            + "Each tag can only appear once per command.", toAdd.get(j).tagName));
                 }
             }
         }

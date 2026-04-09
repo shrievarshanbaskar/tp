@@ -11,16 +11,16 @@ public class Name {
 
     public static final String MESSAGE_CONSTRAINTS =
             "Error: Invalid name. Name must contain only letters, spaces, hyphens, "
-            + "apostrophes, periods, slashes, commas, and @ symbols, "
-            + "and must be between 1 and 100 characters.";
+            + "apostrophes (both ' and ’), periods, slashes, commas, @ symbols, "
+            + "backticks (`), and parentheses, and must be between 1 and 100 characters.";
 
     public static final int MAX_LENGTH = 100;
 
     /*
-     * Allows alphabetical characters, spaces, hyphens, apostrophes, periods, slashes,
-     * commas, and @ symbols. Must start with a letter.
+     * Allows alphabetical characters, spaces, hyphens, apostrophes (both ' and ’), periods, slashes,
+     * commas, @ symbols, backticks (`), and parentheses (). Must start with a letter.
      */
-    public static final String VALIDATION_REGEX = "[A-Za-z][A-Za-z ,@\\-'./]*";
+    public static final String VALIDATION_REGEX = "[A-Za-z][A-Za-z ,@\\-'./()`’]*";
 
     public final String fullName;
 

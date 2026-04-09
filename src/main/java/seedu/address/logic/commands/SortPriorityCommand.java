@@ -25,9 +25,9 @@ public class SortPriorityCommand extends Command {
             + "Example: " + COMMAND_WORD + " pr " + PREFIX_ORDER + "desc";
 
     public static final String MESSAGE_SUCCESS_ASC =
-            "Sorted all candidates by priority status (high-priority first).";
+            "Sorted all candidates by priority status (low-priority first).";
     public static final String MESSAGE_SUCCESS_DESC =
-            "Sorted all candidates by priority status (high-priority last).";
+            "Sorted all candidates by priority status (high-priority first).";
     public static final String MESSAGE_EMPTY_ADDRESS_BOOK = "The address book is currently empty. Nothing to sort.";
 
     private static final Logger logger = LogsCenter.getLogger(SortPriorityCommand.class);
@@ -37,8 +37,8 @@ public class SortPriorityCommand extends Command {
     /**
      * Creates a SortPriorityCommand.
      *
-     * @param isAscending if true, high-priority candidates appear first (asc);
-     *                    if false, high-priority candidates appear last (desc).
+     * @param isAscending if true, low-priority candidates appear first (asc);
+     *                    if false, high-priority candidates appear first (desc).
      */
     public SortPriorityCommand(boolean isAscending) {
         this.isAscending = isAscending;
@@ -63,20 +63,20 @@ public class SortPriorityCommand extends Command {
 
     /**
      * Builds the sort comparator for the given order direction.
-     * Priority candidates (isPriority=true) sort to position 0 in asc order
-     * and position 1 in desc order. Secondary sort is by Date Added descending,
-     * then by Name ascending.
+     * In ascending order, low-priority candidates (isPriority=false) come first.
+     * In descending order, high-priority candidates (isPriority=true) come first.
+     * Secondary sort is by Date Added descending, then by Name ascending.
      *
-     * @param ascending true for high-priority first, false for high-priority last.
+     * @param ascending true for low-priority first, false for high-priority first.
      * @return the composed {@code Comparator<Person>}.
      */
     private static Comparator<Person> buildComparator(boolean ascending) {
         if (ascending) {
-            return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 0 : 1)
+            return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 1 : 0)
                     .thenComparing(Person::getDateAdded, Comparator.reverseOrder())
                     .thenComparing(p -> p.getName().fullName);
         }
-        return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 1 : 0)
+        return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 0 : 1)
                 .thenComparing(Person::getDateAdded, Comparator.reverseOrder())
                 .thenComparing(p -> p.getName().fullName);
     }

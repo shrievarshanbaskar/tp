@@ -36,7 +36,7 @@ public class SortPriorityCommandTest {
         String expectedMessage = SortPriorityCommand.MESSAGE_SUCCESS_ASC;
 
         expectedModel.sortFilteredPersonList(
-                java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 0 : 1)
+                java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 1 : 0)
                         .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
                         .thenComparing(p -> p.getName().fullName)
         );
@@ -52,7 +52,7 @@ public class SortPriorityCommandTest {
         String expectedMessage = SortPriorityCommand.MESSAGE_SUCCESS_DESC;
 
         expectedModel.sortFilteredPersonList(
-                java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 1 : 0)
+                java.util.Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 0 : 1)
                         .thenComparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
                         .thenComparing(p -> p.getName().fullName)
         );
@@ -101,18 +101,19 @@ public class SortPriorityCommandTest {
         SortPriorityCommand sortPriorityCommand = new SortPriorityCommand(true);
         sortPriorityCommand.execute(customModel);
 
-        // Zack has newer date — high priority, newer date first
-        assertEquals("Zack", customModel.getFilteredPersonList().get(0).getName().fullName);
+        // asc = low-priority first, so Dan (no priority) should come first
+        assertEquals("Dan", customModel.getFilteredPersonList().get(0).getName().fullName);
+        // Then high priority sorted by date desc then name
+        // Zack has newer date — high priority
+        assertEquals("Zack", customModel.getFilteredPersonList().get(1).getName().fullName);
         // Alice and Charlie same date, same priority — alphabetical
-        assertEquals("Alice", customModel.getFilteredPersonList().get(1).getName().fullName);
-        assertEquals("Charlie", customModel.getFilteredPersonList().get(2).getName().fullName);
-        // Dan has no priority — appears last
-        assertEquals("Dan", customModel.getFilteredPersonList().get(3).getName().fullName);
+        assertEquals("Alice", customModel.getFilteredPersonList().get(2).getName().fullName);
+        assertEquals("Charlie", customModel.getFilteredPersonList().get(3).getName().fullName);
     }
 
     @Test
-    public void execute_sortDescendingSecondary_noPriorityFirst() {
-        // desc order: non-priority first, priority last
+    public void execute_sortDescendingSecondary_highPriorityFirst() {
+        // desc order: high priority first, non-priority last
         Person aPerson = new PersonBuilder().withName("Alice").withPhone("11111111")
                 .withEmail("a@a.com").withDateAdded("01/01/2024 10:00 +0800").withPriority("yes").build();
         Person bPerson = new PersonBuilder().withName("Bob").withPhone("22222222")
@@ -128,12 +129,12 @@ public class SortPriorityCommandTest {
         SortPriorityCommand sortPriorityCommand = new SortPriorityCommand(false);
         sortPriorityCommand.execute(customModel);
 
-        // Non-priority candidates come first in descending mode
+        // High priority candidate comes first in descending mode
+        assertEquals("Alice", customModel.getFilteredPersonList().get(0).getName().fullName);
+        // Non-priority candidates come after
         // Bob has newer date among non-priority
-        assertEquals("Bob", customModel.getFilteredPersonList().get(0).getName().fullName);
-        assertEquals("Carol", customModel.getFilteredPersonList().get(1).getName().fullName);
-        // Alice is high priority — last in descending
-        assertEquals("Alice", customModel.getFilteredPersonList().get(2).getName().fullName);
+        assertEquals("Bob", customModel.getFilteredPersonList().get(1).getName().fullName);
+        assertEquals("Carol", customModel.getFilteredPersonList().get(2).getName().fullName);
     }
 
     @Test

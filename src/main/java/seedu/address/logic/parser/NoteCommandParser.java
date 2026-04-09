@@ -18,10 +18,10 @@ import seedu.address.model.person.Note;
 public class NoteCommandParser implements Parser<NoteCommand> {
 
     public static final String MESSAGE_INVALID_FORMAT =
-            "Error: Note content cannot be empty. Usage: addnote INDEX n/CONTENT [h/HEADING]";
+            "Error: Note content cannot be empty. Usage: addnote INDEX c/CONTENT [h/HEADING]";
     public static final String MESSAGE_INVALID_INDEX =
             "Error: Invalid index. Please provide a valid positive integer.\n"
-            + "Usage: addnote INDEX n/CONTENT [h/HEADING]";
+                    + "Usage: addnote INDEX c/CONTENT [h/HEADING]";
 
     private static final Logger logger = LogsCenter.getLogger(NoteCommandParser.class);
     private static final String DEFAULT_HEADING = "General Note";
@@ -41,6 +41,11 @@ public class NoteCommandParser implements Parser<NoteCommand> {
         try {
             index = ParserUtil.parseIndex(argMultimap.getPreamble());
         } catch (ParseException pe) {
+            String preamble = argMultimap.getPreamble().trim();
+            if (preamble.matches("^\\d+\\s+.+")) {
+                throw new ParseException("Invalid command format. Did you forget a prefix? (e.g. c/) \n"
+                        + "Usage: addnote INDEX c/CONTENT [h/HEADING]");
+            }
             throw new ParseException(MESSAGE_INVALID_INDEX, pe);
         }
 
@@ -64,11 +69,17 @@ public class NoteCommandParser implements Parser<NoteCommand> {
             throw new ParseException(Note.MESSAGE_CONTENT_CONSTRAINTS);
         }
 
-        String heading = argMultimap.getValue(PREFIX_NOTE_HEADING)
-                .map(h -> h.replaceAll("\\r\\n|\\r|\\n", " "))
-                .map(String::trim)
-                .filter(h -> !h.isEmpty())
-                .orElse(DEFAULT_HEADING);
+        String heading;
+        if (argMultimap.getValue(PREFIX_NOTE_HEADING).isPresent()) {
+            heading = argMultimap.getValue(PREFIX_NOTE_HEADING).get()
+                    .replaceAll("\\r\\n|\\r|\\n", " ").trim();
+            if (heading.isEmpty()) {
+                throw new ParseException("Error: Note heading cannot be blank. "
+                        + "Provide a heading or omit the h/ prefix entirely.");
+            }
+        } else {
+            heading = DEFAULT_HEADING;
+        }
 
         if (heading.length() > Note.MAX_HEADING_LENGTH) {
             throw new ParseException(String.format(

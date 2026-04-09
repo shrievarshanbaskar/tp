@@ -15,9 +15,9 @@ import seedu.address.model.person.Note;
 public class EditNoteCommandParser implements Parser<EditNoteCommand> {
 
     public static final String MESSAGE_INVALID_FORMAT =
-            "Error: Invalid format. Usage: editnote INDEX NOTE_INDEX [n/CONTENT] [h/HEADING]\n"
+            "Error: Invalid format. Usage: editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]\n"
             + "Both INDEX and NOTE_INDEX must be positive integers. "
-            + "At least one of n/CONTENT or h/HEADING must be provided.";
+            + "At least one of c/CONTENT or h/HEADING must be provided.";
 
     /**
      * Parses the given {@code String} of arguments in the context of the EditNoteCommand
@@ -70,7 +70,7 @@ public class EditNoteCommandParser implements Parser<EditNoteCommand> {
                     .replaceAll("\\r\\n|\\r|\\n", " ").trim();
             if (newContent.isEmpty()) {
                 throw new ParseException("Error: Note content cannot be blank. "
-                        + "Usage: editnote INDEX NOTE_INDEX [n/CONTENT] [h/HEADING]");
+                        + "Usage: editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]");
             }
             if (newContent.length() > Note.MAX_CONTENT_LENGTH) {
                 throw new ParseException(String.format(
@@ -87,7 +87,7 @@ public class EditNoteCommandParser implements Parser<EditNoteCommand> {
                     .replaceAll("\\r\\n|\\r|\\n", " ").trim();
             if (newHeading.isEmpty()) {
                 throw new ParseException("Error: Note heading cannot be blank. "
-                        + "Usage: editnote INDEX NOTE_INDEX [n/CONTENT] [h/HEADING]");
+                        + "Usage: editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]");
             }
             if (newHeading.length() > Note.MAX_HEADING_LENGTH) {
                 throw new ParseException(String.format(

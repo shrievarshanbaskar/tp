@@ -12,12 +12,17 @@ public class ClearCommand extends Command {
 
     public static final String COMMAND_WORD = "clear";
     public static final String MESSAGE_SUCCESS = "All candidates and tags have been cleared!";
+    public static final String MESSAGE_CONFIRMATION =
+            "Are you sure you want to clear all candidates and tags? "
+            + "This action can be undone with 'undo'.";
 
 
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
-        model.setAddressBook(new AddressBook());
-        return new CommandResult(MESSAGE_SUCCESS);
+        return new CommandResult(MESSAGE_CONFIRMATION, () -> {
+            model.setAddressBook(new AddressBook());
+            return new CommandResult(MESSAGE_SUCCESS);
+        });
     }
 }
