@@ -27,18 +27,26 @@ public class PhoneTest {
         // invalid phone numbers
         assertFalse(Phone.isValidPhone("")); // empty string
         assertFalse(Phone.isValidPhone(" ")); // spaces only
-        assertFalse(Phone.isValidPhone("91")); // less than 3 numbers
+        assertFalse(Phone.isValidPhone("91")); // less than 3 digits
         assertFalse(Phone.isValidPhone("phone")); // non-numeric
         assertFalse(Phone.isValidPhone("9011p041")); // alphabets within digits
-        assertFalse(Phone.isValidPhone("9312 1534")); // spaces within digits
         assertFalse(Phone.isValidPhone("1234567890123456")); // exceeds 15 digits
+        assertFalse(Phone.isValidPhone("-91234567")); // separator before first digit
+        assertFalse(Phone.isValidPhone("(91234567")); // leading '(' rejected — must start with digit
+        assertFalse(Phone.isValidPhone("+62-812-0000000000000")); // too many digits
 
-        // valid phone numbers
-        assertTrue(Phone.isValidPhone("911")); // exactly 3 numbers
+        // valid phone numbers — plain digits
+        assertTrue(Phone.isValidPhone("911")); // exactly 3 digits
         assertTrue(Phone.isValidPhone("93121534"));
         assertTrue(Phone.isValidPhone("124293842033123")); // exactly 15 digits
-        assertTrue(Phone.isValidPhone("+6591234567")); // with + prefix
-        assertTrue(Phone.isValidPhone("+441234567890")); // international number
+        assertTrue(Phone.isValidPhone("+6591234567")); // with + prefix, no separators
+
+        // valid phone numbers — international formats with separators
+        assertTrue(Phone.isValidPhone("+65-9123-4567")); // hyphens
+        assertTrue(Phone.isValidPhone("+62 812 5555 1234")); // spaces (12 digits)
+        assertTrue(Phone.isValidPhone("+1 (415) 555-2671")); // US format with parentheses
+        assertTrue(Phone.isValidPhone("9312 1534")); // spaces within local number
+        assertTrue(Phone.isValidPhone("+44 20 7946 0958")); // UK number with spaces
     }
 
     @Test
@@ -72,6 +80,11 @@ public class PhoneTest {
 
         // different numbers, one with + prefix -> not equal
         assertFalse(phoneWithPlus.equals(new Phone("+6599999999")));
+
+        // formatted variants normalise to the same digits -> equal
+        assertTrue(phoneWithPlus.equals(new Phone("+65-9123-4567")));
+        assertTrue(phoneWithPlus.equals(new Phone("+65 9123 4567")));
+        assertTrue(new Phone("+1 (415) 555-2671").equals(new Phone("+14155552671")));
     }
 
     @Test
@@ -79,12 +92,15 @@ public class PhoneTest {
         assertFalse(Phone.isValidPhone("000"));
         assertFalse(Phone.isValidPhone("0000000"));
         assertFalse(Phone.isValidPhone("+000"));
+        assertFalse(Phone.isValidPhone("+00-0")); // separators don't save all-zero
     }
 
     @Test
     public void hashCode_normalizedPhones_sameHashCode() {
-        Phone phoneWithPlus = new Phone("+999");
-        Phone phoneWithoutPlus = new Phone("999");
-        assertTrue(phoneWithPlus.hashCode() == phoneWithoutPlus.hashCode());
+        // plain vs + prefix
+        assertTrue(new Phone("+999").hashCode() == new Phone("999").hashCode());
+        // formatted variants
+        assertTrue(new Phone("+6591234567").hashCode() == new Phone("+65-9123-4567").hashCode());
+        assertTrue(new Phone("+6591234567").hashCode() == new Phone("+65 9123 4567").hashCode());
     }
 }

@@ -119,6 +119,11 @@ public class AddCommandParserTest {
         Person expectedPerson = new PersonBuilder(AMY).withTags().build();
         assertParseSuccess(parser, NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY + ADDRESS_DESC_AMY,
                 new AddCommand(expectedPerson));
+
+        // address is optional — omitting a/ produces a person with Address.EMPTY
+        Person expectedPersonNoAddress = new PersonBuilder(AMY).withTags().withAddress("").build();
+        assertParseSuccess(parser, NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY,
+                new AddCommand(expectedPersonNoAddress));
     }
 
     @Test
@@ -135,9 +140,7 @@ public class AddCommandParserTest {
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + ADDRESS_DESC_BOB,
                 AddCommand.MESSAGE_MISSING_EMAIL);
 
-        // missing address prefix
-        assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB,
-                AddCommand.MESSAGE_MISSING_ADDRESS);
+        // address is optional — missing a/ alone is now valid (tested above)
 
         // all prefixes missing (preamble triggers general error)
         assertParseFailure(parser, VALID_NAME_BOB + VALID_PHONE_BOB + VALID_EMAIL_BOB + VALID_ADDRESS_BOB,

@@ -24,7 +24,7 @@ public class AddCommand extends Command {
             + PREFIX_NAME + "NAME "
             + PREFIX_PHONE + "PHONE "
             + PREFIX_EMAIL + "EMAIL "
-            + PREFIX_ADDRESS + "ADDRESS "
+            + "[" + PREFIX_ADDRESS + "ADDRESS] "
             + "[" + seedu.address.logic.parser.CliSyntax.PREFIX_PRIORITY + "PRIORITY]\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "John Doe "
@@ -37,15 +37,13 @@ public class AddCommand extends Command {
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book";
 
     public static final String MESSAGE_MISSING_NAME =
-            "Error: Name is required. Usage: add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]";
+            "Error: Name is required. Usage: add n/NAME p/PHONE e/EMAIL [a/ADDRESS] [pr/PRIORITY]";
     public static final String MESSAGE_MISSING_PHONE =
-            "Error: Phone number is required. Usage: add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]";
+            "Error: Phone number and email are required. Usage: add n/NAME p/PHONE e/EMAIL [a/ADDRESS] [pr/PRIORITY]";
     public static final String MESSAGE_MISSING_EMAIL =
-            "Error: Email is required. Usage: add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]";
-    public static final String MESSAGE_MISSING_ADDRESS =
-            "Error: Address is required. Usage: add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]";
+            "Error: Phone number and email are required. Usage: add n/NAME p/PHONE e/EMAIL [a/ADDRESS] [pr/PRIORITY]";
     public static final String MESSAGE_MISSING_ALL =
-            "Error: Missing required parameters. Usage: add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]";
+            "Error: Missing required parameters. Usage: add n/NAME p/PHONE e/EMAIL [a/ADDRESS] [pr/PRIORITY]";
 
     private final Person toAdd;
 

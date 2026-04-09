@@ -85,9 +85,10 @@ public class PersonBuilder {
 
     /**
      * Sets the {@code Address} of the {@code Person} that we are building.
+     * Pass an empty string {@code ""} to use {@link Address#EMPTY} (no address provided).
      */
     public PersonBuilder withAddress(String address) {
-        this.address = new Address(address);
+        this.address = address.isEmpty() ? Address.EMPTY : new Address(address);
         return this;
     }
 

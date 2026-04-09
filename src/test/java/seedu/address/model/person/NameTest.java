@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -30,7 +31,7 @@ public class NameTest {
         assertFalse(Name.isValidName("^")); // only non-alphanumeric characters
         assertFalse(Name.isValidName("peter*")); // contains special characters
         assertFalse(Name.isValidName("John123")); // contains digits
-        assertFalse(Name.isValidName("John@Doe")); // contains @
+        assertFalse(Name.isValidName("@JohnDoe")); // must start with a letter, not @
         assertFalse(Name.isValidName("12345")); // numbers only
         assertFalse(Name.isValidName("a".repeat(101))); // exceeds 100 chars
 
@@ -42,7 +43,16 @@ public class NameTest {
         assertTrue(Name.isValidName("Jean-Luc")); // hyphen
         assertTrue(Name.isValidName("S. Kumar")); // period
         assertTrue(Name.isValidName("Ravi S/O Muthu")); // slash
+        assertTrue(Name.isValidName("John@Doe")); // @ symbol
+        assertTrue(Name.isValidName("Doe, John")); // comma
+        assertTrue(Name.isValidName("Smith, Jane @ HR")); // comma and @
         assertTrue(Name.isValidName("a".repeat(100))); // exactly 100 chars
+    }
+
+    @Test
+    public void constructor_normalizesWhitespace() {
+        assertEquals("John Doe", new Name("John  Doe").fullName); // multiple spaces collapsed
+        assertEquals("John Doe", new Name("  John Doe  ").fullName); // leading/trailing trimmed
     }
 
     @Test
@@ -63,5 +73,15 @@ public class NameTest {
 
         // different values -> returns false
         assertFalse(name.equals(new Name("Other Valid Name")));
+
+        // case-insensitive -> returns true
+        assertTrue(name.equals(new Name("valid name")));
+        assertTrue(name.equals(new Name("VALID NAME")));
+    }
+
+    @Test
+    public void hashCode_caseInsensitive() {
+        assertEquals(new Name("Valid Name").hashCode(), new Name("valid name").hashCode());
+        assertEquals(new Name("Valid Name").hashCode(), new Name("VALID NAME").hashCode());
     }
 }
