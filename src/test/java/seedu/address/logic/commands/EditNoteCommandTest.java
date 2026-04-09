@@ -47,6 +47,15 @@ public class EditNoteCommandTest {
     }
 
     @Test
+    public void execute_emptyList_failure() {
+        Model emptyModel = new ModelManager();
+        EditNoteCommand command = new EditNoteCommand(INDEX_FIRST_PERSON, Index.fromOneBased(1),
+                "content", null);
+
+        assertCommandFailure(command, emptyModel, seedu.address.logic.Messages.MESSAGE_EMPTY_LIST);
+    }
+
+    @Test
     public void execute_editContentOnly_success() {
         EditNoteCommand command = new EditNoteCommand(INDEX_FIRST_PERSON, Index.fromOneBased(1),
                 "Failed interview", null);
@@ -178,7 +187,6 @@ public class EditNoteCommandTest {
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.setPerson(personWithNote, expectedPerson);
-        showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
 
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
     }

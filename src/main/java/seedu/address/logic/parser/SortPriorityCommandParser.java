@@ -11,7 +11,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class SortPriorityCommandParser implements Parser<SortPriorityCommand> {
 
     public static final String MESSAGE_INVALID_ORDER =
-            "Invalid sort order. Please use 'asc' for high-priority-first or 'desc' for high-priority-last.";
+            "Invalid sort order. Please use 'asc' for low-priority-first or 'desc' for high-priority-first.";
 
     public static final String MESSAGE_INVALID_FORMAT =
             "Invalid command format! \nFormat: sort pr o/ORDER \nExample: sort pr o/asc";

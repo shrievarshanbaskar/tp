@@ -2,7 +2,6 @@ package seedu.address.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.storage.JsonAdaptedPerson.MISSING_FIELD_MESSAGE_FORMAT;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.BENSON;
@@ -130,25 +129,13 @@ public class JsonAdaptedPersonTest {
     }
 
     @Test
-    public void toModelType_nullAddress_usesEmptySentinel() throws Exception {
-        // Address is optional — a null/absent address in JSON maps to Address.EMPTY, not an error.
+    public void toModelType_nullAddress_throwsIllegalValueException() {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, null, VALID_TAGS,
                 VALID_REJECTION_REASONS, VALID_DATE_ADDED, VALID_PRIORITY, null);
+        String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName());
         AddressBook ab = new AddressBook();
         BENSON.getTags().forEach(ab::addTag);
-        Person modelPerson = person.toModelType(ab);
-        assertTrue(modelPerson.getAddress().isEmpty());
-    }
-
-    @Test
-    public void toModelType_emptyStringAddress_usesEmptySentinel() throws Exception {
-        // An empty string address (e.g. serialised from Address.EMPTY) also maps to Address.EMPTY.
-        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, "", VALID_TAGS,
-                VALID_REJECTION_REASONS, VALID_DATE_ADDED, VALID_PRIORITY, null);
-        AddressBook ab = new AddressBook();
-        BENSON.getTags().forEach(ab::addTag);
-        Person modelPerson = person.toModelType(ab);
-        assertTrue(modelPerson.getAddress().isEmpty());
+        assertThrows(IllegalValueException.class, expectedMessage, () -> person.toModelType(ab));
     }
 
     @Test

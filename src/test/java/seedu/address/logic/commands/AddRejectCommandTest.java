@@ -57,12 +57,21 @@ public class AddRejectCommandTest {
     }
 
     @Test
+    public void execute_emptyList_failure() {
+        Model emptyModel = new ModelManager();
+        AddRejectCommand rejectCommand = new AddRejectCommand(INDEX_FIRST_PERSON, VALID_REASON);
+
+        assertCommandFailure(rejectCommand, emptyModel, Messages.MESSAGE_EMPTY_LIST);
+    }
+
+    @Test
     public void execute_invalidIndexUnfilteredList_throwsCommandException() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
         AddRejectCommand rejectCommand = new AddRejectCommand(outOfBoundIndex, VALID_REASON);
 
         String expectedMessage = String.format(Messages.MESSAGE_INDEX_OUT_OF_RANGE,
-                outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size());
+                outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size(),
+                model.getFilteredPersonList().size());
 
         assertCommandFailure(rejectCommand, model, expectedMessage);
     }
@@ -86,7 +95,6 @@ public class AddRejectCommandTest {
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.setPerson(personToReject, rejectedPerson);
-        showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
 
         assertCommandSuccess(rejectCommand, model, expectedMessage, expectedModel);
     }
@@ -101,7 +109,8 @@ public class AddRejectCommandTest {
         AddRejectCommand rejectCommand = new AddRejectCommand(outOfBoundIndex, VALID_REASON);
 
         String expectedMessage = String.format(Messages.MESSAGE_INDEX_OUT_OF_RANGE,
-                outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size());
+                outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size(),
+                model.getFilteredPersonList().size());
 
         assertCommandFailure(rejectCommand, model, expectedMessage);
     }

@@ -102,7 +102,8 @@ public class TagCommandParserTest {
     @Test
     public void parse_garbageAfterIndex_throwsParseException() {
         assertThrows(ParseException.class,
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, TagCommand.MESSAGE_USAGE), ()
+                "Invalid command format. Did you forget a prefix? (e.g. at/ or dt/) \n" 
+                + TagCommand.MESSAGE_USAGE, ()
                 -> parser.parse(" 1 randomtext at/Java"));
     }
 

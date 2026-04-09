@@ -50,6 +50,14 @@ public class TagCommandTest {
                 new TagCommandParser().parse("1 randomtext a/friends"));
     }
 
+    @Test
+    public void execute_emptyList_failure() {
+        Model emptyModel = new ModelManager();
+        TagCommand tagCommand = new TagCommand(INDEX_FIRST_PERSON, List.of(), List.of());
+
+        assertCommandFailure(tagCommand, emptyModel, seedu.address.logic.Messages.MESSAGE_EMPTY_LIST);
+    }
+
     // ── Out-of-range index ────────────────────────────────────────────────────
 
     @Test

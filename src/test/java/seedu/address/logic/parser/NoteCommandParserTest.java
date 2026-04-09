@@ -30,7 +30,8 @@ public class NoteCommandParserTest {
     @Test
     public void parse_missingContentPrefix_throwsParseException() {
         assertParseFailure(parser, " 1 some content",
-                NoteCommandParser.MESSAGE_INVALID_INDEX);
+                "Invalid command format. Did you forget a prefix? (e.g. c/) \n" 
+                + "Usage: addnote INDEX c/CONTENT [h/HEADING]");
     }
 
     @Test
@@ -47,7 +48,8 @@ public class NoteCommandParserTest {
     public void parse_trailingGarbageInPreamble_throwsParseException() {
         // preamble "1 oops" is not a valid index
         assertParseFailure(parser, " 1 oops c/text",
-                NoteCommandParser.MESSAGE_INVALID_INDEX);
+                "Invalid command format. Did you forget a prefix? (e.g. c/) \n" 
+                + "Usage: addnote INDEX c/CONTENT [h/HEADING]");
     }
 
     @Test
@@ -80,11 +82,11 @@ public class NoteCommandParserTest {
     }
 
     @Test
-    public void parse_blankHeading_defaultsToGeneralNote() throws Exception {
-        // Heading provided but blank (h/   ) should default to "General Note"
-        NoteCommand cmd = parser.parse(" 1 c/Some content h/   ");
-        assertEquals("General Note", cmd.getNote().heading);
-        assertEquals("Some content", cmd.getNote().content);
+    public void parse_blankHeading_throwsParseException() {
+        // Heading provided but blank (h/   ) should be rejected
+        assertParseFailure(parser, " 1 c/Some content h/   ",
+                "Error: Note heading cannot be blank. "
+                + "Provide a heading or omit the h/ prefix entirely.");
     }
 
     @Test

@@ -97,7 +97,8 @@ public class TagPoolCommandTest {
 
         TagPoolCommand cmd = new TagPoolCommand(List.of(frontend, frontendLower), Collections.emptyList());
         assertThrows(CommandException.class,
-                String.format(TagPoolCommand.MESSAGE_DUPLICATE_ADD, "frontend"), () -> cmd.execute(model));
+                String.format("Error: Duplicate tag '%s' in your add list. "
+                        + "Each tag can only appear once per command.", "frontend"), () -> cmd.execute(model));
     }
 
     @Test
@@ -108,7 +109,9 @@ public class TagPoolCommandTest {
 
         Tag backendUpper = new Tag("BACKEND"); // same tag, different case
         TagPoolCommand cmd = new TagPoolCommand(Collections.emptyList(), List.of(backend, backendUpper));
-        assertThrows(CommandException.class, () -> cmd.execute(model));
+        assertThrows(CommandException.class,
+                String.format("Error: Duplicate tag '%s' in delete list.", "BACKEND"),
+                () -> cmd.execute(model));
     }
 
     @Test

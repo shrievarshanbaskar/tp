@@ -15,6 +15,9 @@ public class Messages {
     public static final String MESSAGE_INDEX_OUT_OF_RANGE =
             "Error: Index %1$d is out of range. The current list has %2$d candidate(s). "
             + "Please provide an index between 1 and %2$d.";
+    public static final String MESSAGE_EMPTY_LIST =
+            "Error: The candidate list is currently empty. "
+            + "There are no candidates to perform this action on.";
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Error: Duplicate parameter detected \u2014 multiple values for '%s' provided.";
 
@@ -43,9 +46,8 @@ public class Messages {
                 .append(" | Phone: ")
                 .append(person.getPhone())
                 .append(" | Email: ")
-                .append(person.getEmail())
-                .append(" | Address: ")
-                .append(person.getAddress().isEmpty() ? "Not provided" : person.getAddress().value);
+                .append(person.getEmail());
+        builder.append(" | Address: ").append(person.getAddress().value);
         if (!person.getTags().isEmpty()) {
             builder.append(" | Tags: ");
             person.getTags().forEach(builder::append);

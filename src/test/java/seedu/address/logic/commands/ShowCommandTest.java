@@ -40,6 +40,14 @@ public class ShowCommandTest {
     }
 
     @Test
+    public void execute_emptyList_failure() {
+        Model emptyModel = new ModelManager();
+        ShowCommand showCommand = new ShowCommand(INDEX_FIRST_PERSON);
+
+        assertCommandFailure(showCommand, emptyModel, Messages.MESSAGE_EMPTY_LIST);
+    }
+
+    @Test
     public void execute_invalidIndexUnfilteredList_throwsCommandException() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
         ShowCommand showCommand = new ShowCommand(outOfBoundIndex);

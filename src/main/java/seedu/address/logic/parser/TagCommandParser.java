@@ -38,6 +38,11 @@ public class TagCommandParser implements Parser<TagCommand> {
         try {
             indices = parseIndices(argMultimap.getPreamble());
         } catch (ParseException pe) {
+            String preamble = argMultimap.getPreamble().trim();
+            if (preamble.matches("^[\\d,]+\\s+.+")) {
+                throw new ParseException("Invalid command format. Did you forget a prefix? (e.g. at/ or dt/) \n" 
+                        + TagCommand.MESSAGE_USAGE);
+            }
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, TagCommand.MESSAGE_USAGE), pe);
         }

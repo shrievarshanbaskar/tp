@@ -76,14 +76,14 @@ public class EditNoteCommandParserTest {
     public void parse_blankContent_throwsParseException() {
         assertParseFailure(parser, " 1 2 c/   ",
                 "Error: Note content cannot be blank. "
-                + "Usage: editnote INDEX NOTE_INDEX [n/CONTENT] [h/HEADING]");
+                + "Usage: editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]");
     }
 
     @Test
     public void parse_blankHeading_throwsParseException() {
         assertParseFailure(parser, " 1 2 h/   ",
                 "Error: Note heading cannot be blank. "
-                + "Usage: editnote INDEX NOTE_INDEX [n/CONTENT] [h/HEADING]");
+                + "Usage: editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]");
     }
 
     @Test

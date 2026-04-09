@@ -45,6 +45,9 @@ public class EditCommandParserTest {
 
     private static final String MESSAGE_INVALID_FORMAT =
             "Error: Invalid index. Please provide a valid positive integer. Usage: edit INDEX";
+    private static final String MESSAGE_MISSING_PREFIX =
+            "Invalid command format. Did you forget a prefix? (e.g. n/) \n" 
+            + EditCommand.MESSAGE_USAGE;
 
     private EditCommandParser parser = new EditCommandParser();
 
@@ -69,10 +72,10 @@ public class EditCommandParserTest {
         assertParseFailure(parser, "0" + NAME_DESC_AMY, MESSAGE_INVALID_FORMAT);
 
         // invalid arguments being parsed as preamble
-        assertParseFailure(parser, "1 some random string", MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "1 some random string", MESSAGE_MISSING_PREFIX);
 
         // invalid prefix being parsed as preamble
-        assertParseFailure(parser, "1 i/ string", MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "1 i/ string", MESSAGE_MISSING_PREFIX);
     }
 
     @Test

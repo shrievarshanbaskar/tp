@@ -266,6 +266,17 @@ Talently is designed for Applicant Tracking System (ATS) workflows where missing
   * Pros: Fewer false positives.
   * Cons: Misses obvious duplicates where only one field was entered differently (e.g., same person with a new email).
 
+### Data Verification Design
+
+**Aspect: Should the system verify contact details against the real world?**
+
+* **Alternative 1 (current choice):** Do not verify emails, names, or phone numbers for actual real-world existence. Talently acts purely as a local record management system. Duplicate profiles with the exact same name can be created if they have different contact details, and the system is not responsible for reconciling them.
+  * Pros: Fast, offline-first behavior. No dependency on external APIs or internet connection.
+  * Cons: Users could enter fake contact details or create duplicated entities that represent the same real-world person. Real-world validation is deferred to a future enhancement.
+* **Alternative 2:** Verify emails and phone numbers via external services.
+  * Pros: Ensures high data quality.
+  * Cons: Requires internet, slows down commands, and introduces external API dependencies.
+
 ### Rejection history design
 
 **Aspect: Why does rejection history persist across hiring cycles?**
@@ -378,7 +389,7 @@ Priorities: High (must-have) - `* * *`, Medium (nice-to-have) - `* *`, Low (unli
 
 | Priority | As a …​ | I want to …​                                                                       | So that I can…​ |
 |----------|---------|------------------------------------------------------------------------------------|-----------------|
-| `* * *` | recruiter | add a candidate with name, phone, email, optional address, and optional priority   | begin tracking them in my talent pool immediately. |
+| `* * *` | recruiter | add a candidate with name, phone, email, address, and optional priority   | begin tracking them in my talent pool immediately. |
 | `* * *` | recruiter | list all candidates alphabetically                                                 | get a full overview of everyone in my talent pool. |
 | `* * *` | recruiter | view the complete profile of a specific candidate via a detail panel                | read their full history (notes, tags, rejections) in one place before a call. |
 | `* * *` | recruiter | search for candidates by partial name, phone, email, note content, or rejection reason | instantly locate a record even if I only remember a fragment of their details. |
@@ -974,8 +985,8 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `add n/John p/+1 (415) 555-2671 e/john@example.com a/123 Main St`<br>
       Expected: Candidate added. Parentheses and spaces in the phone number are accepted. For duplicate detection, the phone is compared as digits only (`14155552671`).
 
-   1. Test case: `add n/Doe, Jane @ Acme p/91234567 e/jane@example.com` (comma and @ in name, no address)<br>
-      Expected: Candidate added. Comma and `@` are accepted in the name. Address is recorded as "Not provided". The `a/` prefix is optional.
+   1. Test case: `add n/Doe, Jane @ Acme p/91234567 e/jane@example.com a/123 Main St` (comma and @ in name, valid address)<br>
+      Expected: Candidate added. Comma and `@` are accepted in the name.
 
 1. Adding a candidate with invalid input
 

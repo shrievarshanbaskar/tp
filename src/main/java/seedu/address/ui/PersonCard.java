@@ -59,12 +59,22 @@ public class PersonCard extends UiPart<Region> {
         this.person = person;
         id.setText(displayedIndex + ". ");
         name.setText(person.getName().fullName);
-        phone.setText(person.getPhone().value);
-        address.setText(person.getAddress().value);
-        email.setText(person.getEmail().value);
-        person.getTags().stream()
+        phone.setText("Phone: " + person.getPhone().value);
+        address.setText("Address: " + person.getAddress().value);
+        email.setText("Email: " + person.getEmail().value);
+        java.util.List<seedu.address.model.tag.Tag> sortedTags = person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
+                .collect(java.util.stream.Collectors.toList());
+
+        int maxVisibleTags = 5;
+        sortedTags.stream()
+                .limit(maxVisibleTags)
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
+        if (sortedTags.size() > maxVisibleTags) {
+            Label moreLabel = new Label("+" + (sortedTags.size() - maxVisibleTags) + " more");
+            moreLabel.setStyle("-fx-text-fill: #aaaaaa; -fx-font-style: italic;");
+            tags.getChildren().add(moreLabel);
+        }
 
         if (!person.getRejectionReasons().isEmpty()) {
             List<RejectionReason> reasons = person.getRejectionReasons();

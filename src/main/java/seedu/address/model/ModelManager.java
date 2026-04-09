@@ -123,12 +123,17 @@ public class ModelManager implements Model {
     @Override
     public void deletePerson(Person target) {
         addressBook.removePerson(target);
+        updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        sortFilteredPersonList(Comparator.comparing(
+                p -> p.getName().fullName.toLowerCase()));
     }
 
     @Override
     public void addPerson(Person person) {
         addressBook.addPerson(person);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        sortFilteredPersonList(Comparator.comparing(
+                p -> p.getName().fullName.toLowerCase()));
     }
 
     @Override
@@ -136,6 +141,9 @@ public class ModelManager implements Model {
         requireAllNonNull(target, editedPerson);
 
         addressBook.setPerson(target, editedPerson);
+        updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        sortFilteredPersonList(Comparator.comparing(
+                p -> p.getName().fullName.toLowerCase()));
     }
 
     //=========== Tag Operations =============================================================================

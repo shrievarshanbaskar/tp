@@ -83,12 +83,21 @@ public class DeleteRejectCommandTest {
     }
 
     @Test
+    public void execute_emptyList_failure() {
+        Model emptyModel = new ModelManager();
+        DeleteRejectCommand command = new DeleteRejectCommand(INDEX_FIRST_PERSON, Index.fromOneBased(1));
+
+        assertCommandFailure(command, emptyModel, Messages.MESSAGE_EMPTY_LIST);
+    }
+
+    @Test
     public void execute_personIndexOutOfRange_throwsCommandException() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
         DeleteRejectCommand command = new DeleteRejectCommand(outOfBoundIndex, Index.fromOneBased(1));
 
         String expectedMessage = String.format(Messages.MESSAGE_INDEX_OUT_OF_RANGE,
-                outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size());
+                outOfBoundIndex.getOneBased(), model.getFilteredPersonList().size(),
+                model.getFilteredPersonList().size());
 
         assertCommandFailure(command, model, expectedMessage);
     }
@@ -141,7 +150,6 @@ public class DeleteRejectCommandTest {
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.setPerson(personWithRejection, expectedPerson);
-        showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
 
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
     }
