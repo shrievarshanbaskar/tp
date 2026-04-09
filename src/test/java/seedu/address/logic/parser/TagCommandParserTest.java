@@ -82,57 +82,57 @@ public class TagCommandParserTest {
     public void parse_missingIndex_throwsParseException() {
         assertThrows(ParseException.class,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, TagCommand.MESSAGE_USAGE), ()
-                -> parser.parse(" at/Java"));
+                        -> parser.parse(" at/Java"));
     }
 
     @Test
     public void parse_invalidIndex_throwsParseException() {
         assertThrows(ParseException.class,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, TagCommand.MESSAGE_USAGE), ()
-                -> parser.parse(" 0 at/Java"));
+                        -> parser.parse(" 0 at/Java"));
     }
 
     @Test
     public void parse_nonNumericIndex_throwsParseException() {
         assertThrows(ParseException.class,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, TagCommand.MESSAGE_USAGE), ()
-                -> parser.parse(" abc at/Java"));
+                        -> parser.parse(" abc at/Java"));
     }
 
     @Test
     public void parse_garbageAfterIndex_throwsParseException() {
         assertThrows(ParseException.class,
-                "Invalid command format. Did you forget a prefix? (e.g. at/ or dt/) \n" 
-                + TagCommand.MESSAGE_USAGE, ()
-                -> parser.parse(" 1 randomtext at/Java"));
+                "Invalid command format. Did you forget a prefix? (e.g. at/ or dt/) \n"
+                        + TagCommand.MESSAGE_USAGE, ()
+                        -> parser.parse(" 1 randomtext at/Java"));
     }
 
     @Test
     public void parse_invalidCommaSeparatedIndices_throwsParseException() {
         assertThrows(ParseException.class,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, TagCommand.MESSAGE_USAGE), ()
-                -> parser.parse(" 1,,2 at/Java"));
+                        -> parser.parse(" 1,,2 at/Java"));
     }
 
     @Test
     public void parse_duplicateIndices_throwsParseException() {
         assertThrows(ParseException.class,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, TagCommand.MESSAGE_USAGE), ()
-                -> parser.parse(" 1,1 at/Java"));
+                        -> parser.parse(" 1,1 at/Java"));
     }
 
     @Test
     public void parse_noPrefixes_throwsParseException() {
         assertThrows(ParseException.class,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, TagCommand.MESSAGE_USAGE), ()
-                -> parser.parse(" 1"));
+                        -> parser.parse(" 1"));
     }
 
     @Test
     public void parse_emptyArgs_throwsParseException() {
         assertThrows(ParseException.class,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, TagCommand.MESSAGE_USAGE), ()
-                -> parser.parse(""));
+                        -> parser.parse(""));
     }
 
     @Test
