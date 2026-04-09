@@ -447,16 +447,14 @@ ASCII, so parsers, validators, matchers, and the JSON (de)serialiser all share t
 Notes serve as the recruiter's live scratchpad during calls. Full CRUD (create, read, update, delete) is essential
 because:
 
-* **Add (`addnote`):** Captures impressions in real time. Auto-timestamping ensures chronological ordering without
-  manual effort.
-* **Edit (`editnote`):** Corrects typos or updates details post-call without losing the original timestamp, preserving
-  the chronological record.
+* **Add (`addnote`):** Captures impressions in real time. Each note auto-records its creation time internally, ensuring chronological ordering without manual effort.
+* **Edit (`editnote`):** Corrects typos or updates details post-call without changing the note's position in the chronological record.
 * **Delete (`deletenote`):** Removes notes added to the wrong candidate or notes that are no longer relevant. Without
   delete, the only way to remove an incorrect note would be to delete and re-add the entire candidate — losing all other
   data.
 
-The original timestamp is always preserved on edit so that the note's position in the chronological timeline remains
-accurate. If the recruiter wants a "fresh" note, they should delete the old one and add a new one.
+The original creation time is always preserved on edit so that the note's position in the chronological timeline remains
+accurate. If the recruiter wants a "fresh" note at the latest position, they should delete the old one and add a new one.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -503,8 +501,8 @@ Priorities: High (must-have) - `* * *`, Medium (nice-to-have) - `* *`, Low (unli
 | `* * *`  | recruiter | edit a candidate’s name, phone, email, address, or priority                            | keep my records accurate when details change.                                                  |
 | `* * *`  | recruiter | remove a candidate permanently                                                         | delete invalid or withdrawn contacts and stay legally compliant.                               |
 | `* * *`  | recruiter | record a rejection with a specific reason that appends to a chronological history      | maintain a full record of why a candidate was passed over across multiple hiring cycles.       |
-| `* * *`  | recruiter | add timestamped notes (with optional heading) to a candidate                           | capture impressions and context immediately during or after a conversation.                    |
-| `* * *`  | recruiter | edit an existing note’s content or heading while preserving its timestamp              | correct mistakes without losing the chronological record.                                      |
+| `* * *`  | recruiter | add notes (with optional heading) to a candidate                                       | capture impressions and context immediately during or after a conversation.                    |
+| `* * *`  | recruiter | edit an existing note’s content or heading while preserving the original creation order | correct mistakes without losing the chronological record.                                      |
 | `* * *`  | recruiter | delete a note from a candidate                                                         | remove outdated or incorrect information and keep records clean.                               |
 | `* * *`  | recruiter | assign and remove tags on one or more candidates at once                               | efficiently categorize candidates by role, skill, or hiring stage.                             |
 | `* * *`  | recruiter | manage a master tag pool (list, create, and delete tags)                               | enforce a controlled vocabulary and prevent typo-created tags from fragmenting my data.        |
@@ -882,7 +880,7 @@ state. The max of 10 tags per command prevents abuse while covering realistic ba
 
 1. User requests to add a note to a candidate by index, providing content and an optional heading.
 2. System validates the index and content (must be non-empty; content max 500 characters, heading max 50 characters).
-3. System creates a timestamped note and appends it to the candidate's record.
+3. System creates a note (with an auto-recorded creation time) and appends it to the candidate's record.
 4. System informs the user of success.
    Use case ends.
 
@@ -914,7 +912,7 @@ and ensure single-line display.
 
 1. User requests to edit a note by candidate index and note index, providing new content and/or heading.
 2. System validates both indices and the provided fields.
-3. System updates the note's content and/or heading while preserving the original timestamp.
+3. System updates the note's content and/or heading while preserving the original creation order.
 4. System informs the user of success.
    Use case ends.
 
@@ -1054,33 +1052,34 @@ prevents confusing branching states and is consistent with how most mainstream a
 
 ### Non-Functional Requirements
 
-1. The system must run without requiring an installer on any mainstream Operating System (Windows, macOS, Linux),
-   provided that **Java 17 or above** is installed. The entire application must be packaged as a single portable JAR
-   file not exceeding `100 MB` in size.
-2. The application must operate as a standalone, single-user system. It must not depend on any Database Management
-   System (DBMS) or remote server. All data must be saved locally in a human-editable text file (JSON format) to allow
-   advanced users manual access to their records.
-3. The system must be capable of holding up to 1,000 candidate records without exceeding 250 MB of JVM heap memory at peak. find and filter operations must return results within 1 second when searching across all 1,000 records on standard consumer hardware (Intel Core i5 equivalent, 8 GB RAM). Per-record limits: each candidate may hold up to 50 notes and up to 20 rejection records. The tag pool may hold up to 50 tags in total.
-4. All core workflows — adding a candidate, recording a rejection, assigning a tag, searching by keyword — must be completable entirely via keyboard, without requiring any mouse interaction. No mandatory click, drag, or mouse-hover must be present in any part of these workflows.
-5. The application must not become unresponsive (UI freeze or hang lasting more than 2 seconds) during any command execution when the candidate database contains up to 1,000 candidate records. Data is persisted to disk after every mutating command; persistence latency is hardware-dependent and is not user-visible or subject to a timing guarantee.
-6. The system must automatically save data locally after every mutating command. If a command fails validation halfway
-   through execution (e.g., valid identifier but invalid rejection reason), the system state must remain entirely
-   unchanged to prevent corrupted data.
-7. **Desktop display design.** The Graphical User Interface is designed for standard desktop resolutions between
-   `1280x720` and `1920x1080`. The GUI must remain fully usable (all panels visible, no cut-off controls) throughout
-   this range and at scaling factors 100%, 125%, and 150%. Stretching the main window across multiple monitors or onto
-   ultra-wide displays is explicitly **out of scope**; the layout is only guaranteed to recover once the window is
-   resized back within the supported range. A minimum window size is enforced in code (main window 800×600, help window
-   700×500) so the user cannot shrink either below the point where essential controls would be hidden. On startup, if
-   the saved window position falls outside the bounds of any currently connected screen (e.g. a secondary monitor has
-   been disconnected), the application automatically repositions the window to the primary screen. (Verification of 125% and 150% display scaling compliance is performed by manual visual inspection only and is not covered by automated tests.)
-8. **ASCII-only text input.** All free-text fields (name, address, note heading, note content, rejection reason) and all
-   keyword-based search inputs accept **printable ASCII characters only** (0x20–0x7E). Non-ASCII input — accented
-   letters, CJK characters, emojis, right-to-left scripts, and "smart" quotes pasted from word processors — must be
-   rejected at the validator level. This constraint simplifies matching/indexing and ensures consistent rendering on all
-   supported platforms without font-fallback artefacts.
-9. The system must function completely independently of an internet connection, ensuring 100% feature availability
-   during automated testing and offline usage.
+#### Usability
+
+1. All core workflows — adding a candidate, recording a rejection, assigning a tag, searching by keyword — must be completable entirely via keyboard, without requiring any mouse interaction.
+2. The application must provide clear feedback for both successful and failed commands (e.g., invalid index, missing required field, duplicate detection).
+3. The application must provide built-in guidance via the `help` command, which lists all available commands and links to this User Guide.
+4. The Graphical User Interface is designed for standard desktop resolutions between `1280×720` and `1920×1080`. A minimum window size is enforced in code (main window 800×600, help window 700×500). Ultra-wide layouts and multi-monitor spanning are out of scope.
+
+#### Reliability & Data Integrity
+
+1. Data must be persisted locally after every mutating command. The data file must remain intact and loadable after restarting the application.
+2. If a command fails validation (e.g., invalid index, missing required field, invalid field format), the application must not modify the in-memory state and must not corrupt the persisted data file.
+3. All free-text fields (name, address, note heading, note content, rejection reason) and keyword search inputs must accept **printable ASCII characters only** (0x20–0x7E). Non-ASCII input must be rejected at the validator level to ensure consistent rendering and predictable matching across all supported platforms.
+
+#### Performance
+
+1. For a dataset of up to 1,000 candidate records — each with the maximum allowed fields (50 notes of 500-character content, 20 rejection reasons of 200 characters, all 50 tags, 100-character name, 254-character email, 200-character address) — the application should:
+   * Complete typical commands (`list`, `find`, `filter`, `add`, `edit`, `remove`) within 1 second on a typical laptop (Intel Core i5 equivalent, 8 GB RAM).
+   * Not exceed 250 MB of JVM heap memory at baseline load. *(This bound is validated by calculation: maxed-out per-candidate data totals ~64 KB; 1,000 candidates produce ~64 MB of raw data. Adding JVM and JavaFX overhead brings the total to well under 250 MB.)*
+
+#### Portability
+
+1. The application must run without requiring an installer on any mainstream OS (Windows, macOS, Linux) provided Java 17 or above is installed. The entire application must be packaged as a single portable JAR file not exceeding 100 MB.
+2. The application must function completely independently of an internet connection.
+
+#### Security & Privacy
+
+1. The application must operate as a standalone, single-user system with no network dependency, no DBMS, and no remote server. All candidate data must be stored locally in a human-readable JSON file.
+2. No login, authentication, or role-based access control is required. The application is intended for a single trusted user on a personal machine.
 
 ### Glossary
 
@@ -1098,8 +1097,7 @@ prevents confusing branching states and is consistent with how most mainstream a
 * **Tag pool:** The master registry of all valid tags in the system. Tags must be created in the pool (`tagpool at/TAG`)
   before they can be assigned to candidates. Running `tagpool` with no arguments lists all tags. Deleting a tag from the
   pool cascades the removal to all candidates.
-* **Note:** A timestamped text entry attached to a candidate, with an optional heading (max 50 characters) and content (
-  max 500 characters). Notes are ordered chronologically and can be added, edited, or deleted.
+* **Note:** A free-form text entry attached to a candidate, with an optional heading (max 50 characters) and content (max 500 characters). Each note records its creation time internally for chronological ordering. Notes can be added, edited, or deleted.
 * **Hiring stage:** The current position of a candidate in the hiring pipeline, tracked via tags (e.g., `Shortlisted`,
   `Hired`, `Blacklisted`) assigned by the recruiter.
 * **Priority:** A boolean flag (`yes`/`no`) indicating whether a candidate is high-priority. High-priority candidates
@@ -1113,8 +1111,8 @@ prevents confusing branching states and is consistent with how most mainstream a
 * **Index:** The 1-based number shown next to each candidate in the currently displayed list. Commands that target a
   candidate refer to this index, which always reflects the **displayed** (possibly filtered) list — not the full
   candidate list.
-* **Parameter:** A value supplied to a command, usually introduced by a two-character prefix (e.g. `n/`, `p/`, `e/`,
-  `a/`, `pr/`, `h/`, `d/`).
+* **Parameter:** A value supplied to a command, usually introduced by a prefix (e.g. `n/`, `p/`, `e/`,
+  `a/`, `pr/`, `h/`, `c/`, `at/`, `dt/`, `o/`).
 * **Prefix:** The short marker (e.g. `n/`) that introduces a parameter in a command. Must be preceded by a space when
   not at the start of the command.
 * **Identifier:** Generic term for the reference used by the recruiter to address a specific candidate, rejection, or
@@ -1143,6 +1141,13 @@ Given below are instructions to test the app manually.
 <div markdown="span" class="alert alert-info">:information_source: **Note:** These instructions only provide a starting point for testers to work on;
 testers are expected to do more *exploratory* testing.
 
+</div>
+
+<div markdown="span" class="alert alert-info">:information_source: **Note for testers:**
+* If double-clicking the `.jar` does not launch the app, run it using `java -jar talently.jar` from a terminal in the same folder.
+</div>
+
+<div markdown="span" class="alert alert-warning">:warning: **Warning:** Do not place the app in a write-protected folder — it may fail to save changes to `data/talently.json`.
 </div>
 
 ### Launch and shutdown
@@ -1425,7 +1430,7 @@ testers are expected to do more *exploratory* testing.
     1. Test case: `tagpool at/Frontend at/frontend`<br>
        Expected: Error message indicating duplicate tag in the add list (case-insensitive comparison).
 
-    1. Test case: `tagpool d/Frontend`<br>
+    1. Test case: `tagpool dt/Frontend`<br>
        Expected: Tag "Frontend" is removed from the pool and from all candidates who had it.
 
 ### Finding candidates
@@ -1506,6 +1511,15 @@ testers are expected to do more *exploratory* testing.
 1. Test case: `remove 1` → `undo`<br>
    Expected: The removed candidate is restored. The displayed list resets to show all candidates.
 
+1. Test case: `show 1` → `remove 1` → `undo`<br>
+   Expected: The removed candidate is restored and the detail panel repopulates automatically with that candidate's details.
+
+1. Test case: `sort date o/asc` → `undo`<br>
+   Expected: The sort is reversed and the list returns to its previous order.
+
+1. Test case: `find Alice` → `undo`<br>
+   Expected: Undo steps back to the last data-changing action before the `find`. `find` itself is read-only and is not undoable.
+
 1. Test case: `undo` with no prior modifying command.<br>
    Expected: Error message indicating there is nothing to undo.
 
@@ -1553,14 +1567,91 @@ testers are expected to do more *exploratory* testing.
 
     1. To simulate a future note date: open `data/talently.json` and change a note's date to a far-future value such as
        `"2099-01-01T00:00:00"`.<br>
-       Expected: The app loads normally. The affected note's timestamp is silently clamped to the time of loading. A
-       warning is written to the log. No data is lost.
+       Expected: The app loads normally. The affected note's timestamp is silently clamped to the time of loading. The
+       corrected data is written back to disk immediately (no user command needed). A warning is written to the log. No
+       data is lost.
 
     1. To simulate a future candidate date: open `data/talently.json` and change a candidate's `dateAdded` to a
        far-future value such as `"01/01/2099 00:00 +0800"`.<br>
        Expected: The app loads normally. The affected candidate's `dateAdded` is silently clamped to the time of
-       loading. A warning is written to the log. No data is lost.
+       loading. The corrected data is written back to disk immediately. A warning is written to the log. No data is lost.
+
+    1. To simulate excess notes: open `data/talently.json` and manually add more than 50 note entries to a candidate.<br>
+       Expected: The app loads normally. The excess notes beyond 50 are truncated on load. A warning is written to the
+       log.
+
+    1. To simulate excess rejections: open `data/talently.json` and manually add more than 20 rejection entries to a
+       candidate.<br>
+       Expected: The app loads normally. The excess rejections beyond 20 are truncated on load. A warning is written to
+       the log.
 
     1. To simulate orphaned tags: open `data/talently.json` and add a tag to a candidate that does not exist in the
        `"tags"` pool array.<br>
        Expected: The app starts with no candidates (graceful recovery).
+
+--------------------------------------------------------------------------------------------------------------------
+
+## **Appendix: Effort**
+
+### Overview
+
+Talently is a candidate management application built on top of the [AddressBook-Level3 (AB3)](https://se-education.org/addressbook-level3/) scaffold. While AB3 provided the base architecture (UI/Logic/Model/Storage split, JSON persistence, command parsing), the Talently team significantly extended every layer of the application to support a richer candidate management workflow.
+
+---
+
+### Difficulty and Challenges
+
+**UX design for a CLI-first audience**
+
+Designing a command-line-first application that remains discoverable and usable was non-trivial. Unlike a GUI-first app where affordances are visible, every interaction had to be designed so that the command format is self-documenting (via `help`) and that error messages are specific enough to guide correction without needing a manual.
+
+**Undo/redo system via versioned state snapshots**
+
+Implementing undo/redo required maintaining a versioned history of `ReadOnlyAddressBook` snapshots in `ModelManager`. Every command that mutates model state commits a snapshot; `undo` and `redo` restore the previous or next snapshot. Correctly determining which commands are state-changing (including `sort`) versus read-only, and propagating state changes through the Storage layer on each undo/redo, required careful analysis of the entire command execution chain.
+
+**Tag pool enforcement and ghost-tag safety**
+
+The master tag pool is a global registry that must be kept consistent with all candidate records. Any candidate holding a tag not present in the pool constitutes a corrupt state. Implementing this two-way constraint — pool membership enforced at add/delete time, validated at load time — required changes across `Model`, `Storage`, and the `JsonAdaptedPerson` deserialization path. A single orphaned tag on one candidate triggers a full data reset, which necessitated clear documentation for both developers and users.
+
+**Rejection history CRUD**
+
+Rejection records (`addreject`, `editreject`, `deletereject`) introduced a nested, ordered collection within each candidate. Each rejection has its own index scoping (1-indexed per candidate), its own 20-entry cap, and its own validation rules. Implementing full CRUD for this nested entity — including index validation, cap enforcement, and undo/redo support — was substantially more complex than adding a simple flat field.
+
+**Note management with heading fallback and cap enforcement**
+
+Notes similarly form a nested, ordered collection (up to 50 per candidate). The `h/` prefix supports an optional heading that silently falls back to `"General Note"` when omitted or whitespace-only, which required careful parser logic to distinguish "prefix absent" from "prefix present but blank". Notes also auto-record their creation time internally for chronological ordering.
+
+**ASCII input constraints**
+
+All text fields are constrained to printable ASCII (0x20–0x7E) to ensure safe JSON serialisation and cross-platform display. This applies uniformly to all fields including Name — non-ASCII characters, smart quotes, and curly apostrophes are all rejected. Enforcing this constraint consistently across all validators while communicating it clearly in the UX required coordination across the entire validation layer.
+
+**`CandidateDetailPanel` side panel**
+
+The detail panel — which displays the full profile of the selected candidate including notes and rejections — is a custom JavaFX component with no direct AB3 equivalent. It required designing a layout that cleanly presents a variable number of nested records (notes, rejections) in a scrollable panel, with automatic clearing when the currently-shown candidate is removed.
+
+---
+
+### Effort and Achievements
+
+Relative to AB3, the Talently codebase represents substantial effort across all layers:
+
+* **Model layer**: Extended the `Person` entity with five new fields (`Priority`, `DateAdded`), two new nested collections (`NoteList`, `RejectionList`), and a global `TagPool` registry — all with validation, equality, and JSON serialization support.
+* **Logic layer**: Implemented 20+ commands (versus AB3's ~8), covering full CRUD for notes and rejections, tag pool management, filtering, sorting, and undo/redo.
+* **Storage layer**: Extended the JSON schema to persist the tag pool separately from candidates, and implemented healing/reset logic for corrupt data on load.
+* **UI layer**: Added `CandidateDetailPanel` (side panel for notes/rejections), a dark theme via custom CSS, and a copyable help URL button.
+* **Undo/redo**: A complete versioned-snapshot undo/redo system covering all mutating commands.
+* **Duplicate detection**: Candidates are considered duplicates if they share a phone number or email address (either alone is sufficient), rather than AB3's name-based detection.
+
+---
+
+### Planned Enhancements
+
+**Team size: 5**
+
+Below are known limitations and planned improvements for future iterations:
+
+1. **Multi-keyword tag filtering**: `filter` currently accepts a single tag. A future version should support `filter Frontend Backend` to show candidates holding any of the specified tags.
+2. **Bulk candidate import**: A future version should support importing candidates from a CSV file to reduce manual `add` overhead for large hiring pipelines.
+3. **Multi-field sort**: `sort` currently supports only date-added and priority as sort keys. A future version should support sorting by name or by rejection count.
+4. **Undo/redo scope display**: The current `undo` feedback message does not describe what was undone. A future version should include a short summary (e.g., `Undo: add Alice Tan`) for clarity.
+5. **Tag pool export**: A future version should allow exporting the tag pool to a file for reuse across different Talently installations (e.g., sharing a standardised hiring-stage vocabulary across teams).

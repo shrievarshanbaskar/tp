@@ -34,9 +34,45 @@ Talently is a **desktop contact-management application** for recruiters and hiri
 * **Display:** Talently is designed for a **single-monitor desktop setup**. It has been tested at the default launch size up to a typical 1920×1080 display. Stretching the window across multiple monitors, onto ultra-wide displays, or to extreme aspect ratios is **not supported** and may cause the candidate list, detail panel, or help window to render with awkward spacing. If this happens, resize the window back to a normal single-monitor size and the layout will recover.
 * **Minimum window size:** Talently enforces a minimum main-window size of 800×600 and a minimum help-window size of 700×500. You cannot shrink either window below these dimensions — this guarantees that the command box, result display, candidate list, and command summary remain visible at all times.
 * **Operating system:** Tested on Windows, macOS, and Linux with Java 17+.
-* **Character input:** Commands and all text fields accept **printable ASCII characters only** (letters, digits, spaces, and punctuation listed per field below). Non-ASCII characters — including accented letters (`é`, `ñ`), CJK characters (中, 日本語), emojis, right-to-left scripts, and "smart" quotes pasted from word processors — are rejected by the field validators or by the find keyword parser. If you paste text and receive a validation error, re-type the value using plain ASCII.
+* **Character input:** Commands and all text fields accept **printable ASCII characters only** (letters, digits, spaces, and punctuation listed per field below). Non-ASCII characters — including accented letters (`é`, `ñ`), CJK characters (中, 日本語), emojis, curly/smart quotes, and right-to-left scripts — are rejected by the field validators or by the find keyword parser. If you paste text and receive a validation error, re-type the value using plain ASCII.
 
 **Assumed knowledge:** You can open a terminal and type commands. No programming experience required.
+
+--------------------------------------------------------------------------------------------------------------------
+
+## Table of Contents
+
+* [Quick start](#quick-start)
+* [Features](#features)
+  * [Field constraints quick reference](#field-constraints-quick-reference)
+  * [Viewing help : `help`](#viewing-help--help)
+  * [Adding a candidate : `add`](#adding-a-candidate--add)
+  * [Listing all candidates : `list`](#listing-all-candidates--list)
+  * [Editing a candidate : `edit`](#editing-a-candidate--edit)
+  * [Showing candidate details : `show`](#showing-candidate-details--show)
+  * [Locating candidates : `find`](#locating-candidates--find)
+  * [Filtering candidates by tag : `filter`](#filtering-candidates-by-tag--filter)
+  * [Removing a candidate : `remove`](#removing-a-candidate--remove)
+  * [Adding a rejection reason : `addreject`](#adding-a-rejection-reason--addreject)
+  * [Editing a rejection reason : `editreject`](#editing-a-rejection-reason--editreject)
+  * [Deleting a rejection reason : `deletereject`](#deleting-a-rejection-reason--deletereject)
+  * [Sorting candidates by date : `sort date`](#sorting-candidates-by-date--sort-date)
+  * [Sorting candidates by priority : `sort pr`](#sorting-candidates-by-priority--sort-pr)
+  * [Adding a note to a candidate : `addnote`](#adding-a-note-to-a-candidate--addnote)
+  * [Editing a note : `editnote`](#editing-a-note--editnote)
+  * [Deleting a note : `deletenote`](#deleting-a-note--deletenote)
+  * [Managing the tag pool : `tagpool`](#managing-the-tag-pool--tagpool)
+  * [Tagging a candidate : `tag`](#tagging-a-candidate--tag)
+  * [Undoing the last modifying command : `undo`](#undoing-the-last-modifying-command--undo)
+  * [Redoing the last undone command : `redo`](#redoing-the-last-undone-command--redo)
+  * [Clearing all entries : `clear`](#clearing-all-entries--clear)
+  * [Exiting the program : `exit`](#exiting-the-program--exit)
+  * [Saving the data](#saving-the-data)
+  * [Editing the data file](#editing-the-data-file)
+* [FAQ](#faq)
+* [Known issues](#known-issues)
+* [Command summary](#command-summary)
+* [Glossary](#glossary)
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -109,38 +145,45 @@ Ready for more? Continue to [Features](#features).
 * `[square brackets]` = optional. e.g. `[pr/PRIORITY]` can be omitted.
 * `…` after an item = repeatable. e.g. `[at/TAG]…` can be `at/Java at/Python`.
 * `INDEX` must be a positive integer, e.g. `1, 2, 3`.
-* Commands that take no parameters (such as `help`, `list`, `exit`, `clear`, `undo`, and `redo`) will reject any extra text with an error. For example, `list abc` is not valid.
+* Commands that take no parameters (such as `help`, `list`, `exit`, `clear`, `undo`, and `redo`) will reject any extra non-space text with an error. For example, `list abc` is not valid. However, trailing spaces are accepted — `list   ` (with spaces) is treated the same as `list`.
+* For commands where **all** parameters are shown in square brackets (e.g. `edit`, `editnote`, `tag`), at least one bracketed parameter must still be provided — providing zero will result in an error.
 * **Command words are case-insensitive** (e.g. `ADD`, `Add`, and `add` are all valid).
-* **Prefixes are strictly case-sensitive** and must be lowercase (e.g. `n/`, `at/`, `dt/`, `c/`, `h/`, `o/` are valid; `N/`, `AT/` will not be recognized).
+* **Prefixes are strictly case-sensitive and must be typed in lowercase.** For example, `n/`, `p/`, `e/`, `a/`, `pr/`, `at/`, `dt/`, `c/`, `h/`, `o/` are valid prefixes. If you type `N/` instead of `n/`, or `AT/` instead of `at/`, Talently will NOT recognise it as a prefix and will report that required parameters are missing.
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 
 <div markdown="span" class="alert alert-warning">
 :warning: **Caution: Manual Data Editing** <br>
 The data file `[JAR file location]/data/talently.json` is in JSON format. While you can edit it manually, it is **not recommended**.
-*   **Corrupted Data:** If the file is edited in a way that violates data constraints (e.g., an invalid email format like `user@localhost`, or duplicate entries sharing the same phone or email), the application will detect the corruption and **reset to an empty state** to prevent further data loss or crashes.
-*   **Healing:** In cases of missing optional metadata (like `dateAdded`), the application may "heal" the record by assigning a default value.
+*   **Corrupted Data:** If the file is edited in a way that violates data constraints (e.g., an invalid email format, duplicate entries sharing the same phone or email, or a candidate holding a tag that does not exist in the master tag pool), the application will detect the corruption and **reset to an empty state** to prevent further data loss or crashes. **Note:** A single mistyped tag on one candidate is sufficient to trigger a full data reset — always verify tag names exactly match what is in the `"tags"` pool array.
+*   **Healing:** In cases of missing optional metadata (like `dateAdded`), the application may "heal" the record by assigning a default value. For example, a missing `dateAdded` is silently replaced with the current timestamp, whereas an invalid field value causes a full reset. Future-dated timestamps are clamped to the current time on load, and the corrected data is saved immediately even without any further user command. Notes and rejections exceeding the per-candidate limits (50 and 20 respectively) are truncated to the limit on load.
 *   **Backup:** Always keep a backup of your data file before performing manual edits.
 </div>
+
 * **Input normalization:** Names have extra whitespace collapsed (e.g., `John    Doe` becomes `John Doe`). Emails are automatically lowercased (e.g., `John@Gmail.COM` becomes `john@gmail.com`). Phone numbers are compared by their digits only — the `+` prefix, spaces, hyphens, and parentheses are stripped before comparing, so `+65-9123-4567`, `+6591234567`, and `6591234567` are all treated as the same number for duplicate detection.
 * **Providing duplicate prefixes** (e.g., `n/Alice n/Bob`) in a single command is not allowed and will be rejected with an error.
-* **Display resets:** Any filtered or sorted list order is reverted to the default alphabetical view whenever a command that changes candidate data (like `add`, `edit`, `remove`, `tag`, etc.) is executed.
+* **Display resets:** After any command that adds, edits, removes, or otherwise changes candidate data (`add`, `edit`, `remove`, `tag`, `addnote`, `editnote`, `deletenote`, `addreject`, `editreject`, `deletereject`), the candidate list returns to the default alphabetical order and any active filter or search is cleared.
 
 </div>
 
-**:information_source: Field constraints quick reference:**
+---
+
+### Field constraints quick reference
 
 | Field | Prefix | Rules |
 |---|---|---|
-| NAME | `n/` | Should only contain alphabetic characters and spaces, and it should not be blank. |
-| PHONE | `p/` | Should only contain numbers, and it should be at least 3 digits long. |
-| EMAIL | `e/` | Should be of the format local-part@domain and adhere to the following constraints:<br>1. The local-part should only contain alphanumeric characters and these special characters, excluding the parentheses, (!#$%&'*+/=?^_`{|}~-). The local-part may not start or end with any special characters.<br>2. This is followed by a '@' and then a domain name. The domain name is made up of domain labels separated by periods.<br>The domain name must:<br>    - end with a domain label at least 2 characters long.<br>    - have each domain label start and end with alphanumeric characters.<br>    - have each domain label consist of alphanumeric characters, separated only by hyphens, if any. |
-| ADDRESS | `a/` | Can take any values, and it should not be blank. |
-| TAG | `at/` / `dt/` | Should be alphanumeric. |
+| NAME | `n/` | Letters (a-z, A-Z), digits (0-9), spaces, hyphens `-`, apostrophe `'`, periods `.`, slashes `/`, commas `,`, `@` symbols, backticks (`` ` ``), and parentheses `()`. Must start with a letter. Max 100 characters. |
+| PHONE | `p/` | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+1 (415) 555-2671`. |
+| EMAIL | `e/` | `local@domain` format. Max 254 characters. Automatically lowercased. The local part may contain letters, digits, and `+ _ . -`. The domain must have at least one `.` and a TLD of at least two letters. Examples: `john@example.com`, `john+work@example.co.uk`. |
+| ADDRESS | `a/` | Any non-empty printable ASCII text. Max 200 characters. |
+| TAG | `at/` / `dt/` | Must start with a letter or number, followed by letters, numbers, or `. + - _ ( ) @ # ! ? '`. No spaces. 1–30 characters. Case-insensitive (`Python` and `python` are treated as the same tag). |
+| REJECTION REASON | (positional in `addreject`) | Non-empty. Max 200 characters. Allowed characters: letters, digits, spaces, `. , - ' / : ; ! ? ( ) & " # + % @ *`. |
+| NOTE CONTENT | `c/` | Non-empty, printable ASCII only. Max 500 characters. |
+| NOTE HEADING | `h/` | Optional. Printable ASCII only. Max 50 characters. Defaults to `General Note` if omitted or if `h/` is given with only whitespace. |
 
 All text fields accept **printable ASCII characters only** — non-ASCII input (accented letters, emojis, CJK characters) is rejected. See [Environment assumptions](#environment-assumptions) for details.
 
 <div markdown="span" class="alert alert-info">
-:information_source: **Data Verification:** Talently does **not** verify whether emails, phone numbers, or names exist in the real world. This application acts purely as a local record management system (real-world validation will be part of a future enhancement). Duplicate people (same names) can be entered twice if they have different phone numbers or emails, but Talently is not responsible for reconciling these as there's no way of knowing if they represent real duplicate contacts.
+:information_source: **Data Verification:** Talently does **not** verify whether emails, phone numbers, or names exist in the real world. This application acts purely as a local record management system. Duplicate people (same names) can be entered twice if they have different phone numbers or emails.
 </div>
 
 ---
@@ -151,7 +194,12 @@ Opens a help window with a link to this User Guide. Note that the help window al
 
 Format: `help`
 
+Examples:
+* `help`
+
 <p align="center"><img src="images/help%20Command.png" alt="help message" width="730"/></p>
+
+> **Expected output:** A help window opens, displaying a link to the User Guide.
 
 ---
 
@@ -165,10 +213,10 @@ Format: `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]`
 
 | Parameter | Prefix | Required | Rules |
 |---|---|---|---|
-| NAME | `n/` | Yes | Should only contain alphabetic characters and spaces, and it should not be blank. |
-| PHONE | `p/` | Yes | Should only contain numbers, and it should be at least 3 digits long. |
-| EMAIL | `e/` | Yes | `local@domain` format. Max 254 characters. |
-| ADDRESS | `a/` | Yes | Any non-empty text. Max 200 characters. |
+| NAME | `n/` | Yes | Letters (a-z, A-Z), digits (0-9), spaces, hyphens `-`, apostrophe `'`, periods `.`, slashes `/`, commas `,`, `@` symbols, backticks (`` ` ``), and parentheses `()`. Must start with a letter. Max 100 characters. |
+| PHONE | `p/` | Yes | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+1 (415) 555-2671`. |
+| EMAIL | `e/` | Yes | `local@domain` format. Max 254 characters. Automatically lowercased. |
+| ADDRESS | `a/` | Yes | Any non-empty printable ASCII text. Max 200 characters. |
 | PRIORITY | `pr/` | No | `yes` (high) or `no` (normal). Default: `no`. |
 
 <div markdown="span" class="alert alert-info">
@@ -191,6 +239,9 @@ Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `add n/Betsy O'Brien e/betsy@example.com a/Newgate Prison p/+6591234567 pr/yes`
 
+<p align="center"><img src="images/add%20command.png" alt="Expected result after running the add command" width="730"/></p>
+
+> **Expected output:** `New candidate added: John Doe`
 
 ---
 
@@ -202,8 +253,14 @@ Format: `list`
 
 * Shows total candidate count.
 * If Talently is empty, a prompt appears to add candidates.
-* Restores the default alphabetical listing, removing any previous `sort` or `find` results.
+* Restores the default alphabetical listing, removing any previous `sort`, `find`, or `filter` results.
 
+Examples:
+* `list`
+
+<p align="center"><img src="images/list%20command.png" alt="Expected result after running the list command" width="730"/></p>
+
+> **Expected output:** `Listed all X candidates.` (where X is the total number of candidates)
 
 ---
 
@@ -211,7 +268,7 @@ Format: `list`
 
 Updates one or more fields of an existing candidate.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]`
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]` *(at least one field required)*
 
 * `INDEX` refers to the number shown in the current list. Must be a positive integer.
 * At least one field must be provided.
@@ -227,14 +284,13 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]`
 :warning: **Warning:** Editing phone or email to match another existing candidate will fail — duplicates are not allowed.
 </div>
 
-* `INDEX` refers to the number shown in the current list. Must be a positive integer.
-* At least one field must be provided.
-* Unspecified fields are unchanged.
-
 Examples:
 * `edit 1 p/91234567 e/johndoe@example.com` — Updates phone and email.
 * `edit 2 n/Betsy Crower pr/yes` — Updates name and sets high priority.
 
+<p align="center"><img src="images/edit%20command.png" alt="Expected result after running the edit command" width="730"/></p>
+
+> **Expected output:** `Edited Candidate: Betsy Crower`
 
 ---
 
@@ -246,6 +302,8 @@ Format: `show INDEX`
 
 * `INDEX` must be a positive integer.
 * Detail panel displays: name, phone, email, address, priority, date added, tags, all notes (each showing the timestamp above the heading and content), and full rejection history.
+* If you make changes to a candidate (e.g. via `edit`, `addnote`, `tag`) while their detail panel is open, the panel updates automatically to reflect the latest information.
+* If the candidate currently shown is removed (via `remove`), the detail panel clears automatically. If you then `undo` the removal, the detail panel repopulates automatically.
 
 <div markdown="span" class="alert alert-primary">
 :bulb: **Tip:** Use `show` after `addnote` or `addreject` to verify your changes.
@@ -255,6 +313,7 @@ Examples:
 * `show 1` — Opens details for the 1st candidate.
 * `find John` then `show 1` — Opens details for the first match.
 
+> **Expected output:** `Showing candidate: John Doe`
 
 ---
 
@@ -277,13 +336,14 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 **Rules:**
 * Case-insensitive. Partial matches supported.
 * Candidates matching **any** keyword are returned (OR logic).
-* Max 20 keywords. Search keywords max 150 characters total.
-* Keywords may contain: letters, digits, `-` `'` `.` `/` `@` `+` `_` `:` `;` `!` `?` `(` `)` (non-ASCII characters such as accented letters or emojis are not supported)
+* Max 20 keywords. The combined character length of all keywords must not exceed 150 characters.
+* Keywords may contain: letters, digits, `-` `'` `.` `/` `@` `+` `_` `:` `;` `!` `?` `(` `)` `&` `%` `"` `#` `*` `,` (non-ASCII characters such as accented letters or emojis are not supported).
 * Duplicate keywords are automatically removed (e.g., `find john john` searches for `john` once).
-* `find` replaces any active `filter` — the results show matches from the full candidate list, not the currently filtered view.
+* `find` always searches across **ALL** candidates in Talently, not just those currently shown by a previous `filter`. Running `find` after `filter` will show results from the full list.
+* If no candidates match, `0 candidates listed.` is shown. Run `list` to return to the full candidate list.
 
 <div markdown="span" class="alert alert-info">
-:information_source: **Note:** `find` does not search the **address field** or **tags**. Searching by address is excluded as it frequently contains common terms (e.g. "Road", "Avenue", "Street") that create excessive noise and return irrelevant results, diluting the specificity of your search. To locate candidates by tag, use the `filter` command instead.
+:information_source: **Note:** `find` does not search the **address field** or **tags**. Use `filter` to search by tag. Phone number search is normalised — digits-only searches (e.g., `find 6591234567`) will match phone numbers stored with separators (e.g., `+65-9123-4567`).
 </div>
 
 Examples:
@@ -292,6 +352,7 @@ Examples:
 * `find overqualified` — Matches candidates whose rejection reasons include "overqualified".
 * `find technical interview` — Matches candidates with notes or rejection reasons mentioning `technical` or `interview`.
 
+> **Expected output:** `X candidates listed.` (where X is the number of matches)
 
 ---
 
@@ -304,6 +365,7 @@ Format: `filter TAG`
 * Exact match (not partial). `Java` does not match `JavaScript`.
 * Case-insensitive. `java` matches `Java`.
 * Tag must follow naming rules: must start with a letter or number, followed by letters, numbers, or the symbols `. + - _ ( ) @ # ! ? '`, no spaces, 1–30 characters.
+* If no candidates have the specified tag (including if the tag does not exist in the tag pool at all), `No matching candidates found.` is shown. Run `list` to return to the full list.
 
 <div markdown="span" class="alert alert-primary">
 :bulb: **Tip:** Use `filter` to pull all candidates at a specific hiring stage, e.g. `filter Shortlisted`.
@@ -313,6 +375,7 @@ Examples:
 * `filter Shortlisted` — Shows all candidates tagged `Shortlisted`.
 * `filter Java` — Shows candidates tagged `Java`, not `JavaScript`.
 
+> **Expected output:** `X candidates listed.` (where X is the number of candidates with that tag), or `No matching candidates found.` if none match.
 
 ---
 
@@ -332,20 +395,25 @@ Examples:
 * `list` then `remove 2` — Removes the 2nd candidate in the full list.
 * `find Betsy` then `remove 1` — Removes the first result from the search.
 
+> **Expected output:** `Removed Person: John Doe | Phone: 98765432 | Email: johnd@example.com | Address: John street, block 123, #01-01`
 
 ---
 
 ### Adding a rejection reason : `addreject`
 
-Records a rejection against a candidate and appends a reason to their history.
+Records a rejection reason against a candidate and appends it to their rejection history.
 
 Format: `addreject INDEX REASON`
 
 * `INDEX` must be a positive integer.
-* `REASON`: non-empty, max 200 characters. Allowed characters: letters, digits, spaces, `.` `,` `-` `'` `/` `:` `;` `!` `?` `(` `)` `&` `"` `#` `+` `%` `@` `*`.
-* Each `addreject` call appends to the rejection history — previous entries are not overwritten. Max 20 rejection records per candidate.
+* `REASON`: non-empty, max 200 characters. Allowed characters: letters, digits, spaces, `. , - ' / : ; ! ? ( ) & " # + % @ *`.
+* Each `addreject` call appends to the rejection history — previous entries are not overwritten. Max 20 rejection records per candidate. Attempting to add a 21st rejection shows an error and nothing is recorded.
 * The candidate's card shows a **red badge** with the total rejection count (lifetime counter).
 * If the same reason is given consecutively, a warning is shown (the rejection is still recorded).
+
+<div markdown="span" class="alert alert-info">
+:information_source: **Note:** `addreject` is designed for recording historical rejection decisions and reasons — it is not a status tracker. If you want to track a candidate's current stage (e.g. Shortlisted, Interviewed), use the `tag` command instead.
+</div>
 
 <div markdown="span" class="alert alert-primary">
 :bulb: **Tip:** Use tags to track hiring stages (e.g., `tag INDEX at/Blacklisted`). Use `addreject` to formally record the reason for rejection. Use `show INDEX` after rejecting to view the full rejection history in the detail panel.
@@ -355,6 +423,7 @@ Examples:
 * `addreject 1 Failed technical interview`
 * `addreject 3 Insufficient experience`
 
+> **Expected output:** `Rejection reason recorded. New Reason added: Failed technical interview (Total rejections on record: 1)`
 
 ---
 
@@ -373,6 +442,8 @@ Examples:
 * `editreject 1 1 Failed cultural fit interview` — updates the 1st rejection reason for candidate 1.
 * `editreject 2 2 Insufficient experience for senior role` — updates the 2nd rejection reason for candidate 2.
 
+> **Expected output:** A confirmation message showing the updated rejection reason.
+
 ---
 
 ### Deleting a rejection reason : `deletereject`
@@ -389,7 +460,7 @@ Examples:
 * `deletereject 1 2` — deletes the 2nd rejection reason from candidate 1.
 * `deletereject 3 1` — deletes the 1st rejection reason from candidate 3.
 
----
+> **Expected output:** A confirmation message showing that the rejection reason has been deleted.
 
 ---
 
@@ -412,6 +483,7 @@ Examples:
 * `sort date o/asc` — Oldest candidates first.
 * `sort date o/desc` — Newest candidates first.
 
+> **Expected output:** `Sorted all candidates by date added (ascending).` or `Sorted all candidates by date added (descending).`
 
 ---
 
@@ -438,6 +510,7 @@ Examples:
 * `sort pr o/asc` — Low-priority candidates first.
 * `sort pr o/desc` — High-priority candidates first.
 
+> **Expected output:** `Sorted all candidates by priority (descending).`
 
 ---
 
@@ -448,9 +521,9 @@ Adds a timestamped note to a candidate's record.
 Format: `addnote INDEX c/CONTENT [h/HEADING]`
 
 * `INDEX` must be a positive integer.
-* `CONTENT` is required, must not be blank, and must not exceed 500 characters.
-* `HEADING` is optional. Defaults to `General Note` if omitted. Must not exceed 50 characters.
-* Max 50 notes per candidate.
+* `CONTENT` is required, must not be blank, printable ASCII only, and must not exceed 500 characters.
+* `HEADING` is optional. Defaults to `General Note` if omitted **or** if `h/` is provided with only whitespace (e.g. `h/   `). Must not exceed 50 characters (printable ASCII only).
+* Max 50 notes per candidate. Attempting to add a 51st note shows an error and nothing is saved.
 * Each note is automatically stamped with the current date and time. The timestamp is displayed above the note heading in the detail panel (e.g. `02 Apr 2026, 23:15`).
 * Notes are appended in order — earlier notes are never overwritten.
 * Newline characters in pasted content are automatically converted to spaces.
@@ -464,6 +537,7 @@ Examples:
 * `addnote 1 c/Passed the technical interview flawlessly. h/Tech Round 1`
 * `addnote 2 c/Strong communication skills.`
 
+> **Expected output:** `Successfully added note to candidate: John Doe`
 
 ---
 
@@ -471,13 +545,13 @@ Examples:
 
 Edits the content and/or heading of an existing note. The original timestamp is preserved.
 
-Format: `editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]`
+Format: `editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]` *(at least one required)*
 
 * `INDEX` is the candidate's position in the displayed list (positive integer).
 * `NOTE_INDEX` is the note's position in the candidate's notes list (positive integer). Use `show INDEX` to see note numbers.
 * At least one of `c/CONTENT` or `h/HEADING` must be provided.
-* `CONTENT` must not be blank and must not exceed 500 characters.
-* `HEADING` must not be blank and must not exceed 50 characters.
+* `CONTENT` must not be blank, printable ASCII only, and must not exceed 500 characters.
+* `HEADING` must not be blank, printable ASCII only, and must not exceed 50 characters.
 * The note's original timestamp is preserved — only the content and/or heading are updated.
 * Newline characters in pasted content are automatically converted to spaces.
 
@@ -485,6 +559,8 @@ Examples:
 * `editnote 1 1 c/Actually failed the interview.` — updates the content of note 1 for candidate 1, keeping the original heading and timestamp.
 * `editnote 2 3 h/Final Round` — updates only the heading of note 3 for candidate 2.
 * `editnote 1 2 c/New content h/New heading` — updates both content and heading.
+
+> **Expected output:** A confirmation message showing that the note has been updated.
 
 ---
 
@@ -501,6 +577,8 @@ Examples:
 * `deletenote 1 2` — deletes the 2nd note from candidate 1.
 * `deletenote 3 1` — deletes the 1st note from candidate 3.
 
+> **Expected output:** A confirmation message showing that the note has been deleted.
+
 ---
 
 ### Managing the tag pool : `tagpool`
@@ -513,7 +591,7 @@ Format: `tagpool [at/TAG_TO_CREATE]... [dt/TAG_TO_DELETE]...`
 
 * Running `tagpool` with no arguments lists all tags currently in the pool.
 * To create or delete tags, at least one `at/` or `dt/` prefix is required.
-* Max 10 tags per command. The pool can hold at most 50 tags total.
+* Max 10 tags per command — **adds and deletes counted together** (e.g., 6 adds + 5 deletes = 11 total, which exceeds the limit). The pool can hold at most 50 tags total. A command that would bring the net pool size above 50 is rejected — but a swap (e.g., `tagpool at/NewTag dt/OldTag`) is permitted even when the pool is already at 50, since the net size does not change.
 * Tag names: must start with a letter or number, followed by letters, numbers, or the symbols `. + - _ ( ) @ # ! ? '`, no spaces, 1–30 characters, case-insensitive (`Python` and `python` are the same).
 * Cannot create a tag that already exists, or delete one that does not exist. If you try to create an existing tag, the error message will tell you it already exists — this is the quickest way to check if a tag is in the pool.
 * Cannot create and delete the same tag in one command.
@@ -534,6 +612,7 @@ Examples:
 * `tagpool dt/Shortlisted` — Deletes `Shortlisted` from the pool and all candidates.
 * `tagpool at/Senior dt/Junior` — Creates `Senior` and deletes `Junior` in one command.
 
+> **Expected output:** `Tag pool updated. Created: 1 tag(s). Deleted: 0 tag(s).`
 
 ---
 
@@ -541,12 +620,12 @@ Examples:
 
 Adds or removes tags on one or more candidates.
 
-Format: `tag INDEX[,INDEX]... [at/TAG_TO_ADD]... [dt/TAG_TO_REMOVE]...`
+Format: `tag INDEX[,INDEX]... [at/TAG_TO_ADD]... [dt/TAG_TO_REMOVE]...` *(at least one `at/` or `dt/` required)*
 
 * Single index or comma-separated list (e.g. `1,2,3`). Duplicate indices not allowed.
 * Each `INDEX` must be a positive integer.
 * At least one `at/` or `dt/` prefix is required.
-* Max 10 tags per command. A candidate can hold at most one of each tag in the pool (no duplicates), bounded by the 50-tag pool limit.
+* Max 10 tags per command — **adds and deletes counted together**. A candidate can hold at most one of each tag in the pool (no duplicates), bounded by the 50-tag pool limit.
 * Tags must already exist in the tag pool — use `tagpool` to create them first.
 * Cannot add a tag the candidate already has, or remove one they do not have.
 * Cannot add and delete the same tag in one command.
@@ -557,21 +636,27 @@ Examples:
 * `tag 3 at/Senior dt/Junior` — Adds `Senior` and removes `Junior` from candidate 3.
 * `tag 1,2,3 at/Shortlisted` — Adds `Shortlisted` to candidates 1, 2, and 3.
 
+> **Expected output:** A confirmation message listing the tags added and/or removed for the specified candidate(s).
 
 ---
 
 ### Undoing the last modifying command : `undo`
 
-Reverts Talently to the state before the most recent data-changing command. The undo functionality operates like a **stack**, meaning it remembers the exact sequence of your actions. When you type `undo`, it reverts the most recent action placed on the top of the stack. If you type `undo` again, it reverts the action before that, stepping backwards through your history.
+Reverts Talently to the state before the most recent data-changing command.
 
 Format: `undo`
 
+`undo` steps back one action at a time. You can keep typing `undo` to go further back through your history. `redo` steps forward again through actions you have undone. If you make any new change after undoing, you can no longer redo the undone actions.
+
 * Applies to: `add`, `edit`, `remove`, `addreject`, `editreject`, `deletereject`, `tag`, `tagpool`, `addnote`, `editnote`, `deletenote`, `sort`, `clear`.
+* Does **not** apply to read-only commands (`find`, `filter`, `list`, `show`, `help`, `exit`). Typing `undo` after one of these steps back to the last data-changing action, not the last view change.
 * If there is nothing to undo, an error is shown.
 
 Examples:
 * `remove 2` then `undo` — Restores the removed candidate.
+* `undo` then `undo` — Steps back two actions.
 
+> **Expected output:** A message describing the action that was undone.
 
 ---
 
@@ -582,11 +667,12 @@ Re-applies the most recently undone data-changing command. This applies to the s
 Format: `redo`
 
 * Can only be used after `undo`. If there is no undone state, an error is shown.
-* Any new modifying command after `undo` clears the redo history.
+* Any new modifying command after `undo` clears the redo history — once you make a new change, the previously undone actions can no longer be redone.
 
 Examples:
 * `remove 2` → `undo` → `redo` — Re-applies the removal.
 
+> **Expected output:** A message describing the action that was redone.
 
 ---
 
@@ -600,6 +686,10 @@ Format: `clear`
 :warning: **Warning:** Removes all candidate data **and the entire tag pool**. Use `undo` immediately to recover.
 </div>
 
+Examples:
+* `clear`
+
+> **Expected output:** `Address book has been cleared!`
 
 ---
 
@@ -608,6 +698,11 @@ Format: `clear`
 Closes Talently.
 
 Format: `exit` (Alternatively, you can use `Cmd + Q` on macOS or `Ctrl + Q` on Windows/Linux)
+
+Examples:
+* `exit`
+
+> **Expected output:** The application window closes and Talently exits.
 
 ---
 
@@ -653,17 +748,13 @@ A: Use `show INDEX`. The detail panel lists all notes with headings, content, an
 **Q: Can two candidates have the same name?**
 A: Yes — Talently identifies duplicates by phone **or** email, not name. Two candidates with the same name but different phone and email are allowed.
 
-**Q: What happens when I open a save file from an older version?**
-A: Save files from older versions that contain a `status` field are loaded normally — the field is silently ignored. Data from older versions is fully compatible.
-
 --------------------------------------------------------------------------------------------------------------------
 
 ## Known issues
 
-1. **Multiple screens:** Talently automatically detects whether the saved window position is on a currently connected screen. If the saved position is off-screen (e.g. a secondary monitor has been disconnected), the window is repositioned to the primary screen on the next launch. No manual intervention is required.
+1. **Off-screen window on relaunch:** Talently is designed for a single-monitor desktop. If the saved window position is off-screen (e.g. because display settings changed since the last launch), Talently automatically repositions the window to the primary screen on the next launch. No manual intervention is required.
 2. **Minimised help window:** If you minimise the Help Window and then run `help` again (or press `F1`), the existing Help Window is brought back into focus but may remain minimised on some platforms. **Fix:** Restore it manually from the taskbar.
 3. **Long single-line notes:** Extremely long note content without any spaces (e.g. a single 500-character URL) will wrap visually but cannot be broken at word boundaries in the detail panel. Prefer pasting URLs separated by spaces from surrounding prose.
-
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -673,15 +764,15 @@ Action | Format, Examples
 --------|------------------
 **Add** | `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]` <br> e.g. `add n/James Ho p/22224444 e/jamesho@example.com a/123 Clementi Rd`
 **Clear** | `clear`
-**Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]`<br> e.g. `edit 2 n/James Lee e/jameslee@example.com`
-**Exit** | `exit`
+**Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]` *(at least one field required)*<br> e.g. `edit 2 n/James Lee e/jameslee@example.com`
+**Exit** | `exit` (also `Cmd + Q` on macOS, `Ctrl + Q` on Windows/Linux)
 **Filter** | `filter TAG`<br> e.g. `filter Shortlisted`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g. `find James Jake`
 **Help** | `help`
 **List** | `list`
 **Add Note** | `addnote INDEX c/CONTENT [h/HEADING]`<br> e.g. `addnote 1 c/Passed interview h/Tech Round 1`
 **Delete Note** | `deletenote INDEX NOTE_INDEX`<br> e.g. `deletenote 1 2`
-**Edit Note** | `editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]`<br> e.g. `editnote 1 1 c/Updated content`
+**Edit Note** | `editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]` *(at least one required)*<br> e.g. `editnote 1 1 c/Updated content`
 **Redo** | `redo`
 **Add Reject** | `addreject INDEX REASON`<br> e.g. `addreject 1 Failed technical interview`
 **Delete Reject** | `deletereject INDEX REJECT_INDEX`<br> e.g. `deletereject 1 2`
@@ -702,21 +793,20 @@ Action | Format, Examples
 |---|---|
 | **Candidate** | A person managed in Talently, with fields name, phone, email, address, priority, date added, tags, notes, and rejection history. |
 | **Command** | A specific instruction typed into the command box to perform an action (e.g. `add`, `find`, `tag`). |
-| **Parameter** | A value supplied to a command, usually introduced by a two-character prefix such as `n/`, `p/`, `e/`, `a/`, `pr/`, `h/`, `d/`. |
-| **Prefix** | The short marker (e.g. `n/`) that introduces a parameter in a command. Must be preceded by a space when not at the start of the command. |
+| **Parameter** | A value supplied to a command, usually introduced by a prefix such as `n/`, `p/`, `e/`, `a/`, `pr/`, `h/`, `c/`, `o/`. |
+| **Prefix** | The short marker (e.g. `n/`) that introduces a parameter in a command. Prefixes are always lowercase. The real prefixes used in Talently are: `n/`, `p/`, `e/`, `a/`, `pr/`, `at/`, `dt/`, `c/`, `h/`, `o/`. Must be preceded by a space when not at the start of the command. |
 | **Index** | The 1-based number shown next to each candidate in the currently displayed list. Used by commands such as `remove`, `edit`, `show`, `tag`, `addnote`, and `addreject`. The index refers to the **displayed** list, which may be filtered. |
 | **Tag** | A user-defined label attached to a candidate (e.g. `Shortlisted`). Tags are case-insensitive and must first be created in the tag pool before being assigned. |
 | **Tag pool** | The master registry of tags managed with `tagpool`. Only tags in the pool can be assigned to candidates. |
 | **Note** | A timestamped, free-form entry attached to a candidate, with optional heading. Notes are ordered and never overwritten by new additions. |
 | **Rejection reason** | A formal, audit-style record of why a candidate was rejected, added with `addreject`. Each candidate maintains a numbered history; the red badge on a candidate card shows the total count. |
 | **Priority** | A boolean flag (`yes` / `no`) that marks a candidate as high-priority. Surfaced by `sort pr o/desc`. |
-| **Detail panel** | The right-side panel opened by `show INDEX`. Displays all candidate information including notes and full rejection history. |
+| **Detail panel** | The right-side panel opened by `show INDEX`. Displays all candidate information including notes (with timestamps) and full rejection history. |
 | **Command box** | The text input at the top of the main window where you type commands. |
 | **Result display** | The area directly below the command box that shows feedback and error messages after each command. |
 | **Candidate list** | The scrollable list on the left of the main window showing candidate cards with index, name, contact fields, tags, and rejection badge. |
 | **Home folder** | The folder containing `talently.jar`. Talently reads and writes `data/talently.json` and `preferences.json` relative to this folder. |
 | **Save file** | `data/talently.json` — the JSON file where candidate data is autosaved after every modifying command. |
 | **Autosave** | The automatic write to the save file after any command that changes data. No manual save is needed. |
-| **Undo stack** | The internal history of data-modifying commands. `undo` pops the most recent entry; `redo` replays it until a new modifying command is executed. |
 | **Duplicate candidate** | Any new or edited candidate whose phone number **or** email matches an existing candidate. Talently rejects duplicates. Name alone does not determine uniqueness. |
 | **ASCII input** | Plain, printable characters in the US-ASCII range (letters, digits, spaces, common punctuation). Talently only accepts ASCII in text fields — non-ASCII characters are rejected. |
