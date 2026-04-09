@@ -89,7 +89,8 @@ public class CandidateDetailPanel extends UiPart<Region> {
         detailName.setText(person.getName().fullName);
         detailPhone.setText("Phone: " + person.getPhone().value);
         detailEmail.setText("Email: " + person.getEmail().value);
-        detailAddress.setText("Address: " + person.getAddress().value);
+        String addressText = person.getAddress().isEmpty() ? "Not provided" : person.getAddress().value;
+        detailAddress.setText("Address: " + addressText);
         detailPriority.setText("Priority: " + (person.getPriority().isPriority() ? "\u2b50 High" : "Normal"));
         detailDateAdded.setText("Added: " + person.getDateAdded().getDisplayFormat());
     }

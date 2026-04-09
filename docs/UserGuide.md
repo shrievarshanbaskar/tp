@@ -117,11 +117,11 @@ Ready for more? Continue to [Features](#features).
 <div markdown="span" class="alert alert-warning">
 :warning: **Caution: Manual Data Editing** <br>
 The data file `[JAR file location]/data/talently.json` is in JSON format. While you can edit it manually, it is **not recommended**.
-*   **Corrupted Data:** If the file is edited in a way that violates data constraints (e.g., an invalid email format like `user@localhost`), the application will detect the corruption and **reset to an empty state** to prevent further data loss or crashes.
+*   **Corrupted Data:** If the file is edited in a way that violates data constraints (e.g., an invalid email format like `user@localhost`, or duplicate entries sharing the same phone or email), the application will detect the corruption and **reset to an empty state** to prevent further data loss or crashes.
 *   **Healing:** In cases of missing optional metadata (like `dateAdded`), the application may "heal" the record by assigning a default value.
 *   **Backup:** Always keep a backup of your data file before performing manual edits.
 </div>
-* **Input normalization:** Names have extra whitespace collapsed (e.g., `John    Doe` becomes `John Doe`). Emails are automatically lowercased (e.g., `John@Gmail.COM` becomes `john@gmail.com`). Phone numbers with or without the `+` prefix are treated as the same number for duplicate detection (e.g., `+6591234567` and `6591234567` are duplicates).
+* **Input normalization:** Names have extra whitespace collapsed (e.g., `John    Doe` becomes `John Doe`). Emails are automatically lowercased (e.g., `John@Gmail.COM` becomes `john@gmail.com`). Phone numbers are compared by their digits only — the `+` prefix, spaces, hyphens, and parentheses are stripped before comparing, so `+65-9123-4567`, `+6591234567`, and `6591234567` are all treated as the same number for duplicate detection.
 * **Providing duplicate prefixes** (e.g., `n/Alice n/Bob`) in a single command is not allowed and will be rejected with an error.
 
 </div>
@@ -130,10 +130,10 @@ The data file `[JAR file location]/data/talently.json` is in JSON format. While 
 
 | Field | Prefix | Rules |
 |---|---|---|
-| NAME | `n/` | Letters, spaces, hyphens `-`, apostrophes `'`, periods `.`, slashes `/`. No digits. Max 100 characters. |
-| PHONE | `p/` | Digits only, optional `+` prefix. 3–15 digits. All-zero numbers not allowed. |
+| NAME | `n/` | Letters, spaces, hyphens `-`, apostrophes `'`, periods `.`, slashes `/`, commas `,`, and `@`. Must start with a letter. No digits. Max 100 characters. |
+| PHONE | `p/` | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). All-zero numbers not allowed. Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+1 (415) 555-2671`. |
 | EMAIL | `e/` | `local@domain` format. Max 254 characters. Auto-lowercased on save. |
-| ADDRESS | `a/` | Any non-empty printable ASCII text. Max 100 characters. |
+| ADDRESS | `a/` | Optional. Any non-empty printable ASCII text. Max 100 characters. If omitted, recorded as "Not provided". |
 | PRIORITY | `pr/` | `yes` (high priority) or `no` (normal). Case-insensitive. Default: `no`. |
 | TAG | `at/` / `dt/` | Letters, digits, `. + - _ ( ) @ # ! ? '`. No spaces. 1–30 characters. Case-insensitive. |
 | NOTE HEADING | `h/` | Optional. Printable ASCII only. Max 50 characters. Defaults to `General Note`. Max 50 notes per candidate. |
@@ -158,16 +158,16 @@ Format: `help`
 
 Adds a new candidate to Talently.
 
-Format: `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]`
+Format: `add n/NAME p/PHONE e/EMAIL [a/ADDRESS] [pr/PRIORITY]`
 
 **Parameters:**
 
 | Parameter | Prefix | Required | Rules |
 |---|---|---|---|
-| NAME | `n/` | Yes | Letters, spaces, hyphens, apostrophes, periods, slashes. No digits. Max 100 characters. |
-| PHONE | `p/` | Yes | Digits only, optional `+` prefix. 3–15 digits. All-zero numbers (e.g., `000`) are not allowed. |
+| NAME | `n/` | Yes | Letters, spaces, hyphens `-`, apostrophes `'`, periods `.`, slashes `/`, commas `,`, and `@`. Must start with a letter. No digits. Max 100 characters. |
+| PHONE | `p/` | Yes | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). All-zero numbers (e.g. `000`) are not allowed. Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+62 812 5555 1234`, `+1 (415) 555-2671`. |
 | EMAIL | `e/` | Yes | `local@domain` format. Max 254 characters. |
-| ADDRESS | `a/` | Yes | Any non-empty text. Max 100 characters. |
+| ADDRESS | `a/` | No | Any non-empty text. Max 100 characters. If omitted, address is recorded as "Not provided". |
 | PRIORITY | `pr/` | No | `yes` (high) or `no` (normal). Default: `no`. |
 
 <div markdown="span" class="alert alert-info">
@@ -674,8 +674,7 @@ A: Save files from older versions that contain a `status` field are loaded norma
 
 ## Known issues
 
-1. **Multiple screens:** If Talently was last used on a secondary screen that is now disconnected, the window may open off-screen.
-   **Fix:** Delete `preferences.json` from the home folder before relaunching.
+1. **Multiple screens:** Talently automatically detects whether the saved window position is on a currently connected screen. If the saved position is off-screen (e.g. a secondary monitor has been disconnected), the window is repositioned to the primary screen on the next launch. No manual intervention is required.
 2. **Minimised help window:** If you minimise the Help Window and then run `help` again (or press `F1`), the existing Help Window is brought back into focus but may remain minimised on some platforms. **Fix:** Restore it manually from the taskbar.
 3. **Long single-line notes:** Extremely long note content without any spaces (e.g. a single 500-character URL) will wrap visually but cannot be broken at word boundaries in the detail panel. Prefer pasting URLs separated by spaces from surrounding prose.
 
@@ -686,7 +685,7 @@ A: Save files from older versions that contain a `status` field are loaded norma
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]` <br> e.g. `add n/James Ho p/22224444 e/jamesho@example.com a/123 Clementi Rd`
+**Add** | `add n/NAME p/PHONE e/EMAIL [a/ADDRESS] [pr/PRIORITY]` <br> e.g. `add n/James Ho p/22224444 e/jamesho@example.com a/123 Clementi Rd`
 **Clear** | `clear`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]`<br> e.g. `edit 2 n/James Lee e/jameslee@example.com`
 **Exit** | `exit`

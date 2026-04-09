@@ -378,7 +378,7 @@ Priorities: High (must-have) - `* * *`, Medium (nice-to-have) - `* *`, Low (unli
 
 | Priority | As a …​ | I want to …​                                                                       | So that I can…​ |
 |----------|---------|------------------------------------------------------------------------------------|-----------------|
-| `* * *` | recruiter | add a candidate with name, phone, email, address, and optional priority            | begin tracking them in my talent pool immediately. |
+| `* * *` | recruiter | add a candidate with name, phone, email, optional address, and optional priority   | begin tracking them in my talent pool immediately. |
 | `* * *` | recruiter | list all candidates alphabetically                                                 | get a full overview of everyone in my talent pool. |
 | `* * *` | recruiter | view the complete profile of a specific candidate via a detail panel                | read their full history (notes, tags, rejections) in one place before a call. |
 | `* * *` | recruiter | search for candidates by partial name, phone, email, note content, or rejection reason | instantly locate a record even if I only remember a fragment of their details. |
@@ -422,7 +422,7 @@ Priorities: High (must-have) - `* * *`, Medium (nice-to-have) - `* *`, Low (unli
     * 2b1. System informs the user of the duplicate collision.
     * Use case ends.
 
-**Design justification:** Duplicate detection uses phone OR email (not both) because either field alone is sufficient to uniquely identify a real-world person. This prevents accidental duplicate entries even when only one contact field is shared, while still allowing two candidates with the same name (which is common in practice).
+**Design justification:** Duplicate detection uses phone OR email (not both) because either field alone is sufficient to uniquely identify a real-world person. This prevents accidental duplicate entries even when only one contact field is shared, while still allowing two candidates with the same name (which is common in practice). Phone comparison is performed on digits only — formatting separators (`+`, spaces, hyphens, parentheses) are stripped before comparing — so `+65-9123-4567`, `+6591234567`, and `6591234567` are all treated as the same number.
 
 
 **Use case: UC2 - Removing a candidate**
@@ -865,7 +865,7 @@ The `address` field is intentionally excluded because addresses generate enormou
 4. The application must prioritize CLI input. A target user with a fast typing speed (60+ WPM) should be able to execute core workflows (e.g., adding a candidate, recording a rejection with a reason) entirely via text commands significantly faster than executing the equivalent actions in a standard mouse-driven GUI.
 5. All standard data manipulation and retrieval commands must execute, persist to the local file, and update the UI within `200` milliseconds under normal load to prevent disruption of the user's typing flow.
 6. The system must automatically save data locally after every mutating command. If a command fails validation halfway through execution (e.g., valid identifier but invalid rejection reason), the system state must remain entirely unchanged to prevent corrupted data.
-7. **Single-monitor desktop design.** The Graphical User Interface is designed for a single-monitor desktop setup at standard resolutions between `1280x720` and `1920x1080`. The GUI must remain fully usable (all panels visible, no cut-off controls) throughout this range and at scaling factors 100%, 125%, and 150%. Stretching the main window across multiple monitors or onto ultra-wide displays is explicitly **out of scope**; the layout is only guaranteed to recover once the window is resized back within the supported range. A minimum window size is enforced in code (main window 800×600, help window 700×500) so the user cannot shrink either below the point where essential controls would be hidden.
+7. **Desktop display design.** The Graphical User Interface is designed for standard desktop resolutions between `1280x720` and `1920x1080`. The GUI must remain fully usable (all panels visible, no cut-off controls) throughout this range and at scaling factors 100%, 125%, and 150%. Stretching the main window across multiple monitors or onto ultra-wide displays is explicitly **out of scope**; the layout is only guaranteed to recover once the window is resized back within the supported range. A minimum window size is enforced in code (main window 800×600, help window 700×500) so the user cannot shrink either below the point where essential controls would be hidden. On startup, if the saved window position falls outside the bounds of any currently connected screen (e.g. a secondary monitor has been disconnected), the application automatically repositions the window to the primary screen.
 8. **ASCII-only text input.** All free-text fields (name, address, note heading, note content, rejection reason) and all keyword-based search inputs accept **printable ASCII characters only** (0x20–0x7E). Non-ASCII input — accented letters, CJK characters, emojis, right-to-left scripts, and "smart" quotes pasted from word processors — must be rejected at the validator level. This constraint simplifies matching/indexing and ensures consistent rendering on all supported platforms without font-fallback artefacts.
 9. The system must function completely independently of an internet connection, ensuring 100% feature availability during automated testing and offline usage.
 
@@ -968,8 +968,14 @@ testers are expected to do more *exploratory* testing.
    1. Test case: `add n/Jane Smith p/91234567 e/jane@example.com a/10 Havelock Rd`<br>
       Expected: A new candidate is appended with the supplied details and default priority `no`. The candidate card appears in the list. Success message shown in the result display.
 
-   1. Test case: `add n/Mary-Jane O'Brien p/+6591234567 e/mj@example.com a/Blk 123 #02-25 pr/yes`<br>
-      Expected: Candidate added with high priority. The `+` is accepted in the phone number. The hyphen, apostrophe, and period are accepted in the name.
+   1. Test case: `add n/Mary-Jane O'Brien p/+65-9123-4567 e/mj@example.com a/Blk 123 #02-25 pr/yes`<br>
+      Expected: Candidate added with high priority. The international phone format with `+` and hyphens is accepted. The hyphen, apostrophe, and period are accepted in the name.
+
+   1. Test case: `add n/John p/+1 (415) 555-2671 e/john@example.com a/123 Main St`<br>
+      Expected: Candidate added. Parentheses and spaces in the phone number are accepted. For duplicate detection, the phone is compared as digits only (`14155552671`).
+
+   1. Test case: `add n/Doe, Jane @ Acme p/91234567 e/jane@example.com` (comma and @ in name, no address)<br>
+      Expected: Candidate added. Comma and `@` are accepted in the name. Address is recorded as "Not provided". The `a/` prefix is optional.
 
 1. Adding a candidate with invalid input
 

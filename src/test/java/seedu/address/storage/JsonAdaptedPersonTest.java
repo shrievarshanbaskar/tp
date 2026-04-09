@@ -2,6 +2,7 @@ package seedu.address.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.storage.JsonAdaptedPerson.MISSING_FIELD_MESSAGE_FORMAT;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.BENSON;
@@ -26,7 +27,7 @@ import seedu.address.model.person.Phone;
 import seedu.address.testutil.PersonBuilder;
 
 public class JsonAdaptedPersonTest {
-    private static final String INVALID_NAME = "R@chel";
+    private static final String INVALID_NAME = "R@chel123"; // digits are not allowed in names
     private static final String INVALID_PHONE = "911a";
     private static final String INVALID_ADDRESS = " ";
     private static final String INVALID_EMAIL = "example.com";
@@ -129,13 +130,14 @@ public class JsonAdaptedPersonTest {
     }
 
     @Test
-    public void toModelType_nullAddress_throwsIllegalValueException() {
+    public void toModelType_nullAddress_usesEmptySentinel() throws Exception {
+        // Address is optional — a null/absent address in JSON maps to Address.EMPTY, not an error.
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, null, VALID_TAGS,
                 VALID_REJECTION_REASONS, VALID_DATE_ADDED, VALID_PRIORITY, null);
-        String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName());
         AddressBook ab = new AddressBook();
         BENSON.getTags().forEach(ab::addTag);
-        assertThrows(IllegalValueException.class, expectedMessage, () -> person.toModelType(ab));
+        Person modelPerson = person.toModelType(ab);
+        assertTrue(modelPerson.getAddress().isEmpty());
     }
 
     @Test

@@ -45,7 +45,9 @@ public class AddCommandParser implements Parser<AddCommand> {
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
         Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
-        Address address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
+        Address address = argMultimap.getValue(PREFIX_ADDRESS).isPresent()
+                ? ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get())
+                : Address.EMPTY;
         Priority priority = argMultimap.getValue(PREFIX_PRIORITY).isPresent()
                 ? ParserUtil.parsePriority(argMultimap.getValue(PREFIX_PRIORITY).get())
                 : new Priority("no");
@@ -64,9 +66,8 @@ public class AddCommandParser implements Parser<AddCommand> {
         boolean hasName = argMultimap.getValue(PREFIX_NAME).isPresent();
         boolean hasPhone = argMultimap.getValue(PREFIX_PHONE).isPresent();
         boolean hasEmail = argMultimap.getValue(PREFIX_EMAIL).isPresent();
-        boolean hasAddress = argMultimap.getValue(PREFIX_ADDRESS).isPresent();
 
-        if (!hasName && !hasPhone && !hasEmail && !hasAddress) {
+        if (!hasName && !hasPhone && !hasEmail) {
             throw new ParseException(AddCommand.MESSAGE_MISSING_ALL);
         }
         if (!hasName) {
@@ -77,9 +78,6 @@ public class AddCommandParser implements Parser<AddCommand> {
         }
         if (!hasEmail) {
             throw new ParseException(AddCommand.MESSAGE_MISSING_EMAIL);
-        }
-        if (!hasAddress) {
-            throw new ParseException(AddCommand.MESSAGE_MISSING_ADDRESS);
         }
     }
 

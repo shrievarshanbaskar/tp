@@ -15,6 +15,9 @@ public class Address {
             + " (letters, digits, spaces, and common punctuation), and must not exceed "
             + MAX_LENGTH + " characters.";
 
+    /** Sentinel used when no address was supplied (address is optional in {@code add}). */
+    public static final Address EMPTY = new Address();
+
     /*
      * The first character of the address must not be a whitespace (otherwise " " becomes valid),
      * and every character must be a printable ASCII character (0x21-0x7E for the first char,
@@ -23,6 +26,11 @@ public class Address {
     public static final String VALIDATION_REGEX = "[\\x21-\\x7E][\\x20-\\x7E]*";
 
     public final String value;
+
+    /** Private constructor for {@link #EMPTY} — bypasses validation. */
+    private Address() {
+        value = "";
+    }
 
     /**
      * Constructs an {@code Address}.
@@ -33,6 +41,11 @@ public class Address {
         requireNonNull(address);
         checkArgument(isValidAddress(address), MESSAGE_CONSTRAINTS);
         value = address;
+    }
+
+    /** Returns true if this address was not provided (i.e. it is the {@link #EMPTY} sentinel). */
+    public boolean isEmpty() {
+        return value.isEmpty();
     }
 
     /**

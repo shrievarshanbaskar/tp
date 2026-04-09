@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
@@ -13,6 +14,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
@@ -143,11 +145,32 @@ public class MainWindow extends UiPart<Stage> {
         primaryStage.setHeight(guiSettings.getWindowHeight());
         primaryStage.setWidth(guiSettings.getWindowWidth());
         if (guiSettings.getWindowCoordinates() != null) {
-            primaryStage.setX(guiSettings.getWindowCoordinates().getX());
-            primaryStage.setY(guiSettings.getWindowCoordinates().getY());
+            double x = guiSettings.getWindowCoordinates().getX();
+            double y = guiSettings.getWindowCoordinates().getY();
+            if (isPositionOnScreen(x, y)) {
+                primaryStage.setX(x);
+                primaryStage.setY(y);
+            }
+            // If off-screen (e.g. secondary monitor disconnected), skip setting position
+            // so JavaFX centres the window on the primary screen instead.
         }
         primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(600);
+    }
+
+    /**
+     * Returns true if the point ({@code x}, {@code y}) falls within the visual bounds of
+     * any currently connected screen. Used to guard against opening the window off-screen
+     * when a previously-used monitor has been disconnected.
+     */
+    private boolean isPositionOnScreen(double x, double y) {
+        for (Screen screen : Screen.getScreens()) {
+            Rectangle2D bounds = screen.getVisualBounds();
+            if (bounds.contains(x, y)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

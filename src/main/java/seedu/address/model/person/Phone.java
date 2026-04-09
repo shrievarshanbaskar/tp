@@ -11,10 +11,16 @@ public class Phone {
 
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Error: Invalid phone number. Phone number must contain only digits "
-            + "(with optional '+' prefix), must be between 3 and 15 digits long, "
-            + "and must not be all zeros.";
-    public static final String VALIDATION_REGEX = "\\+?\\d{3,15}";
+            "Error: Invalid phone number. Phone numbers may start with an optional '+', "
+            + "followed by digits, spaces, hyphens '-', or parentheses '()' as separators "
+            + "(e.g. +65-9123-4567, +1 (415) 555-2671, 91234567). "
+            + "Must contain 3 to 15 digits (separators excluded). "
+            + "All-zero numbers (e.g. 000) are not allowed.";
+    /**
+     * Matches an optional leading '+', then a digit, then any mix of digits/spaces/hyphens/parentheses.
+     * Digit-count and all-zero checks are performed separately in {@link #isValidPhone(String)}.
+     */
+    public static final String VALIDATION_REGEX = "\\+?\\d[\\d ()\\-]*";
     public final String value;
 
     /**
@@ -31,14 +37,17 @@ public class Phone {
 
     /**
      * Returns true if a given string is a valid phone number.
-     * Rejects all-zero numbers (e.g., 000, 0000000).
+     * Accepts international formats with '+', spaces, hyphens, and parentheses as separators.
+     * Rejects numbers with fewer than 3 or more than 15 digits, and all-zero numbers.
      */
     public static boolean isValidPhone(String test) {
         if (!test.matches(VALIDATION_REGEX)) {
             return false;
         }
-        // Reject all-zero patterns (000, 0000, etc.)
-        String digitsOnly = test.replaceAll("\\+", "");
+        String digitsOnly = test.replaceAll("[^\\d]", "");
+        if (digitsOnly.length() < 3 || digitsOnly.length() > 15) {
+            return false;
+        }
         return !digitsOnly.matches("0+");
     }
 
@@ -63,11 +72,12 @@ public class Phone {
     }
 
     /**
-     * Returns the digits-only form of this phone number (strips leading '+').
-     * Used for duplicate detection so that +6591234567 and 6591234567 are considered the same.
+     * Returns the digits-only form of this phone number (strips '+', spaces, hyphens, parentheses).
+     * Used for duplicate detection so that +65-9123-4567, +6591234567, and 6591234567 are
+     * all considered the same number.
      */
     private String normalizedDigits() {
-        return value.startsWith("+") ? value.substring(1) : value;
+        return value.replaceAll("[^\\d]", "");
     }
 
     @Override

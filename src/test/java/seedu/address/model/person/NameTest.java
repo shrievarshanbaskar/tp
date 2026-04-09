@@ -30,7 +30,7 @@ public class NameTest {
         assertFalse(Name.isValidName("^")); // only non-alphanumeric characters
         assertFalse(Name.isValidName("peter*")); // contains special characters
         assertFalse(Name.isValidName("John123")); // contains digits
-        assertFalse(Name.isValidName("John@Doe")); // contains @
+        assertFalse(Name.isValidName("@JohnDoe")); // must start with a letter, not @
         assertFalse(Name.isValidName("12345")); // numbers only
         assertFalse(Name.isValidName("a".repeat(101))); // exceeds 100 chars
 
@@ -42,6 +42,9 @@ public class NameTest {
         assertTrue(Name.isValidName("Jean-Luc")); // hyphen
         assertTrue(Name.isValidName("S. Kumar")); // period
         assertTrue(Name.isValidName("Ravi S/O Muthu")); // slash
+        assertTrue(Name.isValidName("John@Doe")); // @ symbol
+        assertTrue(Name.isValidName("Doe, John")); // comma
+        assertTrue(Name.isValidName("Smith, Jane @ HR")); // comma and @
         assertTrue(Name.isValidName("a".repeat(100))); // exactly 100 chars
     }
 
