@@ -131,15 +131,11 @@ The data file `[JAR file location]/data/talently.json` is in JSON format. While 
 
 | Field | Prefix | Rules |
 |---|---|---|
-| NAME | `n/` | Letters, spaces, hyphens `-`, apostrophes (both `'` and `’`), periods `.`, slashes `/`, commas `,`, `@` symbols, backticks (`` ` ``), and parentheses `()`. Must start with a letter. No digits. Max 100 characters. |
-| PHONE | `p/` | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). All-zero formatting (e.g. `000`) is allowed. Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+1 (415) 555-2671`. Include country codes for reliable duplicate matching. |
-| EMAIL | `e/` | `local@domain` format. Max 254 characters. Auto-lowercased on save. |
-| ADDRESS | `a/` | Required. Any non-empty printable ASCII text. Max 200 characters. |
-| PRIORITY | `pr/` | `yes` (high priority) or `no` (normal). Case-insensitive. Default: `no`. |
-| TAG | `at/` / `dt/` | Letters, digits, `. + - _ ( ) @ # ! ? '`. No spaces. 1–30 characters. Case-insensitive. |
-| NOTE HEADING | `h/` | Optional. Printable ASCII only. Max 50 characters. Defaults to `General Note`. Max 50 notes per candidate. |
-| NOTE CONTENT | `c/` | Required. Printable ASCII only. Max 500 characters. |
-| REJECTION REASON | (no prefix) | Required. Max 200 characters. Allowed: letters, digits, spaces, `. , - ' / : ; ! ? ( ) & " # + % @ *`. Max 20 per candidate. |
+| NAME | `n/` | Should only contain alphabetic characters and spaces, and it should not be blank. |
+| PHONE | `p/` | Should only contain numbers, and it should be at least 3 digits long. |
+| EMAIL | `e/` | Should be of the format local-part@domain and adhere to the following constraints:<br>1. The local-part should only contain alphanumeric characters and these special characters, excluding the parentheses, (!#$%&'*+/=?^_`{|}~-). The local-part may not start or end with any special characters.<br>2. This is followed by a '@' and then a domain name. The domain name is made up of domain labels separated by periods.<br>The domain name must:<br>    - end with a domain label at least 2 characters long.<br>    - have each domain label start and end with alphanumeric characters.<br>    - have each domain label consist of alphanumeric characters, separated only by hyphens, if any. |
+| ADDRESS | `a/` | Can take any values, and it should not be blank. |
+| TAG | `at/` / `dt/` | Should be alphanumeric. |
 
 All text fields accept **printable ASCII characters only** — non-ASCII input (accented letters, emojis, CJK characters) is rejected. See [Environment assumptions](#environment-assumptions) for details.
 
@@ -169,8 +165,8 @@ Format: `add n/NAME p/PHONE e/EMAIL a/ADDRESS [pr/PRIORITY]`
 
 | Parameter | Prefix | Required | Rules |
 |---|---|---|---|
-| NAME | `n/` | Yes | Letters, spaces, hyphens `-`, apostrophes (both `'` and `’`), periods `.`, slashes `/`, commas `,`, `@` symbols, backticks (`` ` ``), and parentheses `()`. Must start with a letter. No digits. Max 100 characters. |
-| PHONE | `p/` | Yes | Optional `+` prefix, then digits with optional spaces, hyphens `-`, or parentheses `()` as separators. Must contain 3–15 digits (separators excluded). All-zero formatting (e.g. `000`) is allowed. Examples: `91234567`, `+6591234567`, `+65-9123-4567`, `+62 812 5555 1234`, `+1 (415) 555-2671`. Include country codes for reliable duplicate matching. |
+| NAME | `n/` | Yes | Should only contain alphabetic characters and spaces, and it should not be blank. |
+| PHONE | `p/` | Yes | Should only contain numbers, and it should be at least 3 digits long. |
 | EMAIL | `e/` | Yes | `local@domain` format. Max 254 characters. |
 | ADDRESS | `a/` | Yes | Any non-empty text. Max 200 characters. |
 | PRIORITY | `pr/` | No | `yes` (high) or `no` (normal). Default: `no`. |
@@ -195,7 +191,7 @@ Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `add n/Betsy O'Brien e/betsy@example.com a/Newgate Prison p/+6591234567 pr/yes`
 
-<p align="center"><img src="images/add%20Command.png" alt="Expected result after running the add command" width="730"/></p>
+<p align="center"><img src="images/add%20command.png" alt="Expected result after running the add command" width="730"/></p>
 
 ---
 
@@ -209,7 +205,7 @@ Format: `list`
 * If Talently is empty, a prompt appears to add candidates.
 * Restores the default alphabetical listing, removing any previous `sort` or `find` results.
 
-<p align="center"><img src="images/list%20Command.png" alt="Expected result after running the list command" width="730"/></p>
+<p align="center"><img src="images/list%20command.png" alt="Expected result after running the list command" width="730"/></p>
 
 ---
 
@@ -233,15 +229,15 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pr/PRIORITY]`
 :warning: **Warning:** Editing phone or email to match another existing candidate will fail — duplicates are not allowed.
 </div>
 
-<div markdown="span" class="alert alert-info">
-:information_source: **Note:** After a successful edit, the displayed list resets to show all candidates. This ensures you can always see the edited candidate even if the previous filter would have hidden it.
-</div>
+* `INDEX` refers to the number shown in the current list. Must be a positive integer.
+* At least one field must be provided.
+* Unspecified fields are unchanged.
 
 Examples:
 * `edit 1 p/91234567 e/johndoe@example.com` — Updates phone and email.
 * `edit 2 n/Betsy Crower pr/yes` — Updates name and sets high priority.
 
-<p align="center"><img src="images/edit%20Command.png" alt="Expected result after running the edit command" width="730"/></p>
+<p align="center"><img src="images/edit%20command.png" alt="Expected result after running the edit command" width="730"/></p>
 
 ---
 
