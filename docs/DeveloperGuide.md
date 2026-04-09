@@ -750,7 +750,7 @@ is superseded. This is intentional: a recruiter using `find` is performing a fre
 narrowing an existing subset. The prior filter state is discarded rather than composed to avoid confusing "where did the
 rest go?" surprises.
 
-**Why are addresses and tags excluded?**  
+**Why are addresses and tags excluded?**
 The `address` field is intentionally excluded because addresses generate enormous noise. They contain generic block
 digits (e.g., Block `12`), which overlap heavily with search intents targeting phone numbers. Searching "12" to find a
 candidate's phone number would flood the results with everyone who lives at Block 12, destroying the utility of the

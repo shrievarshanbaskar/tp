@@ -21,7 +21,7 @@ public class NoteCommandParser implements Parser<NoteCommand> {
             "Error: Note content cannot be empty. Usage: addnote INDEX c/CONTENT [h/HEADING]";
     public static final String MESSAGE_INVALID_INDEX =
             "Error: Invalid index. Please provide a valid positive integer.\n"
-            + "Usage: addnote INDEX c/CONTENT [h/HEADING]";
+                    + "Usage: addnote INDEX c/CONTENT [h/HEADING]";
 
     private static final Logger logger = LogsCenter.getLogger(NoteCommandParser.class);
     private static final String DEFAULT_HEADING = "General Note";
@@ -43,7 +43,7 @@ public class NoteCommandParser implements Parser<NoteCommand> {
         } catch (ParseException pe) {
             String preamble = argMultimap.getPreamble().trim();
             if (preamble.matches("^\\d+\\s+.+")) {
-                throw new ParseException("Invalid command format. Did you forget a prefix? (e.g. c/) \n" 
+                throw new ParseException("Invalid command format. Did you forget a prefix? (e.g. c/) \n"
                         + "Usage: addnote INDEX c/CONTENT [h/HEADING]");
             }
             throw new ParseException(MESSAGE_INVALID_INDEX, pe);
