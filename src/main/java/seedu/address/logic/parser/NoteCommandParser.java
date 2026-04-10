@@ -24,7 +24,7 @@ public class NoteCommandParser implements Parser<NoteCommand> {
                     + "Usage: addnote INDEX c/CONTENT [h/HEADING]";
 
     private static final Logger logger = LogsCenter.getLogger(NoteCommandParser.class);
-    private static final String DEFAULT_HEADING = "General Note";
+    public static final String DEFAULT_HEADING = "General Note";
 
     /**
      * Parses the given {@code String} of arguments in the context of the NoteCommand

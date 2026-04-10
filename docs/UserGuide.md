@@ -551,7 +551,7 @@ Format: `editnote INDEX NOTE_INDEX [c/CONTENT] [h/HEADING]` *(at least one requi
 * `NOTE_INDEX` is the note's position in the candidate's notes list (positive integer). Use `show INDEX` to see note numbers.
 * At least one of `c/CONTENT` or `h/HEADING` must be provided.
 * `CONTENT` must not be blank, printable ASCII only, and must not exceed 500 characters.
-* `HEADING` must not be blank, printable ASCII only, and must not exceed 50 characters.
+* `HEADING` is printable ASCII only and must not exceed 50 characters. If `h/` is provided with only whitespace (e.g. `h/   `), the heading defaults to `General Note`.
 * The note's original timestamp is preserved — only the content and/or heading are updated.
 * Newline characters in pasted content are automatically converted to spaces.
 
