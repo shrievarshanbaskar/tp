@@ -22,9 +22,9 @@ public class NoteCommandParser implements Parser<NoteCommand> {
     public static final String MESSAGE_INVALID_INDEX =
             "Error: Invalid index. Please provide a valid positive integer.\n"
                     + "Usage: addnote INDEX c/CONTENT [h/HEADING]";
+    public static final String DEFAULT_HEADING = "General Note";
 
     private static final Logger logger = LogsCenter.getLogger(NoteCommandParser.class);
-    public static final String DEFAULT_HEADING = "General Note";
 
     /**
      * Parses the given {@code String} of arguments in the context of the NoteCommand
