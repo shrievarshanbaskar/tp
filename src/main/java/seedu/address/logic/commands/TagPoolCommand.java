@@ -144,11 +144,13 @@ public class TagPoolCommand extends Command {
         // Remove toDelete tags from all persons before touching the pool, so pool state
         // is only mutated after all person edits succeed (validate-all-then-mutate).
         List<Person> allCandidates = model.getAddressBook().getPersonList();
+        Set<String> affectedPersonNames = new HashSet<>();
         for (Tag targetTagToDelete : toDelete) {
             // Iterate over a snapshot to avoid ConcurrentModificationException
             List<Person> snapshot = List.copyOf(allCandidates);
             for (Person person : snapshot) {
                 if (person.getTags().contains(targetTagToDelete)) {
+                    affectedPersonNames.add(person.getName().fullName);
                     Set<Tag> updatedTags = new HashSet<>(person.getTags());
                     updatedTags.remove(targetTagToDelete);
                     Person editedPerson = new Person(
@@ -177,7 +179,12 @@ public class TagPoolCommand extends Command {
         }
 
         // ── Phase 6: UI Feedback ──
-        return new CommandResult(String.format(MESSAGE_SUCCESS, toAdd.size(), toDelete.size()));
+        String result = String.format(MESSAGE_SUCCESS, toAdd.size(), toDelete.size());
+        if (!affectedPersonNames.isEmpty()) {
+            result += "\nWarning: " + affectedPersonNames.size()
+                    + " candidate(s) had their tag(s) removed as a result.";
+        }
+        return new CommandResult(result);
     }
 
     @Override

@@ -57,13 +57,15 @@ class JsonAdaptedNote {
         if (heading == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, "heading"));
         }
-        if (!Note.isValidHeading(heading)) {
+        String sanitizedHeading = heading.replace("\r\n", " ").replace("\n", " ").replace("\r", " ");
+        if (!Note.isValidHeading(sanitizedHeading)) {
             throw new IllegalValueException(Note.MESSAGE_HEADING_CONSTRAINTS);
         }
         if (content == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, "content"));
         }
-        if (!Note.isValidContent(content)) {
+        String sanitizedContent = content.replace("\r\n", " ").replace("\n", " ").replace("\r", " ");
+        if (!Note.isValidContent(sanitizedContent)) {
             throw new IllegalValueException(Note.MESSAGE_CONTENT_CONSTRAINTS);
         }
         if (date == null) {
@@ -84,6 +86,6 @@ class JsonAdaptedNote {
             parsedDate = now;
         }
 
-        return new Note(heading, content, parsedDate);
+        return new Note(sanitizedHeading, sanitizedContent, parsedDate);
     }
 }

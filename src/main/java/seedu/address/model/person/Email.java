@@ -11,7 +11,12 @@ public class Email {
 
     public static final String MESSAGE_CONSTRAINTS =
             "Error: Invalid email address. Please provide a valid email in the format: example@domain.com";
+    public static final String MESSAGE_LENGTH_CONSTRAINTS =
+            "Error: Email exceeds maximum allowed length. "
+            + "Total length must not exceed 254 characters "
+            + "and the local part (before @) must not exceed 64 characters.";
     public static final int MAX_LENGTH = 254;
+    public static final int MAX_LOCAL_PART_LENGTH = 64;
 
     private static final String SPECIAL_CHARACTERS = "+_.-";
     // alphanumeric and special characters
@@ -35,7 +40,8 @@ public class Email {
     public Email(String email) {
         requireNonNull(email);
         String trimmedEmail = email.trim().toLowerCase();
-        checkArgument(isValidEmail(trimmedEmail), MESSAGE_CONSTRAINTS);
+        checkArgument(trimmedEmail.matches(VALIDATION_REGEX), MESSAGE_CONSTRAINTS);
+        checkArgument(isWithinLengthLimits(trimmedEmail), MESSAGE_LENGTH_CONSTRAINTS);
         value = trimmedEmail;
     }
 
@@ -43,7 +49,15 @@ public class Email {
      * Returns if a given string is a valid email.
      */
     public static boolean isValidEmail(String test) {
-        return test.length() <= MAX_LENGTH && test.matches(VALIDATION_REGEX);
+        return test.matches(VALIDATION_REGEX) && isWithinLengthLimits(test);
+    }
+
+    private static boolean isWithinLengthLimits(String test) {
+        if (test.length() > MAX_LENGTH) {
+            return false;
+        }
+        int atIdx = test.indexOf('@');
+        return atIdx < 0 || atIdx <= MAX_LOCAL_PART_LENGTH;
     }
 
     @Override
