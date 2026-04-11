@@ -10,11 +10,8 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 public class Email {
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Error: Invalid email address. Please provide a valid email in the format: example@domain.com";
-    public static final String MESSAGE_LENGTH_CONSTRAINTS =
-            "Error: Email exceeds maximum allowed length. "
-            + "Total length must not exceed 254 characters "
-            + "and the local part (before @) must not exceed 64 characters.";
+            "Error: Invalid email address. Must be in the format local@domain.com "
+            + "(e.g. user@example.com) and must not exceed 254 characters total.";
     public static final int MAX_LENGTH = 254;
     public static final int MAX_LOCAL_PART_LENGTH = 64;
 
@@ -40,8 +37,7 @@ public class Email {
     public Email(String email) {
         requireNonNull(email);
         String trimmedEmail = email.trim().toLowerCase();
-        checkArgument(trimmedEmail.matches(VALIDATION_REGEX), MESSAGE_CONSTRAINTS);
-        checkArgument(isWithinLengthLimits(trimmedEmail), MESSAGE_LENGTH_CONSTRAINTS);
+        checkArgument(isValidEmail(trimmedEmail), MESSAGE_CONSTRAINTS);
         value = trimmedEmail;
     }
 
@@ -49,7 +45,7 @@ public class Email {
      * Returns if a given string is a valid email.
      */
     public static boolean isValidEmail(String test) {
-        return test.matches(VALIDATION_REGEX) && isWithinLengthLimits(test);
+        return isWithinLengthLimits(test) && test.matches(VALIDATION_REGEX);
     }
 
     private static boolean isWithinLengthLimits(String test) {

@@ -3,7 +3,6 @@ package seedu.address.storage;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -188,8 +187,6 @@ class JsonAdaptedPerson {
         for (JsonAdaptedNote note : effectiveNotes) {
             modelNotes.add(note.toModelType());
         }
-        modelNotes.sort(Comparator.comparing(note -> note.date));
-
         return new Person(modelName, modelPhone, modelEmail, modelAddress, modelTags,
                 modelRejectionReasons, modelDateAdded, modelPriority, modelNotes);
     }
