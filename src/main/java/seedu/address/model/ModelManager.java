@@ -125,16 +125,14 @@ public class ModelManager implements Model {
     public void deletePerson(Person target) {
         addressBook.removePerson(target);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        sortFilteredPersonList(Comparator.comparing(
-                p -> p.getName().fullName.toLowerCase()));
+        sortFilteredPersonList(comparatorFor(addressBook.getSortMode()));
     }
 
     @Override
     public void addPerson(Person person) {
         addressBook.addPerson(person);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        sortFilteredPersonList(Comparator.comparing(
-                p -> p.getName().fullName.toLowerCase()));
+        sortFilteredPersonList(comparatorFor(addressBook.getSortMode()));
     }
 
     @Override
@@ -143,8 +141,7 @@ public class ModelManager implements Model {
 
         addressBook.setPerson(target, editedPerson);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        sortFilteredPersonList(Comparator.comparing(
-                p -> p.getName().fullName.toLowerCase()));
+        sortFilteredPersonList(comparatorFor(addressBook.getSortMode()));
     }
 
     //=========== Tag Operations =============================================================================
@@ -192,6 +189,31 @@ public class ModelManager implements Model {
     public void sortFilteredPersonList(Comparator<Person> comparator) {
         requireNonNull(comparator);
         addressBook.sortPersons(comparator);
+    }
+
+    @Override
+    public void setSortMode(SortMode mode) {
+        requireNonNull(mode);
+        addressBook.setSortMode(mode);
+        addressBook.sortPersons(comparatorFor(mode));
+    }
+
+    private static Comparator<Person> comparatorFor(SortMode mode) {
+        Comparator<Person> byName = Comparator.comparing(p -> p.getName().fullName.toLowerCase());
+        switch (mode) {
+        case DATE_ASC:
+            return Comparator.comparing(Person::getDateAdded).thenComparing(byName);
+        case DATE_DESC:
+            return Comparator.comparing(Person::getDateAdded, Comparator.reverseOrder()).thenComparing(byName);
+        case PRIORITY_ASC:
+            return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 1 : 0)
+                    .thenComparing(Person::getDateAdded, Comparator.reverseOrder()).thenComparing(byName);
+        case PRIORITY_DESC:
+            return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 0 : 1)
+                    .thenComparing(Person::getDateAdded, Comparator.reverseOrder()).thenComparing(byName);
+        default:
+            return byName;
+        }
     }
 
     @Override

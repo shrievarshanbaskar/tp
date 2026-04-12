@@ -125,6 +125,8 @@ public interface Model {
      */
     void sortFilteredPersonList(Comparator<Person> comparator);
 
+    void setSortMode(SortMode mode);
+
     /** Returns true if there is a next address book state to restore. */
     boolean canRedoAddressBook();
 

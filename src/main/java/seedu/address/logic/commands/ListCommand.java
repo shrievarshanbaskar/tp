@@ -3,8 +3,6 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
-import java.util.Comparator;
-
 import javafx.collections.ObservableList;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
@@ -25,14 +23,10 @@ public class ListCommand extends Command {
 
     public static final String MESSAGE_EMPTY = "No candidates found. Use the add command to add a new candidate.";
 
-    public static final Comparator<Person> DEFAULT_SORT =
-            Comparator.comparing(person -> person.getName().fullName.toLowerCase());
-
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        model.sortFilteredPersonList(DEFAULT_SORT);
 
         ObservableList<Person> list = model.getFilteredPersonList();
         if (list.isEmpty()) {

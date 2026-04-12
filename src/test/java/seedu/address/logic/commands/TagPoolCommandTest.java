@@ -356,6 +356,10 @@ public class TagPoolCommandTest {
         @Override
         public void sortFilteredPersonList(Comparator<Person> comparator) {
         }
+
+        @Override
+        public void setSortMode(seedu.address.model.SortMode mode) {
+        }
     }
 
     /**
@@ -497,6 +501,10 @@ public class TagPoolCommandTest {
 
         @Override
         public void sortFilteredPersonList(Comparator<Person> comparator) {
+        }
+
+        @Override
+        public void setSortMode(seedu.address.model.SortMode mode) {
         }
     }
 }

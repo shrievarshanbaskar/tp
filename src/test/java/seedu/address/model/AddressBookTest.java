@@ -143,6 +143,11 @@ public class AddressBookTest {
         public ObservableList<Tag> getTagList() {
             return tags;
         }
+
+        @Override
+        public seedu.address.model.SortMode getSortMode() {
+            return seedu.address.model.SortMode.NAME_ASC;
+        }
     }
 
 }

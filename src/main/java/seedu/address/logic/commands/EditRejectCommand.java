@@ -105,7 +105,6 @@ public class EditRejectCommand extends Command {
 
         model.setPerson(personToEdit, editedPerson);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        model.sortFilteredPersonList(ListCommand.DEFAULT_SORT);
         logger.info("Edited rejection " + rejectIndex.getOneBased()
                 + " for candidate: " + personToEdit.getName());
         return new CommandResult(String.format(MESSAGE_SUCCESS, personToEdit.getName()));

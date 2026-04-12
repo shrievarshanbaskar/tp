@@ -131,7 +131,6 @@ public class TagPoolCommand extends Command {
         }
         if (!toAdd.isEmpty() || !toDelete.isEmpty()) {
             model.updateFilteredPersonList(Model.PREDICATE_SHOW_ALL_PERSONS);
-            model.sortFilteredPersonList(ListCommand.DEFAULT_SORT);
         }
     }
 

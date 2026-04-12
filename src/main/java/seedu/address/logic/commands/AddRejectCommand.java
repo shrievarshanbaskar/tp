@@ -82,7 +82,6 @@ public class AddRejectCommand extends Command {
         logger.info("Rejected candidate: " + personToReject.getName() + " with reason: " + reason);
 
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        model.sortFilteredPersonList(ListCommand.DEFAULT_SORT);
 
         int totalReasons = rejectedPerson.getRejectionReasons().size();
         String resultMessage = isDuplicateReason

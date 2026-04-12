@@ -18,7 +18,6 @@ public class ClearCommand extends Command {
         requireNonNull(model);
         model.setAddressBook(new AddressBook());
         model.updateFilteredPersonList(Model.PREDICATE_SHOW_ALL_PERSONS);
-        model.sortFilteredPersonList(ListCommand.DEFAULT_SORT);
         return new CommandResult(MESSAGE_SUCCESS);
     }
 }

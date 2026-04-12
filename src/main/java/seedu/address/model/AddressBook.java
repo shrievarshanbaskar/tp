@@ -20,6 +20,7 @@ public class AddressBook implements ReadOnlyAddressBook {
 
     private final UniquePersonList persons;
     private final UniqueTagList tags;
+    private SortMode sortMode = SortMode.NAME_ASC;
 
     /*
      * The 'unusual' code block below is a non-static initialization block, sometimes used to avoid duplication
@@ -69,6 +70,16 @@ public class AddressBook implements ReadOnlyAddressBook {
 
         setPersons(newData.getPersonList());
         setTags(newData.getTagList());
+        this.sortMode = newData.getSortMode();
+    }
+
+    @Override
+    public SortMode getSortMode() {
+        return sortMode;
+    }
+
+    public void setSortMode(SortMode sortMode) {
+        this.sortMode = sortMode;
     }
 
     //// person-level operations
