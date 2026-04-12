@@ -664,7 +664,7 @@ Examples:
 * `remove 2` then `undo` — Restores the removed candidate.
 * `undo` then `undo` — Steps back two actions.
 
-> **Expected output:** A message describing the action that was undone.
+> **Expected output:** `Undid the previous command.`
 
 ---
 
@@ -684,7 +684,7 @@ Format: `redo`
 Examples:
 * `remove 2` → `undo` → `redo` — Re-applies the removal.
 
-> **Expected output:** A message describing the action that was redone.
+> **Expected output:** `Redid the previously undone command.`
 
 ---
 
