@@ -35,10 +35,7 @@ public class SortDateCommandTest {
         SortDateCommand sortDateCommand = new SortDateCommand(true);
         String expectedMessage = SortDateCommand.MESSAGE_SUCCESS_ASC;
 
-        expectedModel.sortFilteredPersonList(
-                java.util.Comparator.comparing(Person::getDateAdded)
-                        .thenComparing(p -> p.getName().fullName)
-        );
+        expectedModel.setSortMode(seedu.address.model.SortMode.DATE_ASC);
         expectedModel.updateFilteredPersonList(seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS);
 
         assertCommandSuccess(sortDateCommand, model, expectedMessage, expectedModel);
@@ -50,10 +47,7 @@ public class SortDateCommandTest {
         SortDateCommand sortDateCommand = new SortDateCommand(false);
         String expectedMessage = SortDateCommand.MESSAGE_SUCCESS_DESC;
 
-        expectedModel.sortFilteredPersonList(
-                java.util.Comparator.comparing(Person::getDateAdded, java.util.Comparator.reverseOrder())
-                        .thenComparing(p -> p.getName().fullName)
-        );
+        expectedModel.setSortMode(seedu.address.model.SortMode.DATE_DESC);
         expectedModel.updateFilteredPersonList(seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS);
 
         assertCommandSuccess(sortDateCommand, model, expectedMessage, expectedModel);

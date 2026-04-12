@@ -473,10 +473,13 @@ Format: `sort date o/ORDER`
 * `ORDER`: `asc` (oldest first) or `desc` (newest first). Case-insensitive (`ASC`, `Desc`, etc. are accepted).
 * Candidates added at the **exact same date and time** are sorted alphabetically by name.
 * After sorting, any active filter is cleared and all candidates are displayed in the new order.
-* This action is undoable with `undo`.
 
 <div markdown="span" class="alert alert-warning">
 :warning: **Warning:** Cannot sort an empty candidate list — an error is shown if Talently has no candidates.
+</div>
+
+<div markdown="span" class="alert alert-warning">
+:warning: **Warning:** Sorting clears the entire command history. `undo` and `redo` will not be available after sorting.
 </div>
 
 Examples:
@@ -496,7 +499,6 @@ Format: `sort pr o/ORDER`
 * `ORDER`: `asc` (low-priority first) or `desc` (high-priority first). Case-insensitive (`ASC`, `Desc`, etc. are accepted).
 * Secondary sort: by date and time added (newest first), then alphabetically by name.
 * After sorting, any active filter is cleared and all candidates are displayed in the new order.
-* This action is undoable with `undo`.
 
 <div markdown="span" class="alert alert-primary">
 :bulb: **Tip:** Use `sort pr o/desc` to immediately surface your most important candidates.
@@ -504,6 +506,10 @@ Format: `sort pr o/ORDER`
 
 <div markdown="span" class="alert alert-warning">
 :warning: **Warning:** Cannot sort an empty candidate list — an error is shown if Talently has no candidates.
+</div>
+
+<div markdown="span" class="alert alert-warning">
+:warning: **Warning:** Sorting clears the entire command history. `undo` and `redo` will not be available after sorting.
 </div>
 
 Examples:
@@ -646,31 +652,39 @@ Format: `undo`
 
 `undo` steps back one action at a time. You can keep typing `undo` to go further back through your history. `redo` steps forward again through actions you have undone. If you make any new change after undoing, you can no longer redo the undone actions.
 
-* Applies to: `add`, `edit`, `remove`, `addreject`, `editreject`, `deletereject`, `tag`, `tagpool`, `addnote`, `editnote`, `deletenote`, `sort`, `clear`.
+* Applies to: `add`, `edit`, `remove`, `addreject`, `editreject`, `deletereject`, `tag`, `tagpool`, `addnote`, `editnote`, `deletenote`, `clear`.
 * Does **not** apply to read-only commands (`find`, `filter`, `list`, `show`, `help`, `exit`). Typing `undo` after one of these steps back to the last data-changing action, not the last view change.
 * If there is nothing to undo, an error is shown.
+
+<div markdown="span" class="alert alert-warning">
+:warning: **Warning:** Using any `sort` command (`sort date`, `sort pr`) clears the entire command history. Once you sort, `undo` and `redo` are no longer available.
+</div>
 
 Examples:
 * `remove 2` then `undo` — Restores the removed candidate.
 * `undo` then `undo` — Steps back two actions.
 
-> **Expected output:** A message describing the action that was undone.
+> **Expected output:** `Undid the previous command.`
 
 ---
 
 ### Redoing the last undone command : `redo`
 
-Re-applies the most recently undone data-changing command. This applies to the same set of commands as `undo`: `add`, `edit`, `remove`, `addreject`, `editreject`, `deletereject`, `tag`, `tagpool`, `addnote`, `editnote`, `deletenote`, `sort`, and `clear`.
+Re-applies the most recently undone data-changing command. This applies to the same set of commands as `undo`: `add`, `edit`, `remove`, `addreject`, `editreject`, `deletereject`, `tag`, `tagpool`, `addnote`, `editnote`, `deletenote`, and `clear`.
 
 Format: `redo`
 
 * Can only be used after `undo`. If there is no undone state, an error is shown.
 * Any new modifying command after `undo` clears the redo history — once you make a new change, the previously undone actions can no longer be redone.
 
+<div markdown="span" class="alert alert-warning">
+:warning: **Warning:** Using any `sort` command (`sort date`, `sort pr`) clears the entire command history. Once you sort, `redo` is no longer available.
+</div>
+
 Examples:
 * `remove 2` → `undo` → `redo` — Re-applies the removal.
 
-> **Expected output:** A message describing the action that was redone.
+> **Expected output:** `Redid the previously undone command.`
 
 ---
 

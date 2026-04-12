@@ -206,6 +206,10 @@ public class AddCommandTest {
         @Override
         public void sortFilteredPersonList(java.util.Comparator<Person> comparator) {
         }
+
+        @Override
+        public void setSortMode(seedu.address.model.SortMode mode) {
+        }
     }
 
     /**

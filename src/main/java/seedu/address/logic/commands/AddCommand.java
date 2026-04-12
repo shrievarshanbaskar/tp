@@ -68,7 +68,6 @@ public class AddCommand extends Command {
 
         model.addPerson(toAdd);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        model.sortFilteredPersonList(ListCommand.DEFAULT_SORT);
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
     }
 

@@ -170,7 +170,6 @@ public class TagCommand extends Command {
 
         // ── Phase 4: UI Feedback ──
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        model.sortFilteredPersonList(ListCommand.DEFAULT_SORT);
         return new CommandResult(buildSuccessMessage(personsToEdit));
     }
 

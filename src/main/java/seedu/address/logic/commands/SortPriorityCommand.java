@@ -4,13 +4,12 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ORDER;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
-import java.util.Comparator;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.Model;
-import seedu.address.model.person.Person;
+import seedu.address.model.SortMode;
 
 /**
  * Sorts all candidates in the address book by priority.
@@ -51,34 +50,12 @@ public class SortPriorityCommand extends Command {
             return new CommandResult(MESSAGE_EMPTY_ADDRESS_BOOK);
         }
 
-        Comparator<Person> comparator = buildComparator(isAscending);
-
-        model.sortFilteredPersonList(comparator);
+        model.setSortMode(isAscending ? SortMode.PRIORITY_ASC : SortMode.PRIORITY_DESC);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
 
         String resultMessage = isAscending ? MESSAGE_SUCCESS_ASC : MESSAGE_SUCCESS_DESC;
         logger.fine("SortPriorityCommand executed: " + resultMessage);
         return new CommandResult(resultMessage);
-    }
-
-    /**
-     * Builds the sort comparator for the given order direction.
-     * In ascending order, low-priority candidates (isPriority=false) come first.
-     * In descending order, high-priority candidates (isPriority=true) come first.
-     * Secondary sort is by Date Added descending, then by Name ascending.
-     *
-     * @param ascending true for low-priority first, false for high-priority first.
-     * @return the composed {@code Comparator<Person>}.
-     */
-    private static Comparator<Person> buildComparator(boolean ascending) {
-        if (ascending) {
-            return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 1 : 0)
-                    .thenComparing(Person::getDateAdded, Comparator.reverseOrder())
-                    .thenComparing(p -> p.getName().fullName.toLowerCase());
-        }
-        return Comparator.comparing((Person p) -> p.getPriority().isPriority() ? 0 : 1)
-                .thenComparing(Person::getDateAdded, Comparator.reverseOrder())
-                .thenComparing(p -> p.getName().fullName.toLowerCase());
     }
 
     @Override

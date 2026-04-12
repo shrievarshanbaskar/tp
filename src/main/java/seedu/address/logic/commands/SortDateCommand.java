@@ -4,13 +4,12 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ORDER;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
-import java.util.Comparator;
 import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.Model;
-import seedu.address.model.person.Person;
+import seedu.address.model.SortMode;
 
 /**
  * Sorts all candidates in the address book by date added.
@@ -44,30 +43,12 @@ public class SortDateCommand extends Command {
             return new CommandResult(MESSAGE_EMPTY_ADDRESS_BOOK);
         }
 
-        Comparator<Person> comparator = buildComparator(isAscending);
-
-        model.sortFilteredPersonList(comparator);
+        model.setSortMode(isAscending ? SortMode.DATE_ASC : SortMode.DATE_DESC);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
 
         String resultMessage = isAscending ? MESSAGE_SUCCESS_ASC : MESSAGE_SUCCESS_DESC;
         logger.fine("SortDateCommand executed: " + resultMessage);
         return new CommandResult(resultMessage);
-    }
-
-    /**
-     * Builds the sort comparator for the given order direction.
-     * Secondary sort is by Name ascending for determinism.
-     *
-     * @param ascending true for oldest-first, false for newest-first.
-     * @return the composed {@code Comparator<Person>}.
-     */
-    private static Comparator<Person> buildComparator(boolean ascending) {
-        if (ascending) {
-            return Comparator.comparing(Person::getDateAdded)
-                             .thenComparing(p -> p.getName().fullName.toLowerCase());
-        }
-        return Comparator.comparing(Person::getDateAdded, Comparator.reverseOrder())
-                         .thenComparing(p -> p.getName().fullName.toLowerCase());
     }
 
     @Override

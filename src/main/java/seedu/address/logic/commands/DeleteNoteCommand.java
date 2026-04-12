@@ -81,7 +81,6 @@ public class DeleteNoteCommand extends Command {
 
         model.setPerson(personToEdit, editedPerson);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        model.sortFilteredPersonList(ListCommand.DEFAULT_SORT);
         logger.info("Deleted note " + noteIndex.getOneBased() + " from candidate: " + personToEdit.getName());
         return new CommandResult(String.format(MESSAGE_SUCCESS, personToEdit.getName()));
     }
