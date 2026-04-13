@@ -306,6 +306,10 @@ Format: `show INDEX`
 :bulb: **Tip:** Use `show` after `addnote` or `addreject` to verify your changes.
 </div>
 
+<div markdown="span" class="alert alert-warning">
+:warning: **Known limitation:** When the detail panel refreshes (e.g. after adding a note or rejection), it scrolls back to the top. If you have many entries, you will need to scroll down again to see the newly added item.
+</div>
+
 Examples:
 * `show 1` — Opens details for the 1st candidate.
 * `find John` then `show 1` — Opens details for the first match.
@@ -478,9 +482,6 @@ Format: `sort date o/ORDER`
 :warning: **Warning:** Cannot sort an empty candidate list — an error is shown if Talently has no candidates.
 </div>
 
-<div markdown="span" class="alert alert-warning">
-:warning: **Warning:** Sorting clears the entire command history. `undo` and `redo` will not be available after sorting.
-</div>
 
 Examples:
 * `sort date o/asc` — Oldest candidates first.
@@ -508,9 +509,6 @@ Format: `sort pr o/ORDER`
 :warning: **Warning:** Cannot sort an empty candidate list — an error is shown if Talently has no candidates.
 </div>
 
-<div markdown="span" class="alert alert-warning">
-:warning: **Warning:** Sorting clears the entire command history. `undo` and `redo` will not be available after sorting.
-</div>
 
 Examples:
 * `sort pr o/asc` — Low-priority candidates first.
