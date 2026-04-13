@@ -3,8 +3,6 @@ layout: page
 title: Talently
 ---
 
-# **The High-Speed CRM for Recruiter Power Users**
-
 Talently is a lightweight, keyboard-optimized desktop application designed for recruiters and hiring managers who handle large volumes of candidates under time pressure. 
 
 ![Talently UI](images/Ui.png)
@@ -35,7 +33,7 @@ Ready to accelerate your hiring workflow?
 
 *   **[Quick Start Guide](UserGuide.html#quick-start)**: Get up and running in under 5 minutes.
 *   **[Full User Guide](UserGuide.html)**: Learn the full power of Talently's command suite.
-*   **[Latest Release](https://github.com/AY2526S2-CS2103T-T17-4/tp/releases)**: Download the latest `talently.jar` and start recruiting.
+*   **[Latest Release](https://github.com/AY2526S2-CS2103T-T17-4/tp/releases)**: Download the latest `[CS2103T-T17-4][Talently].jar` and start recruiting.
 
 ---
 

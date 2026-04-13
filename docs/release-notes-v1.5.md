@@ -181,5 +181,5 @@ tagpool
 
 **Requirements:** Java 17 or above.
 ```
-java -jar talently.jar
+java -jar [CS2103T-T17-4][Talently].jar
 ```

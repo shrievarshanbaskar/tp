@@ -14,7 +14,7 @@ public class Phone {
             "Error: Invalid phone number. Phone numbers may start with an optional '+', "
             + "followed by digits, spaces, hyphens '-', or parentheses '()' as separators "
             + "(e.g. +65-9123-4567, +1 (415) 555-2671, 91234567). "
-            + "Must contain 3 to 15 digits (separators excluded).";
+            + "Must begin with '+' or a digit, end with a digit, and contain 3 to 15 digits (separators excluded).";
     /**
      * Matches an optional leading '+', then a digit, then any mix of digits/spaces/hyphens/parentheses.
      * Digit-count check is performed separately in {@link #isValidPhone(String)}.

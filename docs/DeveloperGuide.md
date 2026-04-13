@@ -15,6 +15,16 @@ title: Developer Guide
 * PlantUML usage and conventions were guided by the [se-edu PlantUML tutorial](https://se-education.org/guides/tutorials/plantUml.html).
 * The Metro-style JavaFX button CSS in the dark theme is adapted from the JMetro styling example by [Pedro Duque Vieira (PixelDuke)](https://pixelduke.com/java-fx-themes-and-libraries/jmetro/) as cited in the stylesheet comments.
 
+* **AI coding assistants** were used by members of this team to support — not replace — their development work. Tools were used selectively for tasks such as reducing boilerplate in repetitive code sections, accelerating test case authoring, and surfacing potential edge-case bugs during review. All AI-generated suggestions were reviewed, verified against the codebase, and adapted before being incorporated.
+
+  | Team member | Tool | Model | Primary uses |
+  |---|---|---|---|
+  | Kee Zhi Song | Claude Code | Claude Sonnet | Refactoring existing logic, generating boilerplate for new commands, authoring unit tests |
+  | Kamath Arnav Santosh | Claude Code | Claude Sonnet | Writing test cases, reducing boilerplate in parser and model classes |
+  | Shrievarshan Baskar | Claude Code | Claude Sonnet | Code refactoring, boilerplate generation, identifying edge-case bugs |
+  | Niranjan Vijay | Antigravity | — | Generating boilerplate code, writing test cases |
+  | Rayson Yap | Claude Code | Claude Sonnet | Authoring test cases, refactoring command implementations, bug finding |
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Setting up, getting started**
@@ -40,7 +50,7 @@ Given below is a quick overview of main components and how they interact with ea
 
 **Main components of the architecture**
 
-**`Main`** (consisting of classes [`Main`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
+**`Main`** (consisting of classes [`Main`](https://github.com/AY2526S2-CS2103T-T17-4/tp/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/AY2526S2-CS2103T-T17-4/tp/tree/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
 
 * At app launch, it initializes the other components in the correct sequence, and connects them up with each other.
 * At shut down, it shuts down the other components and invokes cleanup methods where necessary.
@@ -57,7 +67,7 @@ The bulk of the app's work is done by the following four components:
 **How the architecture components interact with each other**
 
 The *Sequence Diagram* below shows how the components interact with each other for the scenario where the user issues
-the command `delete 1`.
+the command `remove 1`.
 
 <img src="images/ArchitectureSequenceDiagram.png" width="574" />
 
@@ -78,7 +88,7 @@ The sections below give more details of each component.
 
 ### UI component
 
-The **API** of this component is specified in [`Ui.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/Ui.java)
+The **API** of this component is specified in [`Ui.java`](https://github.com/AY2526S2-CS2103T-T17-4/tp/tree/master/src/main/java/seedu/address/ui/Ui.java)
 
 ![Structure of the UI Component](images/UiClassDiagram.png)
 
@@ -87,7 +97,7 @@ The UI consists of a `MainWindow` that is made up of parts e.g.`CommandBox`, `Re
 the commonalities between classes that represent parts of the visible GUI.
 
 The `UI` component uses the JavaFx UI framework. The layout of these UI parts are defined in matching `.fxml` files that
-are in the `src/main/resources/view` folder. For example, the layout of the [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java) is specified in [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml)
+are in the `src/main/resources/view` folder. For example, the layout of the [`MainWindow`](https://github.com/AY2526S2-CS2103T-T17-4/tp/tree/master/src/main/java/seedu/address/ui/MainWindow.java) is specified in [`MainWindow.fxml`](https://github.com/AY2526S2-CS2103T-T17-4/tp/tree/master/src/main/resources/view/MainWindow.fxml)
 
 The `UI` component,
 
@@ -98,7 +108,7 @@ The `UI` component,
 
 ### Logic component
 
-**API** : [`Logic.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/logic/Logic.java)
+**API** : [`Logic.java`](https://github.com/AY2526S2-CS2103T-T17-4/tp/tree/master/src/main/java/seedu/address/logic/Logic.java)
 
 Here's a (partial) class diagram of the `Logic` component:
 
@@ -138,7 +148,7 @@ How the parsing works:
 
 ### Model component
 
-**API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
+**API** : [`Model.java`](https://github.com/AY2526S2-CS2103T-T17-4/tp/tree/master/src/main/java/seedu/address/model/Model.java)
 
 <img src="images/ModelClassDiagram.png" width="800" />
 
@@ -154,12 +164,6 @@ The `Model` component,
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they
   should make sense on their own without depending on other components)
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** An alternative (arguably, a more OOP) model is given below. It has a `Tag` list in the `Talently database`, which `Candidate` records reference. This allows the database to only require one `Tag` object per unique tag, instead of each `Candidate` needing their own `Tag` objects.<br>
-
-<img src="images/BetterModelClassDiagram.png" width="800" />
-
-</div>
-
 #### UniqueTagList
 
 The class diagram below details the internal structure of `UniqueTagList`:
@@ -173,9 +177,9 @@ which is used by the UI and other components to observe tag changes without muta
 
 ### Storage component
 
-**API** : [`Storage.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/storage/Storage.java)
+**API** : [`Storage.java`](https://github.com/AY2526S2-CS2103T-T17-4/tp/tree/master/src/main/java/seedu/address/storage/Storage.java)
 
-<img src="images/StorageClassDiagram.png" width="550" />
+<img src="images/StorageClassDiagram.png" width="750" />
 
 The `Storage` component,
 
@@ -270,7 +274,7 @@ The following activity diagram summarizes what happens when a user executes a ne
 
 * **Alternative 2:** Individual command knows how to undo by
   itself.
-    * Pros: Will use less memory (e.g. for `delete`, just save the candidate being deleted).
+    * Pros: Will use less memory (e.g. for `remove`, just save the candidate being removed).
     * Cons: We must ensure that the implementation of each individual command are correct.
 
 **Aspect: When to commit state:**
@@ -291,9 +295,9 @@ The following activity diagram summarizes what happens when a user executes a ne
 
 #### Implementation
 
-The `list` command resets the current view to show every candidate in the default alphabetical order. It is implemented by `ListCommand` with input validation handled by `ListCommandParser`.
+The `list` command resets the current view to show every candidate in the default alphabetical order. It is implemented by `ListCommand` with input validation handled directly inside `AddressBookParser`.
 
-`ListCommandParser#parse()` rejects any non-whitespace arguments with a `ParseException`, keeping `list` a strict zero-argument command.
+`AddressBookParser` rejects any non-whitespace arguments for `list` with a `ParseException`, keeping `list` a strict zero-argument command, then creates `ListCommand` directly.
 
 `ListCommand#execute()` calls `Model#updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS)`, which removes any active predicate (from `find` or `filter`) and exposes the full underlying sorted list. It then inspects the resulting list size and returns one of two messages:
 
@@ -303,9 +307,6 @@ The `list` command resets the current view to show every candidate in the defaul
 The sequence diagram below illustrates the flow for `list`:
 
 ![ListSequenceDiagram](images/ListSequenceDiagram.png)
-
-<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `ListCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of the diagram.
-</div>
 
 #### Design considerations
 
@@ -329,9 +330,9 @@ The `find` command searches candidates across five fields simultaneously. It is 
 
 `FindCommandParser#parse()` enforces these rules before building the predicate:
 
-1. Total input length must not exceed 150 characters (after trimming).
+1. Total input length must not exceed 150 characters (after trimming leading/trailing whitespace; internal whitespace counts toward the limit).
 2. Input must not be empty.
-3. Only printable ASCII symbols are allowed (letters, digits, and the set `- ' . / @ + _ : ; ! ? ( ) & % " # * ,`).
+3. Only printable ASCII symbols are allowed (letters, digits, spaces, and the set `- ' . / @ + _ : ; ! ? ( ) & % " # * ,`).
 4. After splitting on whitespace, at most 20 keywords are permitted.
 5. Duplicate keywords are silently removed via `Stream#distinct()`.
 
@@ -599,14 +600,13 @@ ASCII, so parsers, validators, matchers, and the JSON (de)serialiser all share t
 Notes serve as the recruiter's live scratchpad during calls. Full CRUD (create, read, update, delete) is essential
 because:
 
-* **Add (`addnote`):** Captures impressions in real time. Each note auto-records its creation time internally, ensuring chronological ordering without manual effort.
-* **Edit (`editnote`):** Corrects typos or updates details post-call without changing the note's position in the chronological record.
+* **Add (`addnote`):** Captures impressions in real time. Notes are stored in insertion order, so the list naturally stays chronological.
+* **Edit (`editnote`):** Corrects typos or updates details post-call without changing the note's position in the list.
 * **Delete (`deletenote`):** Removes notes added to the wrong candidate or notes that are no longer relevant. Without
   delete, the only way to remove an incorrect note would be to delete and re-add the entire candidate — losing all other
   data.
 
-The original creation time is always preserved on edit so that the note's position in the chronological timeline remains
-accurate. If the recruiter wants a "fresh" note at the latest position, they should delete the old one and add a new one.
+The position of a note is always preserved on edit, keeping the chronological order intact. If the recruiter wants a "fresh" note at the latest position, they should delete the old one and add a new one.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -658,11 +658,11 @@ Priorities: High (must-have) - `* * *`, Medium (nice-to-have) - `* *`, Low (unli
 | `* * *`  | recruiter | delete a note from a candidate                                                         | remove outdated or incorrect information and keep records clean.                               |
 | `* * *`  | recruiter | assign and remove tags on one or more candidates at once                               | efficiently categorize candidates by role, skill, or hiring stage.                             |
 | `* * *`  | recruiter | manage a master tag pool (list, create, and delete tags)                               | enforce a controlled vocabulary and prevent typo-created tags from fragmenting my data.        |
+| `* * *`  | recruiter | track hiring stages using tags                                                         | flexibly categorize candidates by any workflow stage I define.                                 |
 | `* *`    | recruiter | filter the candidate list by a single tag                                              | focus on a specific hiring subset (e.g., all "Shortlisted" candidates) without visual clutter. |
 | `* *`    | recruiter | sort candidates by date added (ascending or descending)                                | quickly review the most recent or oldest leads.                                                |
 | `* *`    | recruiter | sort candidates by priority                                                            | surface high-priority candidates at the top of my list.                                        |
 | `* *`    | recruiter | set a candidate’s priority flag (high or normal)                                       | visually identify whom to contact first when opening the application.                          |
-| `* * *`  | recruiter | track hiring stages using tags                                                         | flexibly categorize candidates by any workflow stage I define.                                 |
 | `* *`    | recruiter | undo the last modifying action                                                         | instantly recover from an accidental deletion or mistyped command.                             |
 | `* *`    | recruiter | redo a previously undone action                                                        | restore a reverted change without retyping it.                                                 |
 | `* *`    | recruiter | clear all data and start fresh                                                         | reset the system when starting a new hiring cycle.                                             |
@@ -688,15 +688,9 @@ Priorities: High (must-have) - `* * *`, Medium (nice-to-have) - `* *`, Low (unli
 * 2a. System detects missing mandatory fields or invalid formatting.
     * 2a1. System informs the user of the formatting error and provides the correct command format.
     * Use case ends.
-* 2b. System detects that the candidate already exists (matching phone or email).
-    * 2b1. System informs the user of the duplicate collision.
+* 2b. System detects that the candidate already exists.
+    * 2b1. System informs the user of the duplicate.
     * Use case ends.
-
-**Design justification:** Duplicate detection uses phone OR email (not both) because either field alone is sufficient to
-uniquely identify a real-world person. This prevents accidental duplicate entries even when only one contact field is
-shared, while still allowing two candidates with the same name (which is common in practice). Phone comparison is
-performed on digits only — formatting separators (`+`, spaces, hyphens, parentheses) are stripped before comparing — so
-`+65-9123-4567`, `+6591234567`, and `6591234567` are all treated as the same number.
 
 **Use case: UC2 - Removing a candidate**
 
@@ -712,12 +706,9 @@ performed on digits only — formatting separators (`+`, spaces, hyphens, parent
 
 **Extensions:**
 
-* 1a. User provides an invalid index (e.g., out of bounds, non-integer, zero).
-    * 1a1. System informs the user of the error and provides usage instructions.
+* 1a. User provides an invalid index.
+    * 1a1. System informs the user of the error.
     * Use case ends.
-
-**Design justification:** No confirmation prompt is required because the `undo` command can immediately reverse an
-accidental removal. This keeps the CLI workflow fast and avoids interrupting the recruiter's typing flow.
 
 **Use case: UC3 - Recording a rejection with reason (`addreject`)**
 
@@ -736,18 +727,12 @@ accidental removal. This keeps the CLI workflow fast and avoids interrupting the
 * 1a. User provides an invalid index.
     * 1a1. System informs the user of the error.
     * Use case ends.
-* 2a. User provides an invalid reason (e.g., empty string, exceeds 200 characters, or contains disallowed characters).
+* 2a. User provides an invalid reason.
     * 2a1. System informs the user of the validation error.
     * Use case ends.
-* 4a. System detects the same rejection reason as the immediately previous one (case-insensitive).
+* 4a. System detects the same rejection reason as the immediately previous one.
     * 4a1. System still records the rejection but includes a warning about the consecutive duplicate.
     * Use case ends.
-
-**Design justification:** The system allows rejecting a candidate multiple times (even with the same reason) because
-real-world hiring involves multiple rounds. Rather than blocking the operation, a warning on consecutive duplicates
-guards against accidental double-entry while preserving flexibility. There are no guards based on the candidate's tags —
-any candidate can be rejected regardless of what tags they carry. Use tags (e.g., `Blacklisted`, `Hired`) to track
-hiring stages; the `addreject` command is solely for recording formal rejection decisions with reasons.
 
 **Use case: UC3a - Editing an existing rejection reason (`editreject`)**
 
@@ -769,13 +754,9 @@ hiring stages; the `addreject` command is solely for recording formal rejection 
 * 1b. The candidate has no rejection reasons.
     * 1b1. System informs the user that the candidate has no rejection history to edit.
     * Use case ends.
-* 2a. User provides an invalid new reason (empty, exceeds 200 characters, or contains disallowed characters).
+* 2a. User provides an invalid new reason.
     * 2a1. System informs the user of the validation error.
     * Use case ends.
-
-**Design justification:** `editreject` preserves the rejection's position in the chronological history — it is a
-correction operation, not an append. The consecutive-duplicate warning from `addreject` is deliberately not re-run
-because an explicit edit is unambiguously intentional.
 
 **Use case: UC3b - Deleting a rejection reason (`deletereject`)**
 
@@ -785,8 +766,8 @@ because an explicit edit is unambiguously intentional.
 
 1. User requests to delete an existing rejection reason by candidate index and rejection index.
 2. System validates both indices.
-3. System removes the specified reason; remaining reasons shift up to preserve contiguous indexing.
-4. System informs the user of success. The candidate's red rejection-count badge updates.
+3. System removes the specified reason.
+4. System informs the user of success.
    Use case ends.
 
 **Extensions:**
@@ -798,10 +779,6 @@ because an explicit edit is unambiguously intentional.
     * 1b1. System informs the user that the candidate has no rejection history to delete from.
     * Use case ends.
 
-**Design justification:** Deletion shifts later entries up (rather than leaving a gap) so that the rejection index
-displayed in `show INDEX` is always a contiguous 1-based sequence matching what the user just saw. This is consistent
-with how notes are deleted.
-
 **Use case: UC4 - Filtering candidates by tag**
 
 **Preconditions:** The system contains at least one candidate.
@@ -809,9 +786,8 @@ with how notes are deleted.
 **MSS:**
 
 1. User requests to filter the candidate list by specifying exactly one tag name.
-2. System validates the tag format (must start with a letter or number; may contain letters, numbers, or the symbols
-   `. + - _ ( ) @ # ! ? '`; no spaces; 1–30 characters).
-3. System filters the list to show only candidates who have that tag assigned (case-insensitive match).
+2. System validates the tag name.
+3. System filters the list to show only candidates who have that tag assigned.
 4. System shows the matching candidates with a count.
    Use case ends.
 
@@ -823,9 +799,6 @@ with how notes are deleted.
 * 3a. No candidates have the specified tag.
     * 3a1. System informs the user that no matching candidates were found.
     * Use case ends.
-
-**Design justification:** Filter accepts exactly one tag to keep the command syntax simple and predictable. Multi-tag
-filtering can be achieved by chaining `filter` with `find` or by using the tag pool's existing categorisation system.
 
 **Use case: UC5 - Updating candidate information**
 
@@ -847,17 +820,9 @@ filtering can be achieved by chaining `filter` with `find` or by using the tag p
 * 2a. System detects invalid formatting in the newly provided fields.
     * 2a1. System informs the user of the formatting error.
     * Use case ends.
-* 2b. System detects the updated details conflict with another existing candidate (duplicate collision on phone or
-  email).
-    * 2b1. System aborts the update and informs the user of the specific conflict (which field and which existing
-      candidate).
+* 2b. System detects the updated details conflict with another existing candidate.
+    * 2b1. System aborts the update and informs the user of the conflict.
     * Use case ends.
-
-**Design justification:** The edit command resets the displayed list to show all candidates after a successful edit.
-This ensures the user can always see the edited candidate in its new position (e.g., if alphabetical sorting moved it).
-The no-change detection (`"No changes detected"`) prevents unnecessary state commits and keeps the undo history clean.
-The `edit` command handles contact details and priority only; hiring stage tracking is done via tags, and formal
-rejection decisions are recorded via the `addreject`/`editreject`/`deletereject` commands.
 
 **Use case: UC6 - Finding a candidate by attributes**
 
@@ -878,25 +843,6 @@ rejection decisions are recorded via the `addreject`/`editreject`/`deletereject`
 * 2a. No candidates match the search query.
     * 2a1. System informs the user that the result set is empty.
     * Use case ends.
-
-**Design justification:** Search uses OR semantics (matching *any* keyword) and is case-insensitive, so a user who
-mis-remembers part of a candidate's details can still find them (e.g., `find alice richards` returns both "Alice
-Davidson" and "Alison Richards"). The search covers name, phone, email, notes, and rejection reasons — the fields most
-likely to contain recall cues.
-
-`find` always searches the **full candidate list**, not the currently filtered or partially displayed view. Internally,
-`Model#updateFilteredPersonList` replaces the active predicate on the full underlying data store, so any prior `filter`
-is superseded. This is intentional: a recruiter using `find` is performing a fresh search across all candidates, not
-narrowing an existing subset. The prior filter state is discarded rather than composed to avoid confusing "where did the
-rest go?" surprises.
-
-**Why are addresses and tags excluded?**
-The `address` field is intentionally excluded because addresses generate enormous noise. They contain generic block
-digits (e.g., Block `12`), which overlap heavily with search intents targeting phone numbers. Searching "12" to find a
-candidate's phone number would flood the results with everyone who lives at Block 12, destroying the utility of the
-search. Tags are similarly excluded because the `filter` command is already dedicated to exact tag-based subsetting,
-which is much more precise for structured hiring stages than partial unstructured keyword searching. Keywords are
-limited to 20 (max 150 characters total) to prevent accidental over-filtering.
 
 **Use case: UC7 - Assigning a tag to a candidate**
 
@@ -921,14 +867,9 @@ limited to 20 (max 150 characters total) to prevent accidental over-filtering.
 * 2b. The specified tag does not exist in the system's tag pool.
     * 2b1. System informs the user that the tag must be created before it can be assigned.
     * Use case ends.
-* 2c. The candidate already has the specified tag (case-insensitive).
+* 2c. The candidate already has the specified tag.
     * 2c1. System rejects the operation and informs the user that the candidate already has the tag.
     * Use case ends.
-
-**Design justification:** Tags must exist in the tag pool before assignment, enforcing a two-step workflow (`tagpool`
-then `tag`). This registry pattern prevents typos from creating rogue tags and ensures all tag names across candidates
-are canonically consistent (case-insensitive). The system rejects (rather than silently ignores) duplicate tag
-assignments to alert the user that their intended action is a no-op.
 
 **Use case: UC8 - Managing the tag pool**
 
@@ -937,11 +878,10 @@ assignments to alert the user that their intended action is a no-op.
 **MSS:**
 
 1. User requests to manage the tag pool (list, create, or delete tags).
-2. If no arguments are given, system displays all tags currently in the pool (alphabetically sorted). Use case ends.
-3. System validates all tag names (must start with a letter or number; may contain letters, numbers, or the symbols
-   `. + - _ ( ) @ # ! ? '`; no spaces; 1–30 characters) and checks for conflicts.
+2. If no arguments are given, system displays all tags currently in the pool. Use case ends.
+3. System validates all tag names and checks for conflicts.
 4. System adds new tags to the pool.
-5. For any tags being deleted, system removes them from all candidates who currently hold them (cascading deletion).
+5. For any tags being deleted, system removes them from all candidates who currently hold them.
 6. System removes the tags from the pool.
 7. System informs the user of the number of tags created and deleted.
    Use case ends.
@@ -957,19 +897,12 @@ assignments to alert the user that their intended action is a no-op.
 * 2c. Same tag appears in both create and delete lists.
     * 2c1. System informs the user of the conflict. No changes are made.
     * Use case ends.
-* 2d. Duplicate tag names within the create list (case-insensitive, e.g., `a/Java a/java`).
+* 2d. Duplicate tag names within the create list.
     * 2d1. System informs the user of the duplicate. No changes are made.
     * Use case ends.
-* 2e. Duplicate tag names within the delete list (case-insensitive).
+* 2e. Duplicate tag names within the delete list.
     * 2e1. System informs the user of the duplicate. No changes are made.
     * Use case ends.
-
-**Design justification:** Deleting a tag from the pool cascades to all candidates. This maintains referential
-integrity — no candidate can hold a tag that doesn't exist in the pool. The cascading sweep uses snapshot iteration to
-avoid concurrent modification issues. All validations run before any mutations (fail-fast atomicity). Tag
-discoverability is supported by running `tagpool` with no arguments, which lists all tags in the pool sorted
-alphabetically. This provides a quick overview without cluttering the UI. Tags are also visible on candidate cards and
-via `filter TAG`.
 
 **Use case: UC9 - Sorting candidates by date added**
 
@@ -988,20 +921,17 @@ via `filter TAG`.
     * 1a1. System informs the user that there is nothing to sort.
     * Use case ends.
 
-**Design justification:** Secondary sort by name (alphabetical) provides a deterministic tiebreaker for candidates added
-on the same date. The sort modifies the underlying list order (persisted to disk), so it is undoable via `undo`.
-
 **Use case: UC10 - Tagging multiple candidates at once**
 
 **Preconditions:** The target candidates exist in the current displayed list, and the tag exists in the tag pool.
 
 **MSS:**
 
-1. User requests to add or remove tags for multiple candidates using comma-separated indices.
-2. System validates all indices, tag names, and checks for conflicts (same tag in both add and delete).
+1. User requests to add or remove tags for multiple candidates.
+2. System validates all indices and tag names.
 3. System verifies all tags exist in the tag pool.
-4. System verifies each candidate's tag state (no duplicate additions, no removing absent tags).
-5. System applies tag changes to all specified candidates atomically.
+4. System verifies the tag assignments are valid for each candidate.
+5. System applies all tag changes.
 6. System informs the user of success.
    Use case ends.
 
@@ -1020,10 +950,6 @@ on the same date. The sort modifies the underlying list order (persisted to disk
     * 4a1. System informs the user of the specific conflict. No changes are made.
     * Use case ends.
 
-**Design justification:** The command uses fail-fast atomic validation — all checks run before any mutations. This
-prevents partial updates where some candidates are tagged but others fail, which would leave the system in a confusing
-state. The max of 10 tags per command prevents abuse while covering realistic batch operations.
-
 **Use case: UC11 - Adding a note to a candidate**
 
 **Preconditions:** The candidate exists in the current displayed list.
@@ -1031,7 +957,7 @@ state. The max of 10 tags per command prevents abuse while covering realistic ba
 **MSS:**
 
 1. User requests to add a note to a candidate by index, providing content and an optional heading.
-2. System validates the index and content (must be non-empty; content max 500 characters, heading max 50 characters).
+2. System validates the index and content.
 3. System creates a note and appends it to the candidate's record.
 4. System informs the user of success.
    Use case ends.
@@ -1044,17 +970,9 @@ state. The max of 10 tags per command prevents abuse while covering realistic ba
 * 2a. Content is empty or blank.
     * 2a1. System informs the user that note content is required.
     * Use case ends.
-* 2b. Content exceeds 500 characters or heading exceeds 50 characters.
-    * 2b1. System informs the user of the character limit.
+* 2b. Content or heading exceeds the allowed length.
+    * 2b1. System informs the user of the length constraint.
     * Use case ends.
-* 2c. Duplicate `c/` or `h/` prefixes detected.
-    * 2c1. System informs the user that duplicate prefixes are not allowed.
-    * Use case ends.
-
-**Design justification:** Heading defaults to "General Note" when omitted to keep the common case fast (just
-`addnote 1 c/content`). Duplicate prefix detection prevents silent data loss where content containing ` c/` would be
-mis-parsed. Newline characters in pasted content are automatically converted to spaces to prevent JSON formatting issues
-and ensure single-line display.
 
 **Use case: UC12 - Editing a note**
 
@@ -1079,7 +997,7 @@ and ensure single-line display.
 * 2a. Neither content nor heading is provided.
     * 2a1. System informs the user that at least one field must be provided.
     * Use case ends.
-* 2b. Content is blank or exceeds 500 characters, or heading is blank or exceeds 50 characters.
+* 2b. Content or heading is blank or exceeds the allowed length.
     * 2b1. System informs the user of the constraint violation.
     * Use case ends.
 
@@ -1111,7 +1029,7 @@ and ensure single-line display.
 **MSS:**
 
 1. User requests to sort candidates by priority, specifying ascending or descending order.
-2. System sorts the list (high-priority first for ascending, last for descending).
+2. System sorts the candidate list by priority.
 3. System shows the sorted list.
    Use case ends.
 
@@ -1120,10 +1038,6 @@ and ensure single-line display.
 * 1a. The candidate list is empty.
     * 1a1. System informs the user that there is nothing to sort.
     * Use case ends.
-
-**Design justification:** Ascending puts high-priority candidates first (most useful default) because `isPriority=true`
-sorts before `false`. Secondary sort by date-added (newest first) and tertiary by name provide stable, predictable
-ordering within same-priority groups.
 
 **Use case: UC15 - Clearing all data**
 
@@ -1135,10 +1049,6 @@ ordering within same-priority groups.
 2. System deletes all candidates and the entire tag pool.
 3. System informs the user of success.
    Use case ends.
-
-**Design justification:** No confirmation prompt is used for the same reason as remove (UC2) — `undo` provides immediate
-recovery. The command also clears the tag pool to maintain referential integrity: orphaned tags without candidates would
-be confusing.
 
 **Use case: UC16 - Undoing the previous action**
 
@@ -1157,10 +1067,6 @@ be confusing.
 * 1a. There are no previous modifying actions to undo in the current session.
     * 1a1. System informs the user that there is nothing to undo.
     * Use case ends.
-
-**Design justification:** Undo uses full-state snapshots (the entire data state is saved before each mutating command).
-This is simpler and more reliable than per-command inverse logic, at the cost of higher memory usage. For the expected
-dataset size (up to 1,000 candidates), this trade-off is acceptable.
 
 **Use case: UC17 - Redoing a previously undone action**
 
@@ -1181,9 +1087,6 @@ dataset size (up to 1,000 candidates), this trade-off is acceptable.
     * 1a1. System informs the user that there is nothing to redo.
     * Use case ends.
 
-**Design justification:** Any new modifying command after `undo` clears the redo history. This linear history model
-prevents confusing branching states and is consistent with how most mainstream applications handle undo/redo.
-
 **Use case: UC18 - Viewing a candidate's full profile**
 
 **Preconditions:** Candidates exist in the system and are currently shown in a list.
@@ -1198,9 +1101,59 @@ prevents confusing branching states and is consistent with how most mainstream a
 
 **Extensions:**
 
-* 1a. User provides an invalid identifier (e.g., out of bounds, incorrect format).
-    * 1a1. System informs the user of the error and provides usage instructions.
+* 1a. User provides an invalid identifier.
+    * 1a1. System informs the user of the error.
     * Use case ends.
+
+### Design decisions
+
+#### Candidate management
+
+**Duplicate detection (UC1, UC5):** A candidate is considered a duplicate if their phone number or email matches an existing record. Either field alone is sufficient to uniquely identify a real person, so matching on either prevents accidental re-entry even when only one contact field is shared. Phone comparison strips all formatting separators (`+`, spaces, hyphens, parentheses) before comparing digits, so `+65-9123-4567`, `+6591234567`, and `6591234567` are all treated as the same number.
+
+**Phone number format flexibility (UC1, UC5):** Phone validation deliberately accepts a wide range of formats — digits plus any mix of `+`, spaces, hyphens, and parentheses — as long as the digit count is between 3 and 15. International phone conventions vary enormously (e.g. `+1 (415) 555-2671`, `+65-9123-4567`, `+44 20 7946 0958`), and rigidly enforcing one format would force recruiters to mentally reformat numbers before typing. The trade-off is that syntactically unusual strings such as `1 2 3` are technically accepted; the productivity benefit of accepting every real-world format outweighs the risk of a malformed entry.
+
+**Email must include a top-level domain (UC1, UC5):** Email validation requires a TLD of at least two letters (e.g. `.com`, `.in`, `.org`). While RFC 5321 technically permits bare domain emails like `user@localhost`, such addresses are never used in professional recruiting: every real candidate's email belongs to a registered domain (`gmail.com`, `company.sg`, etc.). Requiring a TLD catches obvious typos like `alice@example` (missing the dot-suffix) that would otherwise silently create an unusable contact record.
+
+**Email length limit of 254 characters (UC1, UC5):** The 254-character limit applies to the full email address string and is derived from RFC 5321, which defines the maximum length of an address path as 256 characters (including angle brackets), leaving 254 characters for the address itself. This is the de-facto standard maximum email address length and prevents unusually long strings that would be implausible as real-world addresses.
+
+**No confirmation prompt for destructive commands (UC2, UC15):** Neither `remove` nor `clear` prompts for confirmation before executing. The `undo` command provides immediate, frictionless recovery from an accidental deletion. Adding a confirmation step would interrupt the recruiter's typing flow without providing meaningful additional safety given that undo is always available.
+
+**Edit resets the displayed list (UC5):** After a successful edit, the displayed list resets to show all candidates. This ensures the edited candidate is visible in its new position (e.g., if sorting moved it). The system also detects no-change edits and rejects them to avoid creating unnecessary undo history entries. The `edit` command handles contact details and priority only; hiring stage tracking is done via tags, and formal rejection decisions are recorded via dedicated commands.
+
+#### Rejection history
+
+**Multiple rejections and consecutive-duplicate warning (UC3):** The system allows rejecting a candidate multiple times, even with the same reason, because real-world hiring involves multiple rounds across different roles or time periods. Rather than blocking the operation, a warning is shown when the new reason exactly matches the immediately preceding one, guarding against accidental double-entry while preserving flexibility. There are no guards based on the candidate's tags — any candidate can be rejected regardless of what tags they carry.
+
+**`editreject` is a correction, not an append (UC3a):** `editreject` replaces a reason at its existing position in the chronological history. The consecutive-duplicate warning from `addreject` is not re-run because an explicit edit is unambiguously intentional.
+
+**Rejection index contiguity after deletion (UC3b):** When a rejection reason is deleted, later entries shift up so the displayed index sequence remains contiguous. This is consistent with note deletion and avoids gaps that would confuse users referencing indices from a recent `show` output.
+
+#### Tag system
+
+**Registry pattern for tags (UC7, UC8):** Tags must exist in the tag pool before they can be assigned to any candidate. This two-step workflow (`tagpool` then `tag`) prevents typos from creating rogue tags and ensures all tag names are canonically consistent across the system. The system rejects duplicate tag assignments (rather than silently ignoring them) to alert the user that their intended action is already complete. Deleting a tag from the pool cascades to all candidates, maintaining referential integrity: no candidate can hold a tag that no longer exists in the pool. `clear` also removes the entire tag pool for the same reason.
+
+**Single-tag filter (UC4):** `filter` accepts exactly one tag to keep the syntax simple and unambiguous. Multi-tag filtering can be approximated by chaining `filter` with `find`, or by using a shared tag that encompasses all required candidates.
+
+**Atomic multi-candidate tagging (UC10):** All validation runs before any mutations. This prevents partial updates where some candidates are tagged but others fail, which would leave the system in an inconsistent state that is hard to reason about.
+
+#### Search
+
+**OR semantics and case-insensitivity (UC6):** `find` returns candidates that match *any* supplied keyword (OR logic) and comparisons are case-insensitive. A recruiter who mis-remembers part of a name or detail can still locate the candidate without needing to recall the exact form. `find` always searches the full candidate list, superseding any prior `filter`, because a fresh search across all candidates is the most useful and least surprising behaviour. Addresses and tags are intentionally excluded: addresses generate numeric noise that drowns out phone number searches, and tags are best queried with the precision of `filter`.
+
+#### Sort
+
+**Secondary sort for ties (UC9):** When sorting by date added, candidates with the same date are ordered by name alphabetically to give a stable, predictable result.
+
+**Descending priority = high-priority first (UC14):** Descending order surfaces high-priority candidates at the top of the list. Ascending order puts low-priority candidates first.
+
+#### Notes
+
+**Default heading (UC11):** When no heading is provided, the note heading defaults to "General Note" so the common case (`addnote INDEX c/content`) requires minimal input.
+
+#### Undo / Redo
+
+**Full-state snapshots (UC16):** Undo is implemented by saving a complete copy of the data state before each mutating command. This is simpler and more reliable than per-command inverse logic, at the cost of higher memory usage per snapshot. Any new modifying command after `undo` clears the redo history; this linear history model prevents confusing branching states and matches mainstream application behaviour.
 
 ### Non-Functional Requirements
 
@@ -1222,6 +1175,8 @@ prevents confusing branching states and is consistent with how most mainstream a
 1. For a dataset of up to 1,000 candidate records — each with the maximum allowed fields (50 notes of 500-character content, 20 rejection reasons of 200 characters, all 50 tags, 100-character name, 254-character email, 200-character address) — the application should:
    * Complete typical commands (`list`, `find`, `filter`, `add`, `edit`, `remove`) within 1 second on a typical laptop (Intel Core i5 equivalent, 8 GB RAM).
    * Not exceed 250 MB of JVM heap memory at baseline load. *(This bound is validated by calculation: maxed-out per-candidate data totals ~64 KB; 1,000 candidates produce ~64 MB of raw data. Adding JVM and JavaFX overhead brings the total to well under 250 MB.)*
+
+   > **Note:** The undo/redo mechanism stores full-state snapshots with no upper limit on history depth. Memory usage therefore grows with each mutating command executed in a session. This bound assumes typical session lengths (tens of commands); a session with hundreds of mutating commands will consume proportionally more memory.
 
 #### Portability
 
@@ -1274,7 +1229,7 @@ prevents confusing branching states and is consistent with how most mainstream a
 * **Duplicate candidate:** A candidate whose phone number or email address matches that of an existing candidate in the
   system. The `add` and `edit` commands prevent duplicates based on this definition. Name alone does not determine
   uniqueness.
-* **Home folder:** The folder containing `talently.jar`. Talently reads and writes `data/talently.json` and
+* **Home folder:** The folder containing `[CS2103T-T17-4][Talently].jar`. Talently reads and writes `data/talently.json` and
   `preferences.json` relative to this folder.
 * **Save file:** `data/talently.json` — the JSON file where candidate data is autosaved after every modifying command.
 * **Autosave:** The automatic write to the save file after any command that changes data. No manual save is needed.
@@ -1296,7 +1251,7 @@ testers are expected to do more *exploratory* testing.
 </div>
 
 <div markdown="span" class="alert alert-info">:information_source: **Note for testers:**
-* If double-clicking the `.jar` does not launch the app, run it using `java -jar talently.jar` from a terminal in the same folder.
+* If double-clicking the `.jar` does not launch the app, run it using `java -jar [CS2103T-T17-4][Talently].jar` from a terminal in the same folder.
 </div>
 
 <div markdown="span" class="alert alert-warning">:warning: **Warning:** Do not place the app in a write-protected folder — it may fail to save changes to `data/talently.json`.
@@ -1403,7 +1358,7 @@ testers are expected to do more *exploratory* testing.
    Expected: The right-side detail panel opens showing the candidate's full information: name, phone, email, address,
    priority, date added, tags, all notes, and full rejection history.
 
-1. Test case: `show 99` (index out of range).<br>
+1. Test case: `show 99` (index out of range; ensure the current list has fewer than 99 candidates).<br>
    Expected: Error message indicating the index is out of range.
 
 1. Test case: `show 1` after `find Jane` has narrowed the list to a single match.<br>
@@ -1476,7 +1431,7 @@ testers are expected to do more *exploratory* testing.
        Expected: The 1st rejection reason for candidate 1 is replaced with "Updated reason". The rejection count badge
        is unchanged.
 
-    1. Test case: `editreject 1 99 Some reason` (rejection index out of range)<br>
+    1. Test case: `editreject 1 99 Some reason` (rejection index out of range; ensure candidate 1 has fewer than 99 rejection reasons)<br>
        Expected: Error message indicating the rejection index is out of range.
 
     1. Test case: `editreject 1 1` (no new reason provided)<br>
@@ -1597,7 +1552,7 @@ testers are expected to do more *exploratory* testing.
 
     1. Test case: `find @#$`<br>
        Expected: Error message indicating invalid characters. Only letters, digits, and symbols
-       ``- ' . / @ + _ : ; ! ? ( )`` are allowed.
+       ``- ' . / @ + _ : ; ! ? ( ) & % " # * ,`` are allowed.
 
     1. Test case: `find café` (non-ASCII keyword).<br>
        Expected: Error message indicating the keyword contains disallowed characters.
@@ -1629,7 +1584,7 @@ testers are expected to do more *exploratory* testing.
    Expected: Candidates are listed newest-first.
 
 1. Test case: `sort pr o/asc`<br>
-   Expected: High-priority candidates are listed first.
+   Expected: Low-priority candidates are listed first.
 
 1. Test case: `sort date o/xyz` (invalid order)<br>
    Expected: Error message indicating valid orders are `asc` or `desc`.
@@ -1765,7 +1720,7 @@ Rejection records (`addreject`, `editreject`, `deletereject`) introduced a neste
 
 **Note management with heading fallback and cap enforcement**
 
-Notes similarly form a nested, ordered collection (up to 50 per candidate). The `h/` prefix supports an optional heading that silently falls back to `"General Note"` when omitted or whitespace-only, which required careful parser logic to distinguish "prefix absent" from "prefix present but blank". Notes also auto-record their creation time internally for chronological ordering.
+Notes similarly form a nested, ordered collection (up to 50 per candidate). The `h/` prefix supports an optional heading that silently falls back to `"General Note"` when omitted or whitespace-only, which required careful parser logic to distinguish "prefix absent" from "prefix present but blank". Notes are stored in insertion order; no creation timestamp is persisted.
 
 **ASCII input constraints**
 

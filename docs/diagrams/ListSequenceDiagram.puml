@@ -5,7 +5,6 @@ skinparam ArrowFontStyle plain
 box Logic LOGIC_COLOR_T1
 participant ":LogicManager" as LogicManager LOGIC_COLOR
 participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
-participant ":ListCommandParser" as ListCommandParser LOGIC_COLOR
 participant "d:ListCommand" as ListCommand LOGIC_COLOR
 participant "r:CommandResult" as CommandResult LOGIC_COLOR
 end box
@@ -20,32 +19,16 @@ activate LogicManager
 LogicManager -> AddressBookParser : parseCommand("list")
 activate AddressBookParser
 
-create ListCommandParser
-AddressBookParser -> ListCommandParser
-activate ListCommandParser
-
-ListCommandParser --> AddressBookParser
-deactivate ListCommandParser
-
-AddressBookParser -> ListCommandParser : parse("")
-activate ListCommandParser
-
 alt#LightCoral #FFCCCC extra parameters provided
-    ListCommandParser --> AddressBookParser : throw ParseException\n("The list command does not accept any parameters.")
+    AddressBookParser --> LogicManager : throw ParseException\n("list takes no parameters.")
 end
 
 create ListCommand
-ListCommandParser -> ListCommand
+AddressBookParser -> ListCommand
 activate ListCommand
 
-ListCommand --> ListCommandParser
+ListCommand --> AddressBookParser
 deactivate ListCommand
-
-ListCommandParser --> AddressBookParser : d
-deactivate ListCommandParser
-'Hidden arrow to position the destroy marker below the end of the activation bar.
-ListCommandParser -[hidden]-> AddressBookParser
-destroy ListCommandParser
 
 AddressBookParser --> LogicManager : d
 deactivate AddressBookParser
